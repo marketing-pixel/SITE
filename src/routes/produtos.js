@@ -7,6 +7,7 @@ const pool = require('../config/db');
 const { autenticar } = require('../middleware/auth');
 const fs = require('fs');
 const path = require('path');
+const { cloudinary } = require('../config/cloudinary');
 
 const router = express.Router();
 
@@ -106,59 +107,32 @@ function validarNota(valor) {
 
 
 function normalizarImagensAvaliacao(imagens) {
+    if (!Array.isArray(imagens)) return [];
 
-    if (!Array.isArray(imagens)) {
-        return [];
-    }
-
-    const resultado = [];
-
-    for (const imagem of imagens) {
-
-        let caminho = null;
-
-        if (
-            typeof imagem === 'string'
-        ) {
-
-            caminho =
-                normalizarTexto(
-                    imagem,
-                    500
-                );
-
-        } else if (
-            imagem &&
-            typeof imagem === 'object'
-        ) {
-
-            caminho =
-                normalizarTexto(
-                    imagem.caminho,
-                    500
-                );
-        }
-
-        if (!caminho) {
-            continue;
-        }
-
-        /*
-         * Somente caminhos internos do site.
-         */
-        if (
-            !caminho.startsWith('/uploads/') &&
-            !caminho.startsWith('/assets/')
-        ) {
-            continue;
-        }
-
-        resultado.push(
-            caminho
+    return imagens.reduce((resultado, imagem) => {
+        const caminho = normalizarTexto(
+            typeof imagem === 'string' ? imagem : imagem && imagem.caminho,
+            500
         );
-    }
 
-    return resultado;
+        if (
+            !caminho ||
+            (
+                !caminho.startsWith('/uploads/') &&
+                !caminho.startsWith('/assets/') &&
+                !caminho.startsWith('https://res.cloudinary.com/')
+            )
+        ) return resultado;
+
+        resultado.push({
+            caminho,
+            public_id: normalizarTexto(
+                imagem && typeof imagem === 'object' ? imagem.public_id : null,
+                500
+            )
+        });
+        return resultado;
+    }, []);
 }
 
 
@@ -166,12 +140,11 @@ function normalizarImagensAvaliacao(imagens) {
 // REMOVER ARQUIVO FÍSICO SE NÃO ESTIVER EM USO
 // ============================================================
 
-async function removerArquivoSeNaoUsado(caminho) {
+async function removerArquivoSeNaoUsado(caminho, publicId = null) {
 
     if (
         !caminho ||
         typeof caminho !== 'string' ||
-        !caminho.startsWith('/uploads/')
     ) {
         return;
     }
@@ -213,6 +186,21 @@ async function removerArquivoSeNaoUsado(caminho) {
             return;
         }
 
+
+        if (
+            publicId &&
+            caminho.startsWith('https://res.cloudinary.com/')
+        ) {
+            await cloudinary.uploader.destroy(
+                publicId,
+                { resource_type: 'image' }
+            );
+            return;
+        }
+
+        if (!caminho.startsWith('/uploads/')) {
+            return;
+        }
 
         const filePath =
             path.resolve(
@@ -327,6 +315,7 @@ async function buscarProdutoCompleto(id) {
                 id,
                 cor_id,
                 caminho,
+                public_id,
                 ordem,
                 principal
              FROM imagens
@@ -509,7 +498,8 @@ async function buscarAvaliacoes(
             `SELECT
                 id,
                 avaliacao_id,
-                caminho
+                caminho,
+                public_id
              FROM avaliacao_imagens
              WHERE avaliacao_id = ANY($1::integer[])
              ORDER BY
@@ -640,7 +630,8 @@ function normalizarImagensRecebidas(imagens) {
          */
         if (
             !caminho.startsWith('/uploads/') &&
-            !caminho.startsWith('/assets/')
+            !caminho.startsWith('/assets/') &&
+            !caminho.startsWith('https://res.cloudinary.com/')
         ) {
             continue;
         }
@@ -691,6 +682,9 @@ function prepararImagens(imagens) {
                 return {
                     caminho:
                         imagem.caminho,
+
+                    public_id:
+                        imagem.public_id || null,
 
                     principal
                 };
@@ -1206,21 +1200,15 @@ router.post(
                 avaliacao.rows[0].id;
 
 
-            for (
-                const caminho of imagens
-            ) {
-
+            for (const imagem of imagens) {
                 await client.query(
                     `INSERT INTO avaliacao_imagens
-                        (
-                            avaliacao_id,
-                            caminho
-                        )
-                     VALUES
-                        ($1, $2)`,
+                        (avaliacao_id, caminho, public_id)
+                     VALUES ($1, $2, $3)`,
                     [
                         avaliacaoId,
-                        caminho
+                        imagem.caminho,
+                        imagem.public_id
                     ]
                 );
             }
@@ -2218,15 +2206,17 @@ router.post(
                                 produto_id,
                                 cor_id,
                                 caminho,
+                                public_id,
                                 ordem,
                                 principal
                             )
                          VALUES
-                            ($1, $2, $3, $4, $5)`,
+                            ($1, $2, $3, $4, $5, $6)`,
                         [
                             produtoId,
                             corId,
                             imagem.caminho,
+                            imagem.public_id || null,
                             j,
                             imagem.principal
                         ]
@@ -2689,7 +2679,7 @@ router.put(
 
                 const imagensAntigas =
                     await client.query(
-                        `SELECT caminho
+                        `SELECT caminho, public_id
                          FROM imagens
                          WHERE produto_id = $1`,
                         [id]
@@ -2697,10 +2687,7 @@ router.put(
 
 
                 caminhosAntigos.push(
-                    ...imagensAntigas.rows.map(
-                        imagem =>
-                            imagem.caminho
-                    )
+                    ...imagensAntigas.rows
                 );
 
 
@@ -2857,11 +2844,12 @@ router.put(
             // =================================================
 
             for (
-                const caminho of caminhosAntigos
+                const imagem of caminhosAntigos
             ) {
 
                 await removerArquivoSeNaoUsado(
-                    caminho
+                    imagem.caminho,
+                    imagem.public_id
                 );
             }
 
@@ -3111,6 +3099,7 @@ router.delete(
                     `SELECT
                         id,
                         caminho,
+                        public_id,
                         principal
                      FROM imagens
                      WHERE id = $1
@@ -3180,7 +3169,8 @@ router.delete(
 
 
             await removerArquivoSeNaoUsado(
-                caminho
+                caminho,
+                img.rows[0].public_id
             );
 
 
