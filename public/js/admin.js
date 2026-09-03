@@ -1193,7 +1193,8 @@ function adicionarCor(
                     Boolean(
                         imagem.principal
                     ),
-                    imagem.id || ''
+                    imagem.id || '',
+                    imagem.public_id || ''
                 );
             }
         );
@@ -1249,7 +1250,8 @@ function adicionarItemImagem(
     lista,
     caminho,
     principal = false,
-    imagemId = ''
+    imagemId = '',
+    publicId = ''
 ) {
 
     if (
@@ -1617,7 +1619,9 @@ async function fazerUpload(
         adicionarItemImagem(
             lista,
             data.caminho,
-            nenhumaPrincipal
+            nenhumaPrincipal,
+            '',
+            data.public_id || ''
         );
 
 
@@ -1766,6 +1770,11 @@ if (produtoForm) {
                                             '.cor-imagem-id'
                                         );
 
+                                    const publicIdInput =
+                                        item.querySelector(
+                                            '.cor-imagem-public-id'
+                                        );
+
 
                                     imagens.push({
 
@@ -1776,6 +1785,11 @@ if (produtoForm) {
 
                                         caminho:
                                             caminhoInput.value,
+
+                                        public_id:
+                                            publicIdInput
+                                                ? publicIdInput.value
+                                                : null,
 
                                         principal:
                                             principalInput
