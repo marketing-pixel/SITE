@@ -187,14 +187,30 @@ async function removerArquivoSeNaoUsado(caminho, publicId = null) {
         }
 
 
-        if (
-            publicId &&
-            caminho.startsWith('https://res.cloudinary.com/')
-        ) {
-            await cloudinary.uploader.destroy(
+        if (caminho.startsWith('https://res.cloudinary.com/')) {
+            if (
+                !publicId ||
+                !publicId.startsWith('cortez-moveis/')
+            ) {
+                console.error(
+                    'Imagem Cloudinary não removida: public_id ausente ou fora do namespace permitido.',
+                    { caminho, publicId }
+                );
+                return;
+            }
+
+            const resultado = await cloudinary.uploader.destroy(
                 publicId,
                 { resource_type: 'image' }
             );
+
+            if (resultado.result !== 'ok' && resultado.result !== 'not found') {
+                console.error(
+                    'Cloudinary não confirmou a exclusão da imagem.',
+                    { caminho, publicId, resultado }
+                );
+            }
+
             return;
         }
 
@@ -621,7 +637,23 @@ function normalizarImagensRecebidas(imagens) {
                 500
             );
 
+        const publicId =
+            normalizarTexto(
+                imagem.public_id,
+                500
+            );
+
         if (!caminho) {
+            continue;
+        }
+
+        if (
+            caminho.startsWith('https://res.cloudinary.com/') &&
+            (
+                !publicId ||
+                !publicId.startsWith('cortez-moveis/')
+            )
+        ) {
             continue;
         }
 
@@ -639,10 +671,7 @@ function normalizarImagensRecebidas(imagens) {
         resultado.push({
             caminho,
             public_id:
-                normalizarTexto(
-                    imagem.public_id,
-                    500
-                ),
+                publicId,
             principal:
                 imagem.principal === true
         });
