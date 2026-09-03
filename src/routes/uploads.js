@@ -45,8 +45,9 @@ router.post('/', autenticar, (req, res) => {
         }
 
         try {
-            const tipo = ['cor', 'avaliacao'].includes(req.body.tipo)
-                ? req.body.tipo
+            const tipoRecebido = req.body && req.body.tipo;
+            const tipo = ['cor', 'avaliacao'].includes(tipoRecebido)
+                ? tipoRecebido
                 : 'produto';
             const resultado = await enviarParaCloudinary(req.file, PASTAS_CLOUDINARY[tipo]);
             return res.status(201).json({
