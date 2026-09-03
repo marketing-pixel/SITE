@@ -144,7 +144,7 @@ async function removerArquivoSeNaoUsado(caminho, publicId = null) {
 
     if (
         !caminho ||
-        typeof caminho !== 'string' ||
+        typeof caminho !== 'string'
     ) {
         return;
     }
@@ -638,6 +638,11 @@ function normalizarImagensRecebidas(imagens) {
 
         resultado.push({
             caminho,
+            public_id:
+                normalizarTexto(
+                    imagem.public_id,
+                    500
+                ),
             principal:
                 imagem.principal === true
         });
@@ -2800,15 +2805,17 @@ router.put(
                                     produto_id,
                                     cor_id,
                                     caminho,
+                                    public_id,
                                     ordem,
                                     principal
                                 )
                              VALUES
-                                ($1, $2, $3, $4, $5)`,
+                                ($1, $2, $3, $4, $5, $6)`,
                             [
                                 id,
                                 corId,
                                 imagem.caminho,
+                                imagem.public_id || null,
                                 j,
                                 imagem.principal
                             ]
