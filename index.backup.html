@@ -1,0 +1,1008 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cortez Móveis - Soluções em Móveis Escolares e Institucionais</title>
+    <style>
+        /* ===== RESET ===== */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+        body {
+            font-family: 'Segoe UI', -apple-system, Arial, Helvetica, sans-serif;
+            color: #2d2d2d;
+            background-color: #ffffff;
+            line-height: 1.6;
+        }
+        img { max-width: 100%; }
+
+        /* ===== HEADER ===== */
+        .header {
+            background: #ffffff;
+            padding: 14px 0;
+            box-shadow: 0 1px 8px rgba(0,0,0,0.06);
+            position: sticky; top: 0; z-index: 200;
+        }
+        .header-inner {
+            max-width: 1200px; margin: 0 auto; padding: 0 20px;
+            display: flex; align-items: center; justify-content: space-between; gap: 20px;
+        }
+        .header-logo { max-width: 150px; height: auto; display: block; }
+        .header-nav { display: flex; align-items: center; gap: 26px; }
+        .header-nav a, .header-nav button.menu-link {
+            text-decoration: none; color: #2d2d2d; font-size: 0.95rem;
+            font-weight: 500; transition: color 0.2s ease; cursor: pointer; background: none; border: none;
+        }
+        .header-nav a:hover, .header-nav button.menu-link:hover { color: #1a3a5c; }
+        .header-cta {
+            background: #1a3a5c; color: #fff !important; padding: 10px 22px;
+            border-radius: 6px; font-weight: 600;
+        }
+        .header-cta:hover { background: #2c5f8a; }
+        .menu-toggle { display: none; background: none; border: none; font-size: 1.6rem; cursor: pointer; color: #1a3a5c; }
+
+        /* ===== TÍTULOS DE SEÇÃO ===== */
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
+        .section-head { text-align: center; max-width: 720px; margin: 0 auto 50px; }
+        .section-head .kicker {
+            font-size: 0.85rem; text-transform: uppercase; letter-spacing: 3px;
+            color: #8a97a5; font-weight: 600; margin-bottom: 12px;
+        }
+        .section-head h2 { font-size: 2.3rem; color: #162d47; font-weight: 700; line-height: 1.2; }
+        .section-head p { color: #6b7684; font-size: 1.1rem; margin-top: 12px; }
+
+        /* ===== 1. GUIA RÁPIDO DE 3 PERGUNTAS ===== */
+        .guia-section { background: #f7f8fa; padding: 90px 20px; }
+        .guia-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 32px; max-width: 1200px; margin: 0 auto; }
+        .guia-item {
+            background: #ffffff; border-radius: 16px; overflow: hidden; cursor: zoom-in;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.06); transition: transform 0.3s ease, box-shadow 0.3s ease;
+            position: relative;
+        }
+        .guia-item:hover { transform: translateY(-6px); box-shadow: 0 16px 40px rgba(0,0,0,0.10); }
+        .guia-item img { width: 100%; height: auto; display: block; }
+        .guia-num {
+            position: absolute; top: 16px; left: 16px; background: rgba(22,45,71,0.85);
+            color: #fff; font-size: 0.8rem; font-weight: 700; letter-spacing: 1px;
+            padding: 6px 12px; border-radius: 20px;
+        }
+
+        /* ===== 2. NOSSOS PRODUTOS ===== */
+        .catalogo-section { padding: 90px 20px; background: #ffffff; }
+        .grid-produtos { display: grid; grid-template-columns: repeat(3, 1fr); gap: 30px; }
+        .produto-card {
+            background: #fff; border: 1px solid #eceff1; border-radius: 14px; overflow: hidden;
+            display: flex; flex-direction: column; cursor: pointer; position: relative;
+            transition: transform 0.25s ease, box-shadow 0.25s ease;
+        }
+        .produto-card:hover { transform: translateY(-5px); box-shadow: 0 14px 34px rgba(0,0,0,0.09); }
+        .produto-imagem-area { background: #f7f8fa; padding: 34px 24px; text-align: center; position: relative; }
+        .produto-imagem-area img { max-width: 190px; width: 100%; height: auto; display: block; margin: 0 auto; transition: transform 0.35s ease; }
+        .produto-card:hover .produto-imagem-area img { transform: scale(1.04); }
+        .fav-btn {
+            position: absolute; top: 12px; right: 12px; background: #fff; border: none;
+            border-radius: 50%; width: 38px; height: 38px; font-size: 1.2rem; cursor: pointer;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.12); display: flex; align-items: center; justify-content: center;
+            transition: transform 0.2s; z-index: 5; color: #9aa5b1;
+        }
+        .fav-btn.favoritado { color: #e0245e; }
+        .fav-btn:hover { transform: scale(1.12); }
+        .produto-info { padding: 26px 24px 28px; display: flex; flex-direction: column; flex-grow: 1; }
+        .produto-categoria { font-size: 0.78rem; text-transform: uppercase; letter-spacing: 1.5px; color: #9aa5b1; margin-bottom: 6px; font-weight: 600; }
+        .produto-nome { font-size: 1.15rem; color: #162d47; font-weight: 700; margin-bottom: 8px; }
+        .produto-preco { font-size: 1.35rem; color: #162d47; font-weight: 700; }
+        .produto-parcelas { font-size: 0.85rem; color: #7c8894; margin-bottom: 12px; }
+        .produto-descricao { font-size: 0.92rem; color: #6b7684; flex-grow: 1; margin-bottom: 20px; }
+        .btn-produto {
+            display: block; width: 100%; background: #162d47; color: #fff; padding: 12px 20px;
+            border-radius: 8px; font-weight: 600; font-size: 0.9rem; text-align: center;
+            transition: background 0.2s; border: none; cursor: pointer;
+        }
+        .btn-produto:hover { background: #2c5f8a; }
+
+        /* ===== 3. SOBRE ===== */
+        .sobre-section { background: #f7f8fa; padding: 90px 20px; }
+        .sobre-texto { max-width: 780px; margin: 0 auto; text-align: center; }
+        .sobre-texto p { font-size: 1.12rem; color: #4a5563; margin-bottom: 18px; }
+
+        /* ===== 4. APRESENTAÇÃO INSTITUCIONAL ===== */
+        .institucional {
+            background: linear-gradient(150deg, #0f2236 0%, #162d47 55%, #1d3a5c 100%);
+            color: #ffffff; padding: 110px 20px; text-align: center;
+        }
+        .institucional h2 { font-size: 2.6rem; font-weight: 700; margin-bottom: 10px; }
+        .institucional .subtitulo { font-size: 1.25rem; color: #a9c1d8; margin-bottom: 18px; }
+        .institucional .texto { font-size: 1.08rem; color: #d3dee8; max-width: 640px; margin: 0 auto 60px; }
+        .cartaz-img {
+            max-width: 720px; width: 100%; height: auto; border-radius: 18px;
+            box-shadow: 0 30px 70px rgba(0,0,0,0.45); display: block; margin: 0 auto;
+        }
+        .cta-box {
+            margin-top: 80px; background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.14);
+            border-radius: 18px; padding: 56px 30px; max-width: 720px; margin-left: auto; margin-right: auto;
+            backdrop-filter: blur(4px);
+        }
+        .cta-box h3 { font-size: 1.9rem; margin-bottom: 12px; }
+        .cta-box p { color: #c9d6e2; font-size: 1.05rem; margin-bottom: 30px; }
+        .btn-cta {
+            display: inline-block; background: #ffffff; color: #162d47; padding: 15px 40px;
+            border-radius: 8px; font-weight: 700; font-size: 1rem; letter-spacing: 0.5px;
+            border: none; cursor: pointer; transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        .btn-cta:hover { transform: translateY(-2px); box-shadow: 0 10px 24px rgba(0,0,0,0.25); }
+
+        /* ===== 5. ORÇAMENTO ===== */
+        .orcamento-section { background: #ffffff; padding: 90px 20px; text-align: center; }
+        .orcamento-card {
+            max-width: 640px; margin: 0 auto; border: 1px solid #eceff1; border-radius: 18px;
+            padding: 60px 40px; box-shadow: 0 10px 40px rgba(22,45,71,0.06);
+        }
+        .orcamento-card h2 { font-size: 2rem; color: #162d47; margin-bottom: 14px; }
+        .orcamento-card p { color: #6b7684; font-size: 1.08rem; margin-bottom: 34px; }
+        .btn-orcamento-principal {
+            background: #25D366; color: #fff; padding: 16px 46px; border-radius: 8px;
+            font-weight: 700; font-size: 1.05rem; border: none; cursor: pointer; transition: transform 0.2s, background 0.2s;
+        }
+        .btn-orcamento-principal:hover { background: #1eb85a; transform: translateY(-2px); }
+        .orcamento-num { margin-top: 20px; font-size: 0.9rem; color: #9aa5b1; }
+
+        /* ===== 6. CONTATO ===== */
+        .contato-section { background: #f7f8fa; padding: 90px 20px; text-align: center; }
+        .contato-section h2 { font-size: 2rem; color: #162d47; margin-bottom: 36px; }
+        .contato-lista { display: flex; justify-content: center; gap: 40px; flex-wrap: wrap; }
+        .contato-item { text-align: center; }
+        .contato-item .rotulo { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1.5px; color: #9aa5b1; margin-bottom: 6px; font-weight: 600; }
+        .contato-item a { color: #162d47; font-size: 1.1rem; font-weight: 600; text-decoration: none; border-bottom: 1px solid transparent; transition: border-color 0.2s; }
+        .contato-item a:hover { border-bottom-color: #162d47; }
+
+        /* ===== 7. FOOTER ===== */
+        footer { background: #0f2236; color: #fff; text-align: center; padding: 60px 20px 40px; }
+        footer .logo { max-width: 140px; margin-bottom: 16px; }
+        footer .marca { font-size: 1.2rem; font-weight: 700; letter-spacing: 1px; }
+        footer .tagline { font-size: 0.9rem; color: #8fa5ba; margin: 8px 0 24px; letter-spacing: 0.5px; }
+        footer .footer-contatos { display: flex; justify-content: center; gap: 28px; flex-wrap: wrap; }
+        footer .footer-contatos a { color: #c9d6e2; text-decoration: none; font-size: 0.92rem; transition: color 0.2s; }
+        footer .footer-contatos a:hover { color: #ffffff; }
+        footer .copy { margin-top: 34px; font-size: 0.8rem; color: #5f768c; }
+
+        /* ===== PÁGINA DO PRODUTO (VERTICAL) ===== */
+        .pagina-produto { padding: 40px 20px 70px; background: #ffffff; }
+        .voltar {
+            display: inline-block; margin-bottom: 30px; color: #162d47; text-decoration: none;
+            font-weight: 600; cursor: pointer; background: none; border: none; font-size: 0.95rem;
+        }
+        .voltar:hover { text-decoration: underline; }
+        .pp-container { max-width: 900px; margin: 0 auto; }
+
+        .pp-titulo-area { text-align: center; margin-bottom: 34px; }
+        .pp-titulo { font-size: 2.2rem; color: #162d47; font-weight: 700; line-height: 1.2; }
+        .pp-categoria { font-size: 0.9rem; color: #9aa5b1; margin-top: 8px; text-transform: uppercase; letter-spacing: 2px; }
+
+        .pp-imagem-area {
+            position: relative; background: #f7f8fa; border-radius: 18px;
+            padding: 50px 24px; text-align: center; max-width: 640px; margin: 0 auto;
+        }
+        .pp-imagem-principal { max-width: 420px; width: 100%; height: auto; border-radius: 10px; }
+        .pp-contador {
+            position: absolute; top: 16px; left: 16px; background: rgba(0,0,0,0.55);
+            color: #fff; padding: 5px 14px; border-radius: 20px; font-size: 0.85rem;
+        }
+        .pp-fav {
+            position: absolute; top: 12px; right: 12px; background: #fff; border: none;
+            border-radius: 50%; width: 44px; height: 44px; font-size: 1.3rem; cursor: pointer;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.12); display: flex; align-items: center; justify-content: center; color: #9aa5b1;
+        }
+        .pp-fav.favoritado { color: #e0245e; }
+        .pp-compartilhar {
+            position: absolute; bottom: 14px; right: 14px; background: #fff; border: none;
+            border-radius: 50%; width: 44px; height: 44px; font-size: 1.2rem; cursor: pointer;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.12); display: flex; align-items: center; justify-content: center; color: #162d47;
+        }
+        .pp-seta {
+            position: absolute; top: 50%; transform: translateY(-50%); background: rgba(255,255,255,0.92);
+            border: none; border-radius: 50%; width: 44px; height: 44px; font-size: 1.5rem; cursor: pointer;
+            color: #162d47; box-shadow: 0 2px 10px rgba(0,0,0,0.15);
+        }
+        .pp-seta.esq { left: 12px; }
+        .pp-seta.dir { right: 12px; }
+
+        .pp-cor { text-align: center; margin-top: 30px; font-size: 1.1rem; color: #3a4653; font-weight: 600; }
+        .pp-cores { display: flex; justify-content: center; gap: 18px; margin-top: 16px; flex-wrap: wrap; }
+        .pp-cor-item { text-align: center; cursor: pointer; }
+        .pp-cor-thumb {
+            width: 68px; height: 68px; border-radius: 10px; overflow: hidden; border: 2px solid #e3e7ea;
+            transition: border-color 0.2s, transform 0.2s; background: #f7f8fa; padding: 0;
+        }
+        .pp-cor-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+        .pp-cor-item:hover .pp-cor-thumb { transform: translateY(-2px); }
+        .pp-cor-item.selecionada .pp-cor-thumb { border-color: #162d47; box-shadow: 0 4px 14px rgba(22,45,71,0.2); }
+        .pp-cor-nome { font-size: 0.82rem; color: #6b7684; margin-top: 7px; }
+
+        .pp-bloco { max-width: 800px; margin: 60px auto 0; }
+        .pp-bloco h3 { font-size: 1.5rem; color: #162d47; margin-bottom: 18px; }
+        .frete-campos { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+        .frete-campos input { padding: 13px 16px; border: 1px solid #dde2e6; border-radius: 8px; font-size: 1rem; width: 190px; }
+        .frete-campos button { background: #162d47; color: #fff; border: none; padding: 13px 24px; border-radius: 8px; font-weight: 600; cursor: pointer; }
+        .frete-aviso { font-size: 0.85rem; color: #9aa5b1; margin-top: 10px; }
+
+        .pp-orcamento { text-align: center; }
+        .btn-solicitar {
+            display: inline-block; background: #162d47; color: #fff; padding: 17px 44px;
+            border-radius: 8px; font-weight: 700; font-size: 1.1rem; border: none; cursor: pointer;
+            transition: background 0.2s, transform 0.2s;
+        }
+        .btn-solicitar:hover { background: #2c5f8a; transform: translateY(-2px); }
+
+        .relacionados-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; margin-top: 24px; }
+        .rel-card {
+            background: #fff; border: 1px solid #eceff1; border-radius: 12px; overflow: hidden; cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s; position: relative;
+        }
+        .rel-card:hover { transform: translateY(-4px); box-shadow: 0 10px 26px rgba(0,0,0,0.08); }
+        .rel-imagem-area { background: #f7f8fa; padding: 22px; text-align: center; position: relative; }
+        .rel-imagem-area img { max-width: 110px; width: 100%; height: auto; }
+        .rel-fav {
+            position: absolute; top: 10px; right: 10px; background: #fff; border: none; border-radius: 50%;
+            width: 32px; height: 32px; font-size: 1rem; cursor: pointer; box-shadow: 0 2px 6px rgba(0,0,0,0.12);
+            display: flex; align-items: center; justify-content: center; color: #9aa5b1;
+        }
+        .rel-fav.favoritado { color: #e0245e; }
+        .rel-info { padding: 16px 18px 18px; }
+        .rel-categoria { font-size: 0.72rem; text-transform: uppercase; letter-spacing: 1.2px; color: #9aa5b1; font-weight: 600; }
+        .rel-nome { font-size: 1rem; color: #162d47; font-weight: 700; margin: 4px 0; }
+        .rel-preco { font-size: 1.1rem; color: #162d47; font-weight: 700; }
+        .rel-parcelas { font-size: 0.8rem; color: #7c8894; }
+
+        .carac-sub { font-size: 1.05rem; color: #162d47; font-weight: 600; margin-top: 24px; margin-bottom: 6px; }
+        .carac-tabela { width: 100%; border-collapse: collapse; }
+        .carac-tabela td { padding: 11px 0; border-bottom: 1px solid #eef1f3; font-size: 0.95rem; color: #4a5563; }
+        .carac-tabela td:first-child { font-weight: 600; color: #333; width: 45%; }
+
+        .perguntas-acoes { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 20px; }
+        .btn-perguntar { background: #162d47; color: #fff; border: none; padding: 13px 26px; border-radius: 8px; font-weight: 600; cursor: pointer; }
+        .btn-ver-perguntas { background: #fff; color: #162d47; border: 1px solid #162d47; padding: 13px 26px; border-radius: 8px; font-weight: 600; cursor: pointer; }
+        .sem-conteudo { background: #f7f8fa; border: 1px dashed #ccd4da; border-radius: 10px; padding: 28px; text-align: center; color: #7c8894; }
+        .btn-avaliar { background: #162d47; color: #fff; border: none; padding: 12px 26px; border-radius: 8px; font-weight: 600; cursor: pointer; margin-top: 14px; }
+
+        /* ===== MODAL ORÇAMENTO ===== */
+        .modal-overlay {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(10,20,32,0.6); z-index: 1000; justify-content: center; align-items: center; padding: 20px;
+        }
+        .modal-overlay.aberto { display: flex; }
+        .modal-box { background: #fff; border-radius: 16px; padding: 36px 32px; max-width: 430px; width: 100%; text-align: center; position: relative; }
+        .modal-fechar { position: absolute; top: 14px; right: 18px; font-size: 1.7rem; cursor: pointer; color: #9aa5b1; background: none; border: none; }
+        .modal-box h3 { font-size: 1.35rem; color: #162d47; margin-bottom: 10px; }
+        .modal-box .modal-info { color: #6b7684; margin-bottom: 22px; font-size: 0.95rem; min-height: 22px; }
+        .modal-opcoes { display: flex; flex-direction: column; gap: 12px; }
+        .modal-opcao { padding: 15px; border-radius: 10px; font-weight: 700; text-decoration: none; color: #fff; transition: transform 0.2s; }
+        .modal-opcao:hover { transform: translateY(-2px); }
+        .modal-whatsapp { background: #25D366; }
+        .modal-email { background: #162d47; }
+        .modal-num { margin-top: 18px; font-size: 0.85rem; color: #9aa5b1; }
+
+        /* ===== MODAL ZOOM ===== */
+        .zoom-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(10,20,32,0.88); z-index: 1100; justify-content: center; align-items: center; padding: 20px; }
+        .zoom-overlay.aberto { display: flex; }
+        .zoom-overlay img { max-width: 92%; max-height: 92%; border-radius: 10px; }
+        .zoom-fechar { position: absolute; top: 20px; right: 30px; color: #fff; font-size: 2.6rem; cursor: pointer; }
+
+        /* ===== RESPONSIVIDADE ===== */
+        @media (max-width: 900px) {
+            .grid-produtos { grid-template-columns: repeat(2, 1fr); }
+            .relacionados-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+        @media (max-width: 600px) {
+            .grid-produtos { grid-template-columns: 1fr; }
+            .guia-grid { grid-template-columns: 1fr; gap: 24px; }
+            .relacionados-grid { grid-template-columns: 1fr; }
+            .menu-toggle { display: block; }
+            .header-nav {
+                display: none; position: absolute; top: 100%; left: 0; right: 0;
+                background: #fff; flex-direction: column; padding: 22px; box-shadow: 0 8px 24px rgba(0,0,0,0.12); gap: 16px;
+            }
+            .header-nav.aberto { display: flex; }
+            .header-cta { width: 100%; text-align: center; }
+            .header-logo { max-width: 120px; }
+            .guia-section, .catalogo-section, .sobre-section, .orcamento-section, .contato-section { padding: 64px 20px; }
+            .institucional { padding: 70px 20px; }
+            .institucional h2 { font-size: 1.9rem; }
+            .pp-titulo { font-size: 1.7rem; }
+            .section-head h2 { font-size: 1.8rem; }
+            .cta-box { padding: 40px 22px; }
+            .contato-lista { flex-direction: column; gap: 26px; }
+            .orcamento-card { padding: 44px 24px; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ===== HEADER ===== -->
+    <header class="header">
+        <div class="header-inner">
+            <img src="assets/Logo.png" alt="Logo Cortez Móveis" class="header-logo">
+            <button class="menu-toggle" onclick="toggleMenu()" aria-label="Abrir menu">☰</button>
+            <nav class="header-nav" id="menu">
+                <a onclick="irParaInicio()">Início</a>
+                <a onclick="navegar('produtos')">Produtos</a>
+                <a onclick="navegar('sobre')">Sobre</a>
+                <a onclick="navegar('guia')">Guia</a>
+                <a onclick="navegar('contato')">Contato</a>
+                <button class="header-cta" onclick="abrirModalOrcamento()">Solicitar orçamento</button>
+            </nav>
+        </div>
+    </header>
+
+    <!-- ===== VIEW: HOME ===== -->
+    <div id="view-home">
+
+        <!-- 1. GUIA RÁPIDO DE 3 PERGUNTAS -->
+        <section class="guia-section" id="guia">
+            <div class="container">
+                <div class="section-head">
+                    <h2>Um guia rápido de 3 perguntas</h2>
+                </div>
+                <div class="guia-grid">
+                    <div class="guia-item">
+                        <span class="guia-num">01</span>
+                        <img src="assets/Guia/1-Capa.png" alt="Guia Cortez Móveis - Capa" onclick="abrirZoom(this)">
+                    </div>
+                    <div class="guia-item">
+                        <span class="guia-num">02</span>
+                        <img src="assets/Guia/2-Perguntas.png" alt="Guia Cortez Móveis - Perguntas" onclick="abrirZoom(this)">
+                    </div>
+                    <div class="guia-item">
+                        <span class="guia-num">03</span>
+                        <img src="assets/Guia/3-Encerramento.png" alt="Guia Cortez Móveis - Encerramento" onclick="abrirZoom(this)">
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 2. NOSSOS PRODUTOS -->
+        <section class="catalogo-section" id="produtos">
+            <div class="container">
+                <div class="section-head">
+                    <div class="kicker">Catálogo</div>
+                    <h2>Nossos produtos</h2>
+                    <p>Conheça nossas soluções para ambientes escolares e institucionais.</p>
+                </div>
+                <div class="grid-produtos" id="grid-produtos"></div>
+            </div>
+        </section>
+
+        <!-- 3. SOBRE A CORTEZ MÓVEIS -->
+        <section class="sobre-section" id="sobre">
+            <div class="container">
+                <div class="section-head">
+                    <div class="kicker">Quem somos</div>
+                    <h2>Sobre a Cortez Móveis</h2>
+                </div>
+                <div class="sobre-texto">
+                    <p>A Cortez Móveis atua na fabricação de móveis para ambientes escolares e institucionais, oferecendo soluções que unem funcionalidade, qualidade, resistência e organização.</p>
+                    <p>Nossa linha de produtos foi desenvolvida para atender diferentes necessidades de escolas, instituições e ambientes coletivos, proporcionando praticidade e durabilidade no dia a dia.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 4. APRESENTAÇÃO INSTITUCIONAL -->
+        <section class="institucional" id="apresentacao">
+            <div class="container">
+                <h2>Cortez Móveis</h2>
+                <div class="subtitulo">Soluções em móveis escolares e institucionais</div>
+                <p class="texto">Qualidade, resistência e funcionalidade para equipar seus ambientes.</p>
+                <img src="assets/2-cartaz.png" alt="Cartaz de produtos da Cortez Móveis" class="cartaz-img">
+                <div class="cta-box">
+                    <h3>Equipe seu ambiente com qualidade</h3>
+                    <p>Encontre soluções para escolas, instituições e ambientes coletivos com a Cortez Móveis.</p>
+                    <button class="btn-cta" onclick="navegar('produtos')">CONHEÇA NOSSOS PRODUTOS</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- 5. SOLICITE SEU ORÇAMENTO -->
+        <section class="orcamento-section" id="orcamento">
+            <div class="container">
+                <div class="orcamento-card">
+                    <h2>Solicite seu orçamento</h2>
+                    <p>Gostou de algum de nossos produtos? Entre em contato com a Cortez Móveis e solicite seu orçamento.</p>
+                    <button class="btn-orcamento-principal" onclick="abrirModalOrcamento()">SOLICITAR ORÇAMENTO</button>
+                    <div class="orcamento-num">WhatsApp: (15) 3276-9999</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 6. FALE COM A CORTEZ MÓVEIS -->
+        <section class="contato-section" id="contato">
+            <div class="container">
+                <h2>Fale com a Cortez Móveis</h2>
+                <div class="contato-lista">
+                    <div class="contato-item">
+                        <div class="rotulo">WhatsApp</div>
+                        <a href="https://wa.me/551532769999" target="_blank" rel="noopener">(15) 3276-9999</a>
+                    </div>
+                    <div class="contato-item">
+                        <div class="rotulo">E-mail</div>
+                        <a href="mailto:cortez@cortezmoveis.com.br">cortez@cortezmoveis.com.br</a>
+                    </div>
+                    <div class="contato-item">
+                        <div class="rotulo">Site</div>
+                        <a href="https://www.cortezmoveis.com.br" target="_blank" rel="noopener">www.cortezmoveis.com.br</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 7. FOOTER -->
+        <footer>
+            <img src="assets/Logo.png" alt="Logo Cortez Móveis" class="logo">
+            <div class="marca">Cortez Móveis</div>
+            <div class="tagline">Escolas • Refeitórios • Instituições</div>
+            <div class="footer-contatos">
+                <a href="https://wa.me/551532769999" target="_blank" rel="noopener">WhatsApp</a>
+                <a href="mailto:cortez@cortezmoveis.com.br">E-mail</a>
+                <a href="https://www.cortezmoveis.com.br" target="_blank" rel="noopener">Site</a>
+            </div>
+            <div class="copy">&copy; 2026 Cortez Móveis. Todos os direitos reservados.</div>
+        </footer>
+    </div>
+
+    <!-- ===== VIEW: PÁGINA DO PRODUTO (VERTICAL) ===== -->
+    <div id="view-produto" style="display:none;">
+        <div class="pagina-produto">
+            <div class="pp-container">
+                <button class="voltar" onclick="voltarCatalogo()">← Voltar para produtos</button>
+                <div id="produto-layout"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== MODAL ORÇAMENTO ===== -->
+    <div class="modal-overlay" id="modal-orcamento">
+        <div class="modal-box">
+            <button class="modal-fechar" onclick="fecharModalOrcamento()">&times;</button>
+            <h3>Como deseja solicitar seu orçamento?</h3>
+            <div class="modal-info" id="modal-produto-info"></div>
+            <div class="modal-opcoes">
+                <a id="modal-link-whatsapp" href="#" class="modal-opcao modal-whatsapp" target="_blank" rel="noopener">Solicitar pelo WhatsApp</a>
+                <a id="modal-link-email" href="#" class="modal-opcao modal-email">Solicitar por E-mail</a>
+            </div>
+            <div class="modal-num">WhatsApp: (15) 3276-9999 &nbsp;|&nbsp; cortez@cortezmoveis.com.br</div>
+        </div>
+    </div>
+
+    <!-- ===== MODAL ZOOM ===== -->
+    <div class="zoom-overlay" id="zoom-overlay" onclick="fecharZoom()">
+        <span class="zoom-fechar">&times;</span>
+        <img id="zoom-imagem" src="" alt="Zoom">
+    </div>
+
+    <script>
+        /* ============================================================
+           MODELO DE DADOS CENTRALIZADO
+           ============================================================ */
+        const produtos = [
+            {
+                id: "abs-porta-copo",
+                titulo: "Linha ABS — Porta-Copo",
+                linha: "Linha ABS",
+                preco: "",
+                parcelamento: "7x com entrada",
+                descricao: "Conjuntos escolares desenvolvidos para proporcionar praticidade e funcionalidade no ambiente educacional, com tampo em ABS e recursos integrados para organização dos materiais.",
+                categoria: "conjunto-escolar",
+                caracteristicas: {
+                    modelo: "Conjunto Escolar", largura: "", comprimento: "", altura: "",
+                    outros: "", quantidadeAssentos: "", compartimentoLivros: ""
+                },
+                cores: [
+                    { nome: "Azul", imagens: ["assets/Móveis/ABS-PORTA-COPO/1-PC-Azul.png"], altura: "" },
+                    { nome: "Verde", imagens: ["assets/Móveis/ABS-PORTA-COPO/2-PC-Verde.png"], altura: "" },
+                    { nome: "Vermelho", imagens: ["assets/Móveis/ABS-PORTA-COPO/3-PC-Vermelho.png"], altura: "" },
+                    { nome: "Amarelo", imagens: ["assets/Móveis/ABS-PORTA-COPO/4-PC-Amarelo.png"], altura: "" },
+                    { nome: "Laranja", imagens: ["assets/Móveis/ABS-PORTA-COPO/5-PC-Laranja.png"], altura: "" }
+                ]
+            },
+            {
+                id: "tampo-madeira",
+                titulo: "Conjunto Escolar — Tampo de Madeira",
+                linha: "Conjunto Escolar",
+                preco: "",
+                parcelamento: "7x com entrada",
+                descricao: "Conjuntos escolares com tampo de madeira, desenvolvidos para atender às necessidades dos ambientes educacionais com praticidade, resistência e funcionalidade.",
+                categoria: "conjunto-escolar",
+                caracteristicas: {
+                    modelo: "Conjunto Escolar", largura: "", comprimento: "", altura: "",
+                    outros: "", quantidadeAssentos: "", compartimentoLivros: ""
+                },
+                cores: []
+            },
+            {
+                id: "refeitorios",
+                titulo: "Refeitórios",
+                linha: "Ambientes Coletivos",
+                preco: "",
+                parcelamento: "7x com entrada",
+                descricao: "Soluções para refeitórios escolares e institucionais, desenvolvidas para proporcionar organização e praticidade aos ambientes coletivos.",
+                categoria: "refeitorio",
+                caracteristicas: {
+                    modelo: "Refeitório", largura: "", comprimento: "", altura: "",
+                    outros: "", quantidadeAssentos: "", compartimentoLivros: ""
+                },
+                cores: []
+            },
+            {
+                id: "sextavada",
+                titulo: "Linha Conj. Sextavada",
+                linha: "Linha Conj.",
+                preco: "",
+                parcelamento: "7x com entrada",
+                descricao: "Conjuntos sextavados desenvolvidos para ambientes escolares, proporcionando uma solução funcional para organização dos espaços e interação entre os usuários.",
+                categoria: "conjunto-escolar",
+                caracteristicas: {
+                    modelo: "Conjunto Sextavado", largura: "", comprimento: "", altura: "",
+                    outros: "", quantidadeAssentos: "", compartimentoLivros: ""
+                },
+                cores: []
+            },
+            {
+                id: "colet",
+                titulo: "Linha Conj. Colet",
+                linha: "Linha Conj.",
+                preco: "",
+                parcelamento: "7x com entrada",
+                descricao: "Soluções para ambientes coletivos, desenvolvidas para atender diferentes necessidades de organização e utilização dos espaços.",
+                categoria: "conjunto-escolar",
+                caracteristicas: {
+                    modelo: "Conjunto Colet", largura: "", comprimento: "", altura: "",
+                    outros: "", quantidadeAssentos: "", compartimentoLivros: ""
+                },
+                cores: []
+            },
+            {
+                id: "armarios",
+                titulo: "Armários",
+                linha: "Armazenamento",
+                preco: "",
+                parcelamento: "7x com entrada",
+                descricao: "Linha de armários para organização de ambientes escolares e institucionais, oferecendo soluções práticas para armazenamento e organização.",
+                categoria: "armario",
+                caracteristicas: {
+                    modelo: "Armário", largura: "", comprimento: "", altura: "",
+                    outros: "", quantidadeAssentos: "", compartimentoLivros: ""
+                },
+                cores: []
+            }
+        ];
+
+        /* ============================================================
+           FAVORITOS (localStorage)
+           ============================================================ */
+        function getFavoritos() {
+            try { return JSON.parse(localStorage.getItem('cortez_favoritos') || '[]'); }
+            catch(e) { return []; }
+        }
+        function toggleFavorito(id) {
+            let favs = getFavoritos();
+            if (favs.includes(id)) { favs = favs.filter(f => f !== id); }
+            else { favs.push(id); }
+            localStorage.setItem('cortez_favoritos', JSON.stringify(favs));
+            atualizarBotoesFavorito();
+        }
+        function isFavorito(id) { return getFavoritos().includes(id); }
+
+        /* ============================================================
+           RENDER: GRADE DE PRODUTOS (HOME)
+           ============================================================ */
+        function renderGrade() {
+            const grid = document.getElementById('grid-produtos');
+            grid.innerHTML = '';
+            produtos.forEach((p) => {
+                const imgPrincipal = p.cores.length ? p.cores[0].imagens[0] : null;
+                const card = document.createElement('div');
+                card.className = 'produto-card';
+                card.setAttribute('data-id', p.id);
+
+                const areaImg = document.createElement('div');
+                areaImg.className = 'produto-imagem-area';
+
+                const favBtn = document.createElement('button');
+                favBtn.className = 'fav-btn' + (isFavorito(p.id) ? ' favoritado' : '');
+                favBtn.innerHTML = isFavorito(p.id) ? '♥' : '♡';
+                favBtn.onclick = (e) => { e.stopPropagation(); toggleFavorito(p.id); };
+                areaImg.appendChild(favBtn);
+
+                if (imgPrincipal) {
+                    const img = document.createElement('img');
+                    img.src = imgPrincipal;
+                    img.alt = p.titulo;
+                    areaImg.appendChild(img);
+                } else {
+                    const ph = document.createElement('div');
+                    ph.style.cssText = 'font-size:3.2rem;color:#b7c0ca;padding:46px 0;';
+                    ph.textContent = '🪑';
+                    areaImg.appendChild(ph);
+                }
+
+                card.appendChild(areaImg);
+
+                const info = document.createElement('div');
+                info.className = 'produto-info';
+                info.innerHTML = `
+                    <div class="produto-categoria">${p.linha}</div>
+                    <div class="produto-nome">${p.titulo}</div>
+                    ${p.preco ? `<div class="produto-preco">${p.preco}</div>` : ''}
+                    ${p.preco ? `<div class="produto-parcelas">${p.parcelamento}</div>` : ''}
+                    <div class="produto-descricao">${p.descricao || 'Descrição em breve.'}</div>
+                `;
+                const btn = document.createElement('button');
+                btn.className = 'btn-produto';
+                btn.textContent = 'Ver detalhes';
+                btn.onclick = (e) => { e.stopPropagation(); abrirProduto(p.id); };
+                info.appendChild(btn);
+                card.appendChild(info);
+
+                card.onclick = () => abrirProduto(p.id);
+                grid.appendChild(card);
+            });
+        }
+
+        /* ============================================================
+           PÁGINA INDIVIDUAL DO PRODUTO (VERTICAL)
+           ============================================================ */
+        let produtoAtual = null;
+        let corAtual = 0;
+        let imgAtual = 0;
+
+        function abrirProduto(id) {
+            const p = produtos.find(x => x.id === id);
+            if (!p) return;
+            produtoAtual = p;
+            corAtual = 0;
+            imgAtual = 0;
+            document.getElementById('view-home').style.display = 'none';
+            document.getElementById('view-produto').style.display = 'block';
+            renderProduto();
+            history.pushState({}, '', '?produto=' + p.id);
+            window.scrollTo(0, 0);
+        }
+
+        function voltarCatalogo() {
+            document.getElementById('view-produto').style.display = 'none';
+            document.getElementById('view-home').style.display = 'block';
+            history.pushState({}, '', window.location.pathname);
+            window.scrollTo(0, 0);
+        }
+
+        function renderProduto() {
+            const p = produtoAtual;
+            const layout = document.getElementById('produto-layout');
+            const totalImagens = p.cores.length ? p.cores[corAtual].imagens.length : 0;
+
+            const tituloArea = document.createElement('div');
+            tituloArea.className = 'pp-titulo-area';
+            tituloArea.innerHTML = `
+                <h1 class="pp-titulo">${p.titulo}</h1>
+                <div class="pp-categoria">${p.linha}</div>
+            `;
+
+            const imagemArea = document.createElement('div');
+            imagemArea.className = 'pp-imagem-area';
+
+            const contador = document.createElement('span');
+            contador.className = 'pp-contador';
+            contador.id = 'pp-contador';
+            contador.textContent = totalImagens ? `1 / ${totalImagens}` : '1 / 1';
+            imagemArea.appendChild(contador);
+
+            const img = document.createElement('img');
+            img.id = 'pp-img';
+            img.className = 'pp-imagem-principal';
+            img.src = p.cores.length ? p.cores[corAtual].imagens[imgAtual] : '';
+            img.alt = p.titulo;
+            imagemArea.appendChild(img);
+
+            const fav = document.createElement('button');
+            fav.className = 'pp-fav' + (isFavorito(p.id) ? ' favoritado' : '');
+            fav.innerHTML = isFavorito(p.id) ? '♥' : '♡';
+            fav.onclick = () => toggleFavorito(p.id);
+            imagemArea.appendChild(fav);
+
+            const comp = document.createElement('button');
+            comp.className = 'pp-compartilhar';
+            comp.innerHTML = '↗';
+            comp.title = 'Compartilhar';
+            comp.onclick = () => compartilharProduto();
+            imagemArea.appendChild(comp);
+
+            if (totalImagens > 1) {
+                const se = document.createElement('button');
+                se.className = 'pp-seta esq'; se.textContent = '‹';
+                se.onclick = () => mudarImagem(-1);
+                const sd = document.createElement('button');
+                sd.className = 'pp-seta dir'; sd.textContent = '›';
+                sd.onclick = () => mudarImagem(1);
+                imagemArea.appendChild(se);
+                imagemArea.appendChild(sd);
+            }
+
+            const corArea = document.createElement('div');
+            if (p.cores.length > 0) {
+                const corTitulo = document.createElement('div');
+                corTitulo.className = 'pp-cor';
+                corTitulo.id = 'pp-cor';
+                corTitulo.textContent = 'Cor: ' + p.cores[corAtual].nome;
+                corArea.appendChild(corTitulo);
+
+                const cores = document.createElement('div');
+                cores.className = 'pp-cores';
+                p.cores.forEach((c, i) => {
+                    const item = document.createElement('div');
+                    item.className = 'pp-cor-item' + (i === corAtual ? ' selecionada' : '');
+                    item.innerHTML = `
+                        <div class="pp-cor-thumb"><img src="${c.imagens[0]}" alt="${c.nome}"></div>
+                        <div class="pp-cor-nome">${c.nome}</div>
+                    `;
+                    item.onclick = () => mudarCor(i);
+                    cores.appendChild(item);
+                });
+                corArea.appendChild(cores);
+            }
+
+            const frete = document.createElement('div');
+            frete.className = 'pp-bloco';
+            frete.innerHTML = `
+                <h3>Calcule o frete</h3>
+                <div class="frete-campos">
+                    <input type="text" placeholder="Digite seu CEP" maxlength="9">
+                    <button>Calcular</button>
+                </div>
+                <p class="frete-aviso">Funcionalidade de cálculo de frete será disponibilizada em breve.</p>
+            `;
+
+            const orc = document.createElement('div');
+            orc.className = 'pp-bloco pp-orcamento';
+            orc.innerHTML = `
+                <h3>Solicite seu orçamento</h3>
+                ${p.preco ? `<div style="font-size:1.6rem;color:#162d47;font-weight:700;margin-bottom:4px;">${p.preco}</div>` : ''}
+                ${p.preco ? `<div style="color:#7c8894;margin-bottom:12px;">${p.parcelamento}</div>` : ''}
+                <button class="btn-solicitar" onclick="abrirModalOrcamento()">SOLICITAR ORÇAMENTO</button>
+            `;
+
+            const rel = document.createElement('div');
+            rel.className = 'pp-bloco';
+            const relacionados = produtos.filter(x => x.categoria === 'conjunto-escolar' && x.id !== p.id);
+            rel.innerHTML = '<h3>Produtos relacionados</h3>';
+            if (relacionados.length > 0) {
+                const rg = document.createElement('div');
+                rg.className = 'relacionados-grid';
+                relacionados.forEach(r => {
+                    const imgR = r.cores.length ? r.cores[0].imagens[0] : null;
+                    const card = document.createElement('div');
+                    card.className = 'rel-card';
+                    card.innerHTML = `
+                        <div class="rel-imagem-area">
+                            ${imgR ? `<img src="${imgR}" alt="${r.titulo}">` : '<div style="font-size:2.2rem;color:#b7c0ca;">🪑</div>'}
+                            <button class="rel-fav${isFavorito(r.id) ? ' favoritado' : ''}" onclick="event.stopPropagation();toggleFavorito('${r.id}')">${isFavorito(r.id) ? '♥' : '♡'}</button>
+                        </div>
+                        <div class="rel-info">
+                            <div class="rel-categoria">${r.linha}</div>
+                            <div class="rel-nome">${r.titulo}</div>
+                            ${r.preco ? `<div class="rel-preco">${r.preco}</div>` : ''}
+                            ${r.preco ? `<div class="rel-parcelas">${r.parcelamento}</div>` : ''}
+                        </div>
+                    `;
+                    card.onclick = () => abrirProduto(r.id);
+                    rg.appendChild(card);
+                });
+                rel.appendChild(rg);
+            } else {
+                rel.innerHTML += '<p style="color:#9aa5b1;">Nenhum produto relacionado disponível.</p>';
+            }
+
+            const carac = document.createElement('div');
+            carac.className = 'pp-bloco';
+            const c = p.caracteristicas;
+            carac.innerHTML = `
+                <h3>Características do produto</h3>
+                <div class="carac-sub">Características Principais</div>
+                <table class="carac-tabela">
+                    <tr><td>Modelo</td><td>${c.modelo || '—'}</td></tr>
+                    <tr><td>Cor</td><td id="carac-cor">${p.cores.length ? p.cores[corAtual].nome : '—'}</td></tr>
+                </table>
+                <div class="carac-sub">Dimensões</div>
+                <table class="carac-tabela">
+                    <tr><td>Largura x Comprimento</td><td>${(c.largura && c.comprimento) ? c.largura + ' x ' + c.comprimento : '—'}</td></tr>
+                    <tr><td>Altura</td><td id="carac-altura">${(p.cores.length ? p.cores[corAtual].altura : '') || c.altura || '—'}</td></tr>
+                </table>
+                <div class="carac-sub">Outras características</div>
+                <table class="carac-tabela">
+                    <tr><td>Outros</td><td>${c.outros || '—'}</td></tr>
+                    <tr><td>Quantidade de assentos</td><td>${c.quantidadeAssentos || '—'}</td></tr>
+                    <tr><td>Compartimento para livros</td><td>${c.compartimentoLivros || '—'}</td></tr>
+                </table>
+            `;
+
+            const desc = document.createElement('div');
+            desc.className = 'pp-bloco';
+            desc.innerHTML = `
+                <h3>Descrição do produto</h3>
+                <p style="color:#4a5563;">${p.descricao || 'Descrição em breve.'}</p>
+            `;
+
+            const perg = document.createElement('div');
+            perg.className = 'pp-bloco';
+            perg.innerHTML = `
+                <h3>Perguntas e Respostas</h3>
+                <div class="perguntas-acoes">
+                    <button class="btn-perguntar" onclick="alert('Sistema de perguntas será disponibilizado em breve.')">Perguntar</button>
+                    <button class="btn-ver-perguntas" onclick="alert('Sistema de perguntas será disponibilizado em breve.')">Ver Todas as Perguntas</button>
+                </div>
+                <div class="sem-conteudo">
+                    <p>Ainda não há perguntas sobre este produto.</p>
+                </div>
+            `;
+
+            const aval = document.createElement('div');
+            aval.className = 'pp-bloco';
+            aval.innerHTML = `
+                <h3>Avaliações dos clientes</h3>
+                <div class="sem-conteudo">
+                    <p>Este produto ainda não possui avaliações.</p>
+                    <button class="btn-avaliar" onclick="alert('Sistema de avaliações será disponibilizado em breve.')">Avaliar produto</button>
+                </div>
+            `;
+
+            layout.innerHTML = '';
+            layout.appendChild(tituloArea);
+            layout.appendChild(imagemArea);
+            layout.appendChild(corArea);
+            layout.appendChild(frete);
+            layout.appendChild(orc);
+            layout.appendChild(rel);
+            layout.appendChild(carac);
+            layout.appendChild(desc);
+            layout.appendChild(perg);
+            layout.appendChild(aval);
+        }
+
+        function mudarCor(i) {
+            corAtual = i;
+            imgAtual = 0;
+            const p = produtoAtual;
+            const img = document.getElementById('pp-img');
+            if (img) img.src = p.cores[i].imagens[0];
+            const corT = document.getElementById('pp-cor');
+            if (corT) corT.textContent = 'Cor: ' + p.cores[i].nome;
+            const caracCor = document.getElementById('carac-cor');
+            if (caracCor) caracCor.textContent = p.cores[i].nome;
+            const caracAlt = document.getElementById('carac-altura');
+            if (caracAlt) caracAlt.textContent = p.cores[i].altura || p.caracteristicas.altura || '—';
+            const contador = document.getElementById('pp-contador');
+            if (contador) contador.textContent = `1 / ${p.cores[i].imagens.length}`;
+            document.querySelectorAll('.pp-cor-item').forEach((t, idx) => t.classList.toggle('selecionada', idx === i));
+        }
+
+        function mudarImagem(dir) {
+            const p = produtoAtual;
+            const total = p.cores[corAtual].imagens.length;
+            imgAtual = (imgAtual + dir + total) % total;
+            const img = document.getElementById('pp-img');
+            if (img) img.src = p.cores[corAtual].imagens[imgAtual];
+            const contador = document.getElementById('pp-contador');
+            if (contador) contador.textContent = `${imgAtual + 1} / ${total}`;
+        }
+
+        /* ============================================================
+           COMPARTILHAR
+           ============================================================ */
+        function compartilharProduto() {
+            const p = produtoAtual;
+            const url = window.location.origin + window.location.pathname + '?produto=' + p.id;
+            const titulo = p.titulo;
+            if (navigator.share) {
+                navigator.share({ title: titulo, text: titulo, url: url }).catch(() => {});
+            } else {
+                const escolha = prompt('Compartilhar:\n1 = Copiar link\n2 = WhatsApp\n3 = E-mail');
+                if (escolha === '1') {
+                    navigator.clipboard.writeText(url).then(() => alert('Link copiado!'));
+                } else if (escolha === '2') {
+                    window.open('https://wa.me/?text=' + encodeURIComponent(titulo + ' - ' + url), '_blank');
+                } else if (escolha === '3') {
+                    window.location.href = 'mailto:?subject=' + encodeURIComponent(titulo) + '&body=' + encodeURIComponent(url);
+                }
+            }
+        }
+
+        /* ============================================================
+           MODAL ORÇAMENTO
+           ============================================================ */
+        function abrirModalOrcamento() {
+            const p = produtoAtual;
+            const nomeProduto = p ? p.titulo : '';
+            const cor = p && p.cores.length ? p.cores[corAtual].nome : '';
+            document.getElementById('modal-produto-info').textContent =
+                (p ? nomeProduto + (cor ? ' - Cor: ' + cor : '') : 'Conte-nos o que você precisa.');
+
+            const msg = p
+                ? 'Olá! Gostaria de solicitar um orçamento para o produto ' + nomeProduto + (cor ? ', na cor ' + cor : '') + '.'
+                : 'Olá! Gostaria de solicitar um orçamento com a Cortez Móveis.';
+            document.getElementById('modal-link-whatsapp').href = 'https://wa.me/551532769999?text=' + encodeURIComponent(msg);
+
+            const assunto = p ? 'Solicitação de orçamento - ' + nomeProduto : 'Solicitação de orçamento - Cortez Móveis';
+            const corpo = p
+                ? 'Olá, gostaria de solicitar um orçamento para o produto ' + nomeProduto + (cor ? ', na cor ' + cor : '') + '.'
+                : 'Olá, gostaria de solicitar um orçamento com a Cortez Móveis.';
+            document.getElementById('modal-link-email').href = 'mailto:cortez@cortezmoveis.com.br?subject=' + encodeURIComponent(assunto) + '&body=' + encodeURIComponent(corpo);
+
+            document.getElementById('modal-orcamento').classList.add('aberto');
+        }
+        function fecharModalOrcamento() {
+            document.getElementById('modal-orcamento').classList.remove('aberto');
+        }
+
+        /* ============================================================
+           NAVEGAÇÃO / MENU / ZOOM
+           ============================================================ */
+        function irParaInicio() {
+            document.getElementById('menu').classList.remove('aberto');
+            voltarCatalogo();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+        function navegar(secao) {
+            document.getElementById('menu').classList.remove('aberto');
+            voltarCatalogo();
+            setTimeout(() => {
+                const el = document.getElementById(secao);
+                if (el) el.scrollIntoView({ behavior: 'smooth' });
+            }, 60);
+        }
+        function toggleMenu() {
+            document.getElementById('menu').classList.toggle('aberto');
+        }
+        function abrirZoom(img) {
+            document.getElementById('zoom-imagem').src = img.src;
+            document.getElementById('zoom-overlay').classList.add('aberto');
+        }
+        function fecharZoom() {
+            document.getElementById('zoom-overlay').classList.remove('aberto');
+        }
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') { fecharZoom(); fecharModalOrcamento(); }
+        });
+        window.addEventListener('popstate', () => {
+            const params = new URLSearchParams(window.location.search);
+            const id = params.get('produto');
+            if (id) {
+                const p = produtos.find(x => x.id === id);
+                if (p) abrirProduto(p.id);
+            } else {
+                document.getElementById('view-produto').style.display = 'none';
+                document.getElementById('view-home').style.display = 'block';
+            }
+        });
+
+        function atualizarBotoesFavorito() {
+            document.querySelectorAll('.fav-btn, .rel-fav, .pp-fav').forEach(btn => {
+                const card = btn.closest('.produto-card, .rel-card');
+                const id = card ? card.getAttribute('data-id') : (produtoAtual ? produtoAtual.id : null);
+                if (!id) return;
+                const fav = isFavorito(id);
+                btn.classList.toggle('favoritado', fav);
+                btn.innerHTML = fav ? '♥' : '♡';
+            });
+        }
+
+        /* ============================================================
+           INICIALIZAÇÃO
+           ============================================================ */
+        const params = new URLSearchParams(window.location.search);
+        const produtoId = params.get('produto');
+        renderGrade();
+        if (produtoId) {
+            const p = produtos.find(x => x.id === produtoId);
+            if (p) abrirProduto(p.id);
+        }
+    </script>
+
+</body>
+</html>

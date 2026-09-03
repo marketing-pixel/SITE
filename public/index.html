@@ -1,0 +1,633 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>
+        Cortez Móveis - Soluções em Móveis Escolares e Institucionais
+    </title>
+
+    <link
+        rel="stylesheet"
+        href="/css/style.css"
+    >
+</head>
+
+<body>
+
+    <!-- =====================================================
+         HEADER
+    ====================================================== -->
+
+    <header class="header">
+
+        <div class="header-inner">
+
+            <img
+                src="/assets/Logo.png"
+                alt="Logo Cortez Móveis"
+                class="header-logo"
+            >
+
+            <button
+                type="button"
+                class="menu-toggle"
+                id="btn-menu-toggle"
+                aria-label="Abrir menu"
+                aria-expanded="false"
+                aria-controls="menu"
+            >
+                ☰
+            </button>
+
+            <nav
+                class="header-nav"
+                id="menu"
+            >
+
+                <a
+                    href="#"
+                    id="nav-inicio"
+                >
+                    Início
+                </a>
+
+                <a
+                    href="#produtos"
+                    id="nav-produtos"
+                >
+                    Produtos
+                </a>
+
+                <a
+                    href="#sobre"
+                    id="nav-sobre"
+                >
+                    Sobre
+                </a>
+
+                <a
+                    href="#guia"
+                    id="nav-guia"
+                >
+                    Guia
+                </a>
+
+                <a
+                    href="#contato"
+                    id="nav-contato"
+                >
+                    Contato
+                </a>
+
+                <button
+                    type="button"
+                    class="header-cta"
+                    id="btn-header-orcamento"
+                >
+                    Solicitar orçamento
+                </button>
+
+            </nav>
+
+        </div>
+
+    </header>
+
+
+    <!-- =====================================================
+         VIEW: HOME
+    ====================================================== -->
+
+    <div id="view-home">
+
+        <!-- =================================================
+             1. GUIA
+        ================================================== -->
+
+        <section
+            class="guia-section"
+            id="guia"
+        >
+
+            <div class="container">
+
+                <div class="section-head">
+
+                    <h2>
+                        Um guia rápido de 3 perguntas
+                    </h2>
+
+                </div>
+
+
+                <div class="guia-grid">
+
+                    <div class="guia-item">
+
+                        <span class="guia-num">
+                            01
+                        </span>
+
+                        <img
+                            src="/assets/Guia/1-Capa.png"
+                            alt="Guia Cortez Móveis - Capa"
+                            class="guia-imagem"
+                            data-zoom
+                        >
+
+                    </div>
+
+
+                    <div class="guia-item">
+
+                        <span class="guia-num">
+                            02
+                        </span>
+
+                        <img
+                            src="/assets/Guia/2-Perguntas.png"
+                            alt="Guia Cortez Móveis - Perguntas"
+                            class="guia-imagem"
+                            data-zoom
+                        >
+
+                    </div>
+
+
+                    <div class="guia-item">
+
+                        <span class="guia-num">
+                            03
+                        </span>
+
+                        <img
+                            src="/assets/Guia/3-Encerramento.png"
+                            alt="Guia Cortez Móveis - Encerramento"
+                            class="guia-imagem"
+                            data-zoom
+                        >
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- =================================================
+             2. NOSSOS PRODUTOS
+        ================================================== -->
+
+        <section
+            class="catalogo-section"
+            id="produtos"
+        >
+
+            <div class="container">
+
+                <div class="section-head">
+
+                    <div class="kicker">
+                        Catálogo
+                    </div>
+
+                    <h2>
+                        Nossos produtos
+                    </h2>
+
+                    <p>
+                        Conheça nossas soluções para ambientes escolares e institucionais.
+                    </p>
+
+                </div>
+
+
+                <!-- Filtro de categorias -->
+                <div
+                    class="filtro-categorias"
+                    id="filtro-categorias"
+                ></div>
+
+
+                <!-- Grade -->
+                <div
+                    class="grid-produtos"
+                    id="grid-produtos"
+                ></div>
+
+            </div>
+
+        </section>
+
+
+        <!-- =================================================
+             3. SOBRE
+        ================================================== -->
+
+        <section
+            class="sobre-section"
+            id="sobre"
+        >
+
+            <div class="container">
+
+                <div class="section-head">
+
+                    <div class="kicker">
+                        Quem somos
+                    </div>
+
+                    <h2>
+                        Sobre a Cortez Móveis
+                    </h2>
+
+                </div>
+
+
+                <div class="sobre-texto">
+
+                    <p>
+                        A Cortez Móveis atua na fabricação de móveis para ambientes escolares e institucionais, oferecendo soluções que unem funcionalidade, qualidade, resistência e organização.
+                    </p>
+
+                    <p>
+                        Nossa linha de produtos foi desenvolvida para atender diferentes necessidades de escolas, instituições e ambientes coletivos, proporcionando praticidade e durabilidade no dia a dia.
+                    </p>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- =================================================
+             4. APRESENTAÇÃO INSTITUCIONAL
+        ================================================== -->
+
+        <section
+            class="institucional"
+            id="apresentacao"
+        >
+
+            <div class="container">
+
+                <h2>
+                    Cortez Móveis
+                </h2>
+
+                <div class="subtitulo">
+                    Soluções em móveis escolares e institucionais
+                </div>
+
+                <p class="texto">
+                    Qualidade, resistência e funcionalidade para equipar seus ambientes.
+                </p>
+
+
+                <img
+                    src="/assets/2-cartaz.png"
+                    alt="Cartaz de produtos da Cortez Móveis"
+                    class="cartaz-img"
+                >
+
+
+                <div class="cta-box">
+
+                    <h3>
+                        Equipe seu ambiente com qualidade
+                    </h3>
+
+                    <p>
+                        Encontre soluções para escolas, instituições e ambientes coletivos com a Cortez Móveis.
+                    </p>
+
+                    <button
+                        type="button"
+                        class="btn-cta"
+                        id="btn-conheca-produtos"
+                    >
+                        CONHEÇA NOSSOS PRODUTOS
+                    </button>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- =================================================
+             5. ORÇAMENTO
+        ================================================== -->
+
+        <section
+            class="orcamento-section"
+            id="orcamento"
+        >
+
+            <div class="container">
+
+                <div class="orcamento-card">
+
+                    <h2>
+                        Solicite seu orçamento
+                    </h2>
+
+                    <p>
+                        Gostou de algum de nossos produtos? Entre em contato com a Cortez Móveis e solicite seu orçamento.
+                    </p>
+
+                    <button
+                        type="button"
+                        class="btn-orcamento-principal"
+                        id="btn-orcamento-principal"
+                    >
+                        SOLICITAR ORÇAMENTO
+                    </button>
+
+                    <div class="orcamento-num">
+                        WhatsApp: (15) 3276-9999
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- =================================================
+             6. CONTATO
+        ================================================== -->
+
+        <section
+            class="contato-section"
+            id="contato"
+        >
+
+            <div class="container">
+
+                <h2>
+                    Fale com a Cortez Móveis
+                </h2>
+
+
+                <div class="contato-lista">
+
+                    <div class="contato-item">
+
+                        <div class="rotulo">
+                            WhatsApp
+                        </div>
+
+                        <a
+                            href="https://wa.me/551532769999"
+                            target="_blank"
+                            rel="noopener"
+                        >
+                            (15) 3276-9999
+                        </a>
+
+                    </div>
+
+
+                    <div class="contato-item">
+
+                        <div class="rotulo">
+                            E-mail
+                        </div>
+
+                        <a
+                            href="mailto:cortez@cortezmoveis.com.br"
+                        >
+                            cortez@cortezmoveis.com.br
+                        </a>
+
+                    </div>
+
+
+                    <div class="contato-item">
+
+                        <div class="rotulo">
+                            Site
+                        </div>
+
+                        <a
+                            href="https://www.cortezmoveis.com.br"
+                            target="_blank"
+                            rel="noopener"
+                        >
+                            www.cortezmoveis.com.br
+                        </a>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- =================================================
+             7. FOOTER
+        ================================================== -->
+
+        <footer>
+
+            <img
+                src="/assets/Logo.png"
+                alt="Logo Cortez Móveis"
+                class="logo"
+            >
+
+            <div class="marca">
+                Cortez Móveis
+            </div>
+
+            <div class="tagline">
+                Escolas • Refeitórios • Instituições
+            </div>
+
+
+            <div class="footer-contatos">
+
+                <a
+                    href="https://wa.me/551532769999"
+                    target="_blank"
+                    rel="noopener"
+                >
+                    WhatsApp
+                </a>
+
+                <a
+                    href="mailto:cortez@cortezmoveis.com.br"
+                >
+                    E-mail
+                </a>
+
+                <a
+                    href="https://www.cortezmoveis.com.br"
+                    target="_blank"
+                    rel="noopener"
+                >
+                    Site
+                </a>
+
+            </div>
+
+
+            <div class="copy">
+                &copy; 2026 Cortez Móveis. Todos os direitos reservados.
+            </div>
+
+        </footer>
+
+    </div>
+
+
+    <!-- =====================================================
+         VIEW: PÁGINA DO PRODUTO
+    ====================================================== -->
+
+    <div
+        id="view-produto"
+        class="view-produto-oculta"
+    >
+
+        <div class="pagina-produto">
+
+            <div class="pp-container">
+
+                <button
+                    type="button"
+                    class="voltar"
+                    id="btn-voltar-catalogo"
+                >
+                    ← Voltar para produtos
+                </button>
+
+                <div
+                    id="produto-layout"
+                ></div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         MODAL ORÇAMENTO
+    ====================================================== -->
+
+    <div
+        class="modal-overlay"
+        id="modal-orcamento"
+    >
+
+        <div class="modal-box">
+
+            <button
+                type="button"
+                class="modal-fechar"
+                id="btn-fechar-orcamento"
+                aria-label="Fechar"
+            >
+                &times;
+            </button>
+
+
+            <h3>
+                Como deseja solicitar seu orçamento?
+            </h3>
+
+
+            <div
+                class="modal-info"
+                id="modal-produto-info"
+            ></div>
+
+
+            <div class="modal-opcoes">
+
+                <a
+                    id="modal-link-whatsapp"
+                    href="#"
+                    class="modal-opcao modal-whatsapp"
+                    target="_blank"
+                    rel="noopener"
+                >
+                    Solicitar pelo WhatsApp
+                </a>
+
+
+                <a
+                    id="modal-link-email"
+                    href="#"
+                    class="modal-opcao modal-email"
+                >
+                    Solicitar por E-mail
+                </a>
+
+            </div>
+
+
+            <div class="modal-num">
+                WhatsApp: (15) 3276-9999
+                &nbsp;|&nbsp;
+                cortez@cortezmoveis.com.br
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         MODAL ZOOM
+    ====================================================== -->
+
+    <div
+        class="zoom-overlay"
+        id="zoom-overlay"
+    >
+
+        <button
+            type="button"
+            class="zoom-fechar"
+            id="btn-fechar-zoom"
+            aria-label="Fechar zoom"
+        >
+            &times;
+        </button>
+
+        <img
+            id="zoom-imagem"
+            src=""
+            alt="Visualização ampliada"
+        >
+
+    </div>
+
+
+    <!-- =====================================================
+         JAVASCRIPT
+    ====================================================== -->
+
+    <script
+        src="/js/app.js"
+        defer
+    ></script>
+
+</body>
+</html>
