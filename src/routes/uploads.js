@@ -6,6 +6,8 @@ const { cloudinary, cloudinaryConfigurado } = require('../config/cloudinary');
 const router = express.Router();
 const LIMITE_UPLOAD = 5 * 1024 * 1024;
 const TIMEOUT_CLOUDINARY_MS = 30000;
+const LIMPEZA_PENDENTE_MS = 60 * 60 * 1000;
+const uploadsPendentes = new Map();
 const MIMES_PERMITIDOS = ['image/png', 'image/jpeg', 'image/webp'];
 const PASTAS_CLOUDINARY = {
     produto: 'cortez-moveis/produtos',
@@ -50,6 +52,41 @@ function tipoRealImagem(buffer) {
     ) return 'image/webp';
 
     return null;
+}
+
+function agendarLimpezaPendente(publicId) {
+    if (!publicId || !publicId.startsWith('cortez-moveis/')) return;
+
+    const anterior = uploadsPendentes.get(publicId);
+    if (anterior) clearTimeout(anterior);
+
+    const timer = setTimeout(async () => {
+        uploadsPendentes.delete(publicId);
+        try {
+            const resultado = await cloudinary.uploader.destroy(
+                publicId,
+                { resource_type: 'image' }
+            );
+            console.warn('Upload Cloudinary pendente removido.', {
+                publicId,
+                resultado
+            });
+        } catch (erro) {
+            console.error('Falha ao limpar upload Cloudinary pendente.', {
+                publicId,
+                erro
+            });
+        }
+    }, LIMPEZA_PENDENTE_MS);
+
+    uploadsPendentes.set(publicId, timer);
+}
+
+function confirmarUpload(publicId) {
+    const timer = uploadsPendentes.get(publicId);
+    if (!timer) return;
+    clearTimeout(timer);
+    uploadsPendentes.delete(publicId);
 }
 
 function enviarParaCloudinary(file, folder) {
@@ -116,6 +153,8 @@ router.post('/', autenticar, (req, res) => {
                 : 'produto';
             const resultado = await enviarParaCloudinary(req.file, PASTAS_CLOUDINARY[tipo]);
 
+            agendarLimpezaPendente(resultado.public_id);
+
             return res.status(201).json({
                 caminho: resultado.secure_url,
                 public_id: resultado.public_id
@@ -128,4 +167,5 @@ router.post('/', autenticar, (req, res) => {
     });
 });
 
+router.confirmarUpload = confirmarUpload;
 module.exports = router;
