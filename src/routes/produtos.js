@@ -1,5 +1,5 @@
 // ============================================================
-// ESTADO / ROTAS DE PRODUTOS
+// ESTADO E ROTAS DE PRODUTOS
 // ============================================================
 
 const express = require('express');
