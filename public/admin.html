@@ -1195,6 +1195,306 @@
             }
         }
 
+
+        /* ===== PRÉVIA FIEL À PÁGINA DE DETALHES ===== */
+        .editor-preview-head {
+            padding-bottom: 11px;
+        }
+
+        .editor-preview-head h3 {
+            margin-bottom: 2px;
+        }
+
+        .preview-site-frame {
+            overflow: hidden;
+        }
+
+        .preview-topbar {
+            padding: 8px 10px;
+            font-size: .56rem;
+        }
+
+        .preview-detail {
+            padding: 13px 11px 18px;
+            background: #fff;
+            color: #1d2f44;
+        }
+
+        .preview-back {
+            display: block;
+            margin: 0 0 12px;
+            padding: 0;
+            border: 0;
+            background: transparent;
+            color: var(--adm-azul);
+            font-size: .57rem;
+            font-weight: 800;
+            cursor: default;
+        }
+
+        .preview-detail-title {
+            color: var(--adm-azul);
+            text-align: center;
+            font-size: 1.03rem;
+            line-height: 1.13;
+            font-weight: 850;
+            letter-spacing: -.02em;
+        }
+
+        .preview-detail-line {
+            margin-top: 5px;
+            color: #9aa5b1;
+            text-align: center;
+            font-size: .57rem;
+            letter-spacing: .14em;
+            text-transform: uppercase;
+        }
+
+        .preview-detail-rating {
+            margin: 9px 0 13px;
+            color: var(--adm-laranja);
+            text-align: center;
+            font-size: .63rem;
+            font-weight: 800;
+        }
+
+        .preview-detail-gallery {
+            position: relative;
+            margin: 0 auto 11px;
+            padding: 0 18px;
+        }
+
+        .preview-detail-image-wrap {
+            position: relative;
+            height: 300px;
+            overflow: hidden;
+            display: grid;
+            place-items: center;
+            border: 1px solid #e2e8ef;
+            border-radius: 12px;
+            background:
+                radial-gradient(circle at 50% 45%, rgba(249,115,22,.07), transparent 52%),
+                linear-gradient(145deg, #fbfcfd 0%, #eef2f6 100%);
+            box-shadow: inset 0 1px 0 rgba(255,255,255,.8);
+        }
+
+        .preview-detail-image {
+            width: 100%;
+            height: 100%;
+            padding: 8px;
+            object-fit: contain;
+            display: none;
+        }
+
+        .preview-detail-image.visivel {
+            display: block;
+        }
+
+        .preview-detail-empty {
+            display: grid;
+            gap: 4px;
+            align-items: center;
+            justify-items: center;
+            padding: 12px;
+            text-align: center;
+        }
+
+        .preview-detail-empty strong {
+            color: var(--adm-azul);
+            font-size: .62rem;
+            letter-spacing: .08em;
+        }
+
+        .preview-detail-empty span {
+            color: #9aa7b5;
+            font-size: .55rem;
+        }
+
+        .preview-detail-counter {
+            position: absolute;
+            z-index: 4;
+            top: 10px;
+            left: 25px;
+            padding: 5px 8px;
+            border-radius: 999px;
+            background: rgba(80,87,96,.72);
+            color: #fff;
+            font-size: .57rem;
+            font-weight: 800;
+        }
+
+        .preview-detail-fav,
+        .preview-detail-share {
+            position: absolute;
+            z-index: 4;
+            top: 10px;
+            width: 28px;
+            height: 28px;
+            display: grid;
+            place-items: center;
+            padding: 0;
+            border: 0;
+            border-radius: 50%;
+            background: rgba(255,255,255,.94);
+            color: var(--adm-azul);
+            box-shadow: 0 5px 12px rgba(15,23,42,.10);
+            font-size: .86rem;
+            cursor: default;
+        }
+
+        .preview-detail-fav { right: 25px; }
+        .preview-detail-share { right: 57px; }
+
+        .preview-detail-arrow {
+            position: absolute;
+            z-index: 4;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 30px;
+            height: 30px;
+            display: grid;
+            place-items: center;
+            padding: 0;
+            border: 0;
+            border-radius: 50%;
+            background: rgba(255,255,255,.96);
+            color: var(--adm-azul);
+            box-shadow: 0 5px 12px rgba(15,23,42,.11);
+            font-size: 1.18rem;
+            cursor: pointer;
+        }
+
+        .preview-detail-arrow-left { left: 3px; }
+        .preview-detail-arrow-right { right: 3px; }
+
+        .preview-detail-arrow:disabled {
+            opacity: .35;
+            cursor: default;
+        }
+
+        .preview-detail-color {
+            color: #526276;
+            font-size: .62rem;
+            font-weight: 750;
+            margin: 5px 0 6px;
+        }
+
+        .preview-detail-colors {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-bottom: 10px;
+        }
+
+        .preview-color-chip {
+            max-width: 100%;
+            padding: 5px 7px;
+            border-radius: 999px;
+            border: 1px solid #dbe3eb;
+            background: #fff;
+            color: #5d6a7a;
+            font-size: .55rem;
+            font-weight: 750;
+        }
+
+        .preview-color-chip.selecionada {
+            border-color: var(--adm-azul);
+            background: rgba(22,45,71,.06);
+            color: var(--adm-azul);
+        }
+
+        .preview-detail-budget {
+            margin-top: 10px;
+            padding: 11px;
+            border: 1px solid #e1e7ee;
+            border-radius: 11px;
+            background: linear-gradient(180deg, #fff 0%, #f8fafc 100%);
+            box-shadow: 0 7px 18px rgba(15,23,42,.055);
+        }
+
+        .preview-budget-title {
+            color: var(--adm-azul);
+            font-size: .69rem;
+            font-weight: 850;
+        }
+
+        .preview-budget-price {
+            margin-top: 6px;
+            color: #111827;
+            font-size: .92rem;
+            font-weight: 900;
+        }
+
+        .preview-budget-parcel {
+            margin-top: 3px;
+            color: #728095;
+            font-size: .57rem;
+        }
+
+        .preview-budget-button {
+            margin-top: 9px;
+            padding: 8px 9px;
+            border-radius: 8px;
+            background: linear-gradient(135deg, var(--adm-azul) 0%, #2f5f94 100%);
+            color: #fff;
+            font-size: .58rem;
+            font-weight: 850;
+            text-align: center;
+        }
+
+        .preview-detail-section {
+            margin-top: 11px;
+            padding-top: 10px;
+            border-top: 1px solid #edf1f5;
+        }
+
+        .preview-section-title {
+            color: var(--adm-azul);
+            font-size: .67rem;
+            font-weight: 850;
+            margin-bottom: 5px;
+        }
+
+        .preview-section-text {
+            color: #64748b;
+            font-size: .58rem;
+            line-height: 1.5;
+        }
+
+        .preview-specs {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 5px;
+        }
+
+        .preview-spec {
+            padding: 6px 7px;
+            border: 1px solid #e6ebf0;
+            border-radius: 7px;
+            background: #fafbfd;
+        }
+
+        .preview-spec-label {
+            color: #8b98a8;
+            font-size: .49rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: .05em;
+        }
+
+        .preview-spec-value {
+            margin-top: 2px;
+            color: var(--adm-azul);
+            font-size: .57rem;
+            font-weight: 750;
+        }
+
+        @media (max-width: 800px) {
+            .preview-detail-image-wrap {
+                height: 270px;
+            }
+        }
+
 </style>
 </head>
 
@@ -1646,27 +1946,62 @@
                         <div>
                             <span class="editor-kicker">PRÉVIA DO ANÚNCIO</span>
                             <h3>Como ficará no site</h3>
-                            <p>Veja o anúncio enquanto você preenche os dados.</p>
+                            <p>Visualização da página de detalhes do produto.</p>
                         </div>
-                        <span class="preview-live">
-                            <span class="preview-live-dot"></span>
-                            AO VIVO
-                        </span>
                     </div>
 
                     <div class="preview-site-frame">
                         <div class="preview-topbar">
                             <span class="preview-brand">Cortez Móveis</span>
-                            <span>Catálogo</span>
+                            <span>Produto</span>
                         </div>
-                        <div class="preview-card-shell">
-                            <div id="previa-card" class="previa-card"></div>
-                        </div>
-                    </div>
 
-                    <div class="preview-hint">
-                        <strong>Prévia do anúncio:</strong>
-                        imagem principal, linha, título, preço, parcelamento e botão de detalhes.
+                        <div class="preview-detail">
+                            <button type="button" class="preview-back" aria-hidden="true">
+                                ← Voltar para produtos
+                            </button>
+
+                            <div class="preview-detail-title"></div>
+                            <div class="preview-detail-line"></div>
+                            <div class="preview-detail-rating"></div>
+
+                            <div class="preview-detail-gallery">
+                                <span class="preview-detail-counter"></span>
+                                <button type="button" class="preview-detail-fav" aria-hidden="true">♡</button>
+                                <button type="button" class="preview-detail-share" aria-hidden="true">↗</button>
+                                <button type="button" class="preview-detail-arrow preview-detail-arrow-left" data-preview-action="prev" aria-label="Imagem anterior">‹</button>
+
+                                <div class="preview-detail-image-wrap">
+                                    <img class="preview-detail-image" alt="Prévia do produto">
+                                    <div class="preview-detail-empty">
+                                        <strong>SEM IMAGEM</strong>
+                                        <span>Adicione uma foto para visualizar aqui.</span>
+                                    </div>
+                                </div>
+
+                                <button type="button" class="preview-detail-arrow preview-detail-arrow-right" data-preview-action="next" aria-label="Próxima imagem">›</button>
+                            </div>
+
+                            <div class="preview-detail-color"></div>
+                            <div class="preview-detail-colors"></div>
+
+                            <div class="preview-detail-budget">
+                                <div class="preview-budget-title">Solicite seu orçamento</div>
+                                <div class="preview-budget-price"></div>
+                                <div class="preview-budget-parcel"></div>
+                                <div class="preview-budget-button">SOLICITAR ORÇAMENTO</div>
+                            </div>
+
+                            <div class="preview-detail-section">
+                                <div class="preview-section-title">Descrição</div>
+                                <div class="preview-section-text preview-detail-description"></div>
+                            </div>
+
+                            <div class="preview-detail-section">
+                                <div class="preview-section-title">Características</div>
+                                <div class="preview-specs"></div>
+                            </div>
+                        </div>
                     </div>
                 </aside>
 
