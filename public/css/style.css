@@ -189,40 +189,7 @@ footer .copy { margin-top: 34px; font-size: 0.8rem; color: #5f768c; }
     font-weight: 600; cursor: pointer; background: none; border: none; font-size: 0.95rem;
 }
 .voltar:hover { text-decoration: underline; }
-
-/* Galeria à esquerda + caixa de orçamento à direita (estilo ML),
-   posicionada por CSS sobre a estrutura existente do app.js */
-.pp-container { max-width: 1200px; }
-
-#produto-layout {
-    display: grid;
-    grid-template-columns: minmax(0, 1.15fr) minmax(300px, 0.85fr);
-    gap: 28px;
-    align-items: start;
-}
-/* 1º filho: título e avaliações — largura total */
-#produto-layout > div:nth-child(1) { grid-column: 1 / -1; }
-/* 2º filho: galeria de imagens — coluna esquerda */
-#produto-layout > div:nth-child(2) { grid-column: 1; grid-row: 2; }
-/* 3º filho: seleção de cores — coluna esquerda, abaixo da galeria */
-#produto-layout > div:nth-child(3) { grid-column: 1; grid-row: 3; }
-/* 4º filho: caixa de orçamento — coluna direita, fixa ao rolar */
-#produto-layout > div:nth-child(4) {
-    grid-column: 2;
-    grid-row: 2 / span 2;
-    position: sticky;
-    top: 96px;
-    text-align: left;
-}
-/* Demais seções (relacionados, características, perguntas, avaliações) — largura total */
-#produto-layout > div:nth-child(n+5) { grid-column: 1 / -1; }
-
-#produto-layout .pp-orcamento .btn-solicitar {
-    width: 100%;
-    display: block;
-}
-#produto-layout .pp-orcamento .pp-preco { margin: 14px 0 4px; }
-#produto-layout .pp-orcamento .pp-parcelamento { margin-bottom: 20px; }
+.pp-container { max-width: 900px; margin: 0 auto; }
 
 .pp-titulo-area { text-align: center; margin-bottom: 34px; }
 .pp-titulo { font-size: 2.2rem; color: #162d47; font-weight: 700; line-height: 1.2; }
@@ -285,11 +252,11 @@ footer .copy { margin-top: 34px; font-size: 0.8rem; color: #5f768c; }
 
 .relacionados-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; margin-top: 24px; }
 .rel-card {
-    background: #fff; border: 1px solid #eceff1; border-radius: 12px; overflow: hidden; cursor: pointer;
-    transition: transform 0.2s, box-shadow 0.2s; position: relative;
+    background: #fff; border: 1px solid var(--borda); border-radius: 12px; overflow: hidden; cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s; position: relative; box-shadow: var(--sombra-card);
 }
-.rel-card:hover { transform: translateY(-4px); box-shadow: 0 10px 26px rgba(0,0,0,0.08); }
-.rel-imagem-area { background: #f7f8fa; padding: 22px; text-align: center; position: relative; }
+.rel-card:hover { transform: translateY(-4px); box-shadow: var(--sombra-card-hover); }
+.rel-imagem-area { background: #fff; border-bottom: 1px solid var(--borda); padding: 22px; text-align: center; position: relative; }
 .rel-imagem-area img { max-width: 110px; width: 100%; height: auto; }
 .rel-fav {
     position: absolute; top: 10px; right: 10px; background: #fff; border: none; border-radius: 50%;
@@ -298,10 +265,10 @@ footer .copy { margin-top: 34px; font-size: 0.8rem; color: #5f768c; }
 }
 .rel-fav.favoritado { color: #e0245e; }
 .rel-info { padding: 16px 18px 18px; }
-.rel-categoria { font-size: 0.72rem; text-transform: uppercase; letter-spacing: 1.2px; color: #9aa5b1; font-weight: 600; }
-.rel-nome { font-size: 1rem; color: #162d47; font-weight: 700; margin: 4px 0; }
-.rel-preco { font-size: 1.1rem; color: #162d47; font-weight: 700; }
-.rel-parcelas { font-size: 0.8rem; color: #7c8894; }
+.rel-categoria { font-size: 0.68rem; text-transform: uppercase; letter-spacing: 1.2px; color: var(--verde-ml); font-weight: 700; }
+.rel-nome { font-size: 1rem; color: var(--azul-800); font-weight: 700; margin: 4px 0; }
+.rel-preco { font-size: 1.2rem; color: var(--azul-800); font-weight: 700; }
+.rel-parcelas { font-size: 0.8rem; color: var(--verde-ml); font-weight: 600; }
 
 .carac-sub { font-size: 1.05rem; color: #162d47; font-weight: 600; margin-top: 24px; margin-bottom: 6px; }
 .carac-tabela { width: 100%; border-collapse: collapse; }
@@ -309,10 +276,7 @@ footer .copy { margin-top: 34px; font-size: 0.8rem; color: #5f768c; }
 .carac-tabela td:first-child { font-weight: 600; color: #333; width: 45%; }
 
 .perguntas-acoes { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 20px; }
-.btn-perguntar { background: #162d47; color: #fff; border: none; padding: 13px 26px; border-radius: 8px; font-weight: 600; cursor: pointer; }
-.btn-ver-perguntas { background: #fff; color: #162d47; border: 1px solid #162d47; padding: 13px 26px; border-radius: 8px; font-weight: 600; cursor: pointer; }
 .sem-conteudo { background: #f7f8fa; border: 1px dashed #ccd4da; border-radius: 10px; padding: 28px; text-align: center; color: #7c8894; }
-.btn-avaliar { background: #162d47; color: #fff; border: none; padding: 12px 26px; border-radius: 8px; font-weight: 600; cursor: pointer; margin-top: 14px; }
 
 /* ===== MODAL ORÇAMENTO ===== */
 .modal-overlay {
@@ -340,11 +304,12 @@ footer .copy { margin-top: 34px; font-size: 0.8rem; color: #5f768c; }
 /* ===== FILTRO DE CATEGORIAS ===== */
 .filtro-categorias { display: flex; justify-content: center; gap: 12px; flex-wrap: wrap; margin: 0 auto 40px; max-width: 900px; }
 .filtro-btn {
-    background: #fff; border: 1px solid #e3e7ea; color: #162d47; padding: 10px 22px;
-    border-radius: 30px; font-weight: 600; font-size: 0.9rem; cursor: pointer; transition: all 0.2s;
+    background: #fff; border: 1px solid var(--borda); color: var(--azul-800); padding: 10px 24px;
+    border-radius: 30px; font-weight: 600; font-size: 0.9rem; cursor: pointer;
+    transition: all 0.2s; box-shadow: 0 1px 4px rgba(22,45,71,0.05);
 }
-.filtro-btn:hover { border-color: #162d47; }
-.filtro-btn.ativo { background: #162d47; color: #fff; border-color: #162d47; }
+.filtro-btn:hover { border-color: var(--azul-800); transform: translateY(-1px); }
+.filtro-btn.ativo { background: var(--azul-800); color: #fff; border-color: var(--azul-800); box-shadow: 0 4px 12px rgba(22,45,71,0.25); }
 
 /* ===== PREÇO DA PÁGINA DO PRODUTO (estilo marketplace) ===== */
 .pp-preco {
@@ -357,6 +322,34 @@ footer .copy { margin-top: 34px; font-size: 0.8rem; color: #5f768c; }
 .pp-parcelamento:empty { display: none; }
 
 /* ===== PÁGINA DO PRODUTO — LAYOUT PREMIUM (estilo Mercado Livre) ===== */
+
+/* Fluxo vertical: título → galeria → cores → orçamento → seções */
+#produto-layout { display: block; }
+
+/* Caixa de orçamento em destaque (abaixo das cores, estilo ML) */
+#produto-layout .pp-orcamento {
+    background: #fff;
+    border: 1px solid var(--borda);
+    border-radius: var(--raio-card);
+    box-shadow: var(--sombra-card);
+    padding: 28px 30px 30px;
+    max-width: 640px;
+    text-align: left;
+    margin: 26px auto 0;
+}
+/* Remove o título duplicado "Solicite seu orçamento" (o botão já diz isso) */
+#produto-layout .pp-orcamento h3 { display: none; }
+#produto-layout .pp-orcamento .pp-preco { margin: 0 0 4px; }
+#produto-layout .pp-orcamento .pp-parcelamento { margin-bottom: 20px; }
+#produto-layout .pp-orcamento .btn-solicitar {
+    width: 100%;
+    display: block;
+    background: var(--verde-ml);
+    box-shadow: 0 6px 18px rgba(0,166,80,0.28);
+}
+#produto-layout .pp-orcamento .btn-solicitar:hover {
+    background: var(--verde-ml-escuro);
+}
 
 /* Resumo de avaliações no topo (estrelas + nota) */
 .pp-avaliacao-resumo-topo {
@@ -375,32 +368,35 @@ footer .copy { margin-top: 34px; font-size: 0.8rem; color: #5f768c; }
 .estrelas .estrela.ativa { color: #f5a623; }
 .estrelas.small { font-size: 0.85rem; }
 
-/* Caixa de orçamento em destaque (coluna direita) */
-#produto-layout .pp-orcamento {
+/* Galeria de imagem premium */
+.pp-imagem-area {
     background: #fff;
     border: 1px solid var(--borda);
     border-radius: var(--raio-card);
     box-shadow: var(--sombra-card);
-    padding: 28px 26px 30px;
 }
-#produto-layout .pp-orcamento h3 {
-    font-size: 1.25rem;
+.pp-imagem-principal { max-width: 520px; }
+
+/* Cabeçalhos das seções com identidade */
+.pp-bloco {
+    background: #fff;
+    border: 1px solid var(--borda);
+    border-radius: var(--raio-card);
+    box-shadow: var(--sombra-card);
+    padding: 30px 28px;
+    margin: 22px auto 0;
+}
+.pp-bloco h3 {
+    font-size: 1.3rem;
     color: var(--azul-800);
-    margin-bottom: 4px;
-    padding-bottom: 10px;
+    padding-bottom: 12px;
+    margin-bottom: 20px;
     border-bottom: 2px solid var(--dourado);
     display: inline-block;
-    padding-right: 30px;
-}
-#produto-layout .pp-orcamento .btn-solicitar {
-    background: var(--verde-ml);
-    box-shadow: 0 6px 18px rgba(0,166,80,0.28);
-}
-#produto-layout .pp-orcamento .btn-solicitar:hover {
-    background: var(--verde-ml-escuro);
+    padding-right: 40px;
 }
 
-/* Botão de orçamento fora da coluna (fallback usa o mesmo estilo) */
+/* Botão de orçamento fora da coluna (fallback mobile usa o mesmo estilo) */
 .btn-solicitar {
     background: var(--verde-ml);
     box-shadow: 0 6px 18px rgba(0,166,80,0.28);
@@ -412,22 +408,104 @@ footer .copy { margin-top: 34px; font-size: 0.8rem; color: #5f768c; }
 /* Tabela de características com linhas zebradas suaves */
 .carac-tabela tr:nth-child(even) td { background: #fafbfc; }
 
-/* Responsivo: coluna única no mobile */
+/* ===== PERGUNTAS E RESPOSTAS (estilo Mercado Livre) ===== */
+.formulario-pergunta {
+    display: flex; gap: 10px; align-items: center; flex-wrap: wrap;
+    padding: 18px 20px; background: var(--fundo-suave);
+    border: 1px solid var(--borda); border-radius: 12px; margin-bottom: 24px;
+}
+.pergunta-input {
+    flex: 1; min-width: 220px; padding: 14px 16px; border: 1px solid #dde2e6;
+    border-radius: 8px; font-size: 1rem; background: #fff;
+}
+.pergunta-input:focus { outline: none; border-color: var(--azul-600); box-shadow: 0 0 0 3px rgba(44,95,138,0.12); }
+.btn-perguntar {
+    background: var(--azul-800); color: #fff; border: none; padding: 14px 28px;
+    border-radius: 8px; font-weight: 700; cursor: pointer; transition: background 0.2s;
+}
+.btn-perguntar:hover { background: var(--azul-600); }
+.btn-ver-perguntas {
+    background: #fff; color: var(--azul-800); border: 1px solid var(--azul-800);
+    padding: 13px 26px; border-radius: 8px; font-weight: 600; cursor: pointer; transition: all 0.2s;
+}
+.btn-ver-perguntas:hover { background: var(--azul-800); color: #fff; }
+
+.pergunta-card {
+    display: flex; gap: 14px; align-items: flex-start;
+    padding: 20px 4px; border-bottom: 1px solid #eef1f3;
+}
+.pergunta-card:last-child { border-bottom: none; }
+/* Bolha azul "Pergunta" como no ML */
+.pergunta-texto { display: flex; flex-direction: column; gap: 6px; flex: 1; }
+.pergunta-texto strong {
+    display: inline-block; align-self: flex-start;
+    background: #eaf3fb; color: #3483fa; font-size: 0.78rem; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.5px;
+    padding: 4px 12px; border-radius: 4px;
+}
+.pergunta-texto p { font-size: 1rem; color: var(--texto); }
+.pergunta-autor { font-size: 0.82rem; color: var(--texto-suave); }
+/* Resposta com rótulo verde, como no ML */
+.pergunta-resposta {
+    display: flex; flex-direction: column; gap: 6px;
+    background: var(--fundo-suave); border-radius: 10px; padding: 14px 16px; margin-top: 4px;
+}
+.pergunta-resposta strong {
+    display: inline-block; align-self: flex-start;
+    background: #e6f7ee; color: var(--verde-ml); font-size: 0.78rem; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.5px;
+    padding: 4px 12px; border-radius: 4px;
+}
+.pergunta-resposta p { font-size: 0.98rem; color: var(--texto); margin: 0; }
+.pergunta-resposta-data { font-size: 0.8rem; color: var(--texto-suave); }
+
+/* ===== AVALIAÇÕES (estilo Mercado Livre) ===== */
+.avaliacao-resumo-produto {
+    display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+    padding: 16px 20px; background: var(--fundo-suave);
+    border: 1px solid var(--borda); border-radius: 12px; margin-bottom: 22px;
+}
+.avaliacao-resumo-estrelas .estrelas { font-size: 1.1rem; }
+.avaliacao-resumo-media { font-size: 1.25rem; font-weight: 700; color: var(--azul-800); }
+.avaliacao-resumo-quantidade { font-size: 0.92rem; color: var(--texto-suave); }
+.sem-avaliacoes-resumo { font-size: 0.95rem; color: var(--texto-suave); }
+
+.avaliacao-card {
+    padding: 20px 4px; border-bottom: 1px solid #eef1f3;
+    display: flex; flex-direction: column; gap: 8px;
+}
+.avaliacao-card:last-child { border-bottom: none; }
+.avaliacao-card-cabecalho { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
+.avaliacao-cliente { font-size: 0.98rem; color: var(--texto); font-weight: 600; }
+.avaliacao-data { font-size: 0.82rem; color: var(--texto-suave); }
+.avaliacao-card-estrelas .estrelas { font-size: 0.95rem; }
+.avaliacao-comentario-exibido { font-size: 1rem; color: var(--texto); margin: 0; }
+.avaliacao-galeria { display: flex; gap: 10px; flex-wrap: wrap; }
+.avaliacao-galeria img {
+    width: 92px; height: 92px; object-fit: cover; border-radius: 10px;
+    border: 1px solid var(--borda); cursor: zoom-in;
+}
+/* Resposta do vendedor em caixa verde, como no ML */
+.avaliacao-resposta {
+    background: #e6f7ee; border-radius: 10px; padding: 14px 16px; margin-top: 4px;
+    display: flex; flex-direction: column; gap: 6px;
+}
+.avaliacao-resposta strong {
+    color: var(--verde-ml-escuro); font-size: 0.85rem;
+    text-transform: uppercase; letter-spacing: 0.5px;
+}
+.avaliacao-resposta p { font-size: 0.98rem; color: var(--texto); margin: 0; }
+.btn-avaliar {
+    background: #fff; color: var(--azul-800); border: 1px solid var(--azul-800);
+    padding: 12px 26px; border-radius: 8px; font-weight: 600; cursor: pointer; margin-top: 16px;
+    transition: all 0.2s;
+}
+.btn-avaliar:hover { background: var(--azul-800); color: #fff; }
+
+/* Responsivo: ajustes do layout do produto */
 @media (max-width: 900px) {
-    #produto-layout {
-        grid-template-columns: 1fr;
-    }
-    #produto-layout > div:nth-child(1),
-    #produto-layout > div:nth-child(2),
-    #produto-layout > div:nth-child(3),
-    #produto-layout > div:nth-child(4),
-    #produto-layout > div:nth-child(n+5) {
-        grid-column: 1;
-        grid-row: auto;
-    }
-    #produto-layout > div:nth-child(4) {
-        position: static;
-        margin-bottom: 10px;
+    #produto-layout .pp-orcamento {
+        max-width: 100%;
     }
 }
 
