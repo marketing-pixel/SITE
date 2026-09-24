@@ -9,6 +9,7 @@ const authRoutes = require('./routes/auth');
 const produtosRoutes = require('./routes/produtos');
 const categoriasRoutes = require('./routes/categorias');
 const uploadsRoutes = require('./routes/uploads');
+const imagensProxyRoutes = require('./routes/imagens-proxy');
 
 // ============================================================
 // AUTO-MIGRATE: garante que o banco tenha as colunas usadas
@@ -68,6 +69,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/produtos', produtosRoutes);
 app.use('/api/categorias', categoriasRoutes);
 app.use('/api/uploads', uploadsRoutes);
+app.use('/api/imagens', imagensProxyRoutes);
 
 // Página do painel admin
 app.get('/admin', (req, res) => {
