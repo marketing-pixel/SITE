@@ -1078,6 +1078,123 @@
             }
         }
 
+
+        /* ===== CABEÇALHO DO EDITOR ===== */
+        .modal-produto-box {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .editor-modal-header {
+            flex: 0 0 auto;
+            min-height: 86px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 18px;
+            padding: 20px 68px 18px 30px;
+            background:
+                linear-gradient(135deg, #ffffff 0%, #f6f8fb 100%);
+            border-bottom: 1px solid #e1e7ee;
+        }
+
+        .editor-modal-header .editor-kicker {
+            margin-bottom: 3px;
+        }
+
+        .editor-modal-header h2#modal-titulo {
+            margin: 2px 0 0;
+            padding: 0;
+            color: var(--adm-azul);
+            font-size: clamp(1.35rem, 1.8vw, 1.65rem);
+            line-height: 1.15;
+            font-weight: 850;
+            letter-spacing: -.03em;
+        }
+
+        .editor-header-context {
+            flex: none;
+            padding: 7px 10px;
+            border: 1px solid rgba(22,45,71,.10);
+            border-radius: 999px;
+            background: #fff;
+            color: var(--adm-azul);
+            font-size: .58rem;
+            font-weight: 850;
+            letter-spacing: 1.1px;
+        }
+
+        .modal-produto-box > .editor-layout {
+            flex: 1 1 auto;
+            height: auto;
+            min-height: 0;
+        }
+
+        /* ===== MINIATURAS DE IMAGEM ===== */
+        .modal-produto-box .imagem-lista {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(132px, 1fr));
+            gap: 11px;
+            align-items: start;
+        }
+
+        .modal-produto-box .imagem-item {
+            position: relative;
+            width: 100%;
+            min-height: 160px;
+            padding: 7px;
+            border: 1px solid #dfe6ee;
+            border-radius: 12px;
+            background: #fff;
+            box-shadow: 0 5px 14px rgba(15,23,42,.055);
+        }
+
+        .modal-produto-box .imagem-item img {
+            width: 100%;
+            height: 104px;
+            display: block;
+            object-fit: contain;
+            border-radius: 9px;
+            background:
+                linear-gradient(145deg, #f8fafc, #eef2f6);
+            border: 1px solid #edf1f5;
+            color: #64748b;
+            font-size: .72rem;
+        }
+
+        .modal-produto-box .imagem-item::after {
+            content: "";
+            display: block;
+            height: 1px;
+            margin: 8px 1px 7px;
+            background: #edf1f5;
+        }
+
+        .modal-produto-box .imagem-principal-label {
+            margin: 0 1px;
+            justify-content: flex-start;
+            color: var(--adm-azul);
+            font-size: .70rem;
+            font-weight: 750;
+        }
+
+        .modal-produto-box .imagem-item button {
+            top: -7px;
+            right: -7px;
+            z-index: 3;
+        }
+
+        @media (max-width: 800px) {
+            .editor-modal-header {
+                min-height: 74px;
+                padding: 16px 55px 15px 20px;
+            }
+
+            .editor-header-context {
+                display: none;
+            }
+        }
+
 </style>
 </head>
 
@@ -1245,16 +1362,18 @@
             </button>
 
 
-            <h2 id="modal-titulo">
-                Novo Produto
-            </h2>
-
+            <div class="editor-modal-header">
+                <div>
+                    <span class="editor-kicker">GESTÃO DE CATÁLOGO</span>
+                    <h2 id="modal-titulo">Novo Produto</h2>
+                </div>
+                <span class="editor-header-context">ANÚNCIO</span>
+            </div>
 
             <input
                 type="hidden"
                 id="produto-id"
             >
-
 
             <div class="editor-layout">
 
