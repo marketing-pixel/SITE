@@ -118,8 +118,9 @@
     function desenhar() {
         if (!estado.img) return;
 
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
         ctx.save();
+        ctx.globalCompositeOperation = "source-over";
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
         ctx.fillStyle = "#ffffff";
         ctx.fillRect(0, 0, canvas.width, canvas.height);
 
@@ -253,20 +254,14 @@
         }
 
         limitarOffset();
-
-        // JPEG não possui transparência: garante branco atrás do móvel
-        // também no arquivo final que será enviado ao servidor.
-        ctx.save();
-        ctx.globalCompositeOperation = "destination-over";
-        ctx.fillStyle = "#ffffff";
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
-        ctx.restore();
-
+        // Redesenha uma última vez com composição normal e branco sólido.
+        // Isso transforma qualquer transparência do PNG em fundo branco.
         desenhar();
 
         ctx.save();
-        ctx.globalCompositeOperation = "destination-over";
+        ctx.globalCompositeOperation = "source-over";
         ctx.fillStyle = "#ffffff";
+        ctx.globalCompositeOperation = "destination-over";
         ctx.fillRect(0, 0, canvas.width, canvas.height);
         ctx.restore();
 
