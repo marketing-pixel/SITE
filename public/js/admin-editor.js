@@ -120,7 +120,7 @@
 
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         ctx.save();
-        ctx.fillStyle = "#edf1f5";
+        ctx.fillStyle = "#ffffff";
         ctx.fillRect(0, 0, canvas.width, canvas.height);
 
         ctx.translate(
@@ -253,7 +253,22 @@
         }
 
         limitarOffset();
+
+        // JPEG não possui transparência: garante branco atrás do móvel
+        // também no arquivo final que será enviado ao servidor.
+        ctx.save();
+        ctx.globalCompositeOperation = "destination-over";
+        ctx.fillStyle = "#ffffff";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.restore();
+
         desenhar();
+
+        ctx.save();
+        ctx.globalCompositeOperation = "destination-over";
+        ctx.fillStyle = "#ffffff";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.restore();
 
         var dataURL = canvas.toDataURL("image/jpeg", 0.92);
         var callback = estado.callback;
@@ -363,6 +378,9 @@
                         return;
                     }
 
+                    // Remove transparência no carregamento e usa branco como fundo.
+                    contexto.fillStyle = "#ffffff";
+                    contexto.fillRect(0, 0, largura, altura);
                     contexto.drawImage(imagem, 0, 0, largura, altura);
 
                     var resultado = canvasTemporario.toDataURL("image/jpeg", 0.95);
