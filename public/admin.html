@@ -1976,6 +1976,56 @@
         }
 
 
+
+        .modal-produto-box .imagem-item {
+            display: flex;
+            flex-direction: column;
+            align-items: stretch;
+        }
+
+        .modal-produto-box .imagem-item .imagem-principal-label {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            min-height: 25px;
+        }
+
+        .imagem-item-acoes {
+            display: grid;
+            grid-template-columns: 1fr auto;
+            gap: 6px;
+            align-items: center;
+            margin-top: 6px;
+        }
+
+        .btn-recortar-imagem {
+            min-height: 27px;
+            padding: 5px 8px;
+            border: 1px solid #d7e0e9;
+            border-radius: 7px;
+            background: #fff;
+            color: var(--adm-azul);
+            font-size: .60rem;
+            font-weight: 800;
+            cursor: pointer;
+            transition: .18s ease;
+        }
+
+        .btn-recortar-imagem:hover {
+            border-color: var(--adm-laranja);
+            color: var(--adm-laranja);
+            background: #fffaf7;
+            transform: translateY(-1px);
+        }
+
+        .modal-produto-box .imagem-item .btn-remove-imagem {
+            position: static;
+            width: 27px;
+            height: 27px;
+            border-radius: 7px;
+            line-height: 1;
+        }
+
         /* =========================================================
            EDITOR DE RECORTE DE IMAGENS
         ========================================================= */
@@ -2914,11 +2964,11 @@
     </div>
 
     <script
-        src="/js/admin.js?v=4"
+        src="/js/admin.js?v=5"
         defer
     ></script>
     <script
-        src="/js/admin-editor.js?v=2"
+        src="/js/admin-editor.js?v=3"
         defer
     ></script>
 
