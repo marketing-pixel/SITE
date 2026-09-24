@@ -2400,7 +2400,82 @@
             }
         }
 
-</style>
+ 
+        /* ===== CENTRAL DE NOTIFICAÇÕES PREMIUM ===== */
+        .admin-header-ferramentas { display:flex; align-items:center; gap:8px; }
+        .btn-entrar-site,.btn-notificacoes {
+            border:1px solid rgba(255,255,255,.18)!important;
+            background:rgba(255,255,255,.10)!important;
+            color:#fff!important;
+            backdrop-filter:blur(10px);
+            box-shadow:0 8px 24px rgba(0,0,0,.10);
+            transition:transform .22s ease, background .22s ease, box-shadow .22s ease;
+        }
+        .btn-entrar-site { padding:9px 13px!important; border-radius:10px!important; white-space:nowrap; }
+        .btn-entrar-site:hover,.btn-notificacoes:hover { background:rgba(255,255,255,.18)!important; transform:translateY(-1px); }
+        .notificacoes-wrapper { position:relative; }
+        .btn-notificacoes {
+            position:relative; width:42px; height:40px; padding:0!important; border-radius:11px!important;
+            display:grid; place-items:center; cursor:pointer;
+        }
+        .notificacoes-icone { font-size:.8rem; line-height:1; }
+        .notificacoes-badge {
+            position:absolute; top:-5px; right:-5px; min-width:19px; height:19px; padding:0 5px;
+            display:grid; place-items:center; border-radius:999px;
+            background:linear-gradient(135deg,#f97316,#fb7185); color:#fff;
+            border:2px solid #162d47; font-size:.63rem; font-weight:900;
+            box-shadow:0 5px 14px rgba(249,115,22,.35);
+        }
+        .notificacoes-painel {
+            position:absolute; top:calc(100% + 12px); right:0;
+            width:min(390px,calc(100vw - 30px)); background:rgba(255,255,255,.97); color:#25364b;
+            border:1px solid rgba(22,45,71,.10); border-radius:18px;
+            box-shadow:0 24px 70px rgba(15,34,54,.22); overflow:hidden; z-index:2500;
+            animation:notif-drop .22s cubic-bezier(.2,.9,.3,1.1); backdrop-filter:blur(18px);
+        }
+        @keyframes notif-drop { from{opacity:0;transform:translateY(-8px) scale(.97)} to{opacity:1;transform:translateY(0) scale(1)} }
+        .notificacoes-cabecalho {
+            display:flex; justify-content:space-between; gap:12px; padding:18px 18px 14px;
+            background:linear-gradient(135deg,#f8fbff,#eef4fb); border-bottom:1px solid #e5eaf0;
+        }
+        .notificacoes-kicker { color:#f97316; font-size:.58rem; font-weight:900; letter-spacing:1.4px; }
+        .notificacoes-cabecalho h3 { margin:4px 0 2px; color:#162d47; font-size:1.05rem; }
+        .notificacoes-cabecalho p { margin:0; color:#708096; font-size:.70rem; }
+        .notificacoes-fechar {
+            width:32px; height:32px; border:0; border-radius:50%; background:#fff; color:#63758a;
+            box-shadow:0 4px 14px rgba(22,45,71,.10); cursor:pointer; font-size:1.15rem;
+        }
+        .notificacoes-lista { max-height:440px; overflow:auto; padding:8px; }
+        .notificacao-item {
+            display:flex; gap:11px; width:100%; padding:12px; border:1px solid transparent;
+            border-radius:13px; background:#fff; text-align:left; cursor:pointer;
+            transition:transform .2s ease,box-shadow .2s ease,border-color .2s ease,background .2s ease;
+        }
+        .notificacao-item + .notificacao-item { margin-top:4px; }
+        .notificacao-item:hover { transform:translateY(-1px); border-color:#e1e8f0; box-shadow:0 10px 24px rgba(22,45,71,.08); background:#fbfdff; }
+        .notificacao-item.nao-lida { background:linear-gradient(135deg,#fffaf5,#fff); border-color:rgba(249,115,22,.14); }
+        .notificacao-icone {
+            flex:0 0 34px; width:34px; height:34px; display:grid; place-items:center;
+            border-radius:11px; color:#fff; font-size:.76rem; font-weight:900; box-shadow:0 6px 15px rgba(22,45,71,.12);
+        }
+        .notificacao-icone.pergunta { background:linear-gradient(135deg,#162d47,#2c5f8a); }
+        .notificacao-icone.avaliacao { background:linear-gradient(135deg,#f97316,#fb923c); }
+        .notificacao-conteudo { min-width:0; flex:1; }
+        .notificacao-topo { display:flex; justify-content:space-between; gap:10px; align-items:baseline; }
+        .notificacao-tipo { font-size:.69rem; font-weight:900; color:#162d47; }
+        .notificacao-data { flex:none; font-size:.58rem; color:#98a5b3; }
+        .notificacao-produto { margin-top:3px; font-size:.63rem; font-weight:800; color:#f97316; }
+        .notificacao-texto {
+            margin-top:5px; font-size:.69rem; line-height:1.4; color:#5f7082;
+            display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden;
+        }
+        .notificacoes-vazio { padding:26px 18px 30px; text-align:center; color:#8290a0; font-size:.72rem; }
+        @media (max-width:800px) { .admin-header-ferramentas{width:auto}.btn-entrar-site{padding:8px 10px!important;font-size:.76rem!important} }
+        @media (max-width:500px) {
+            .notificacoes-painel{position:fixed;top:76px;right:10px;left:10px;width:auto}
+            .admin-header-ferramentas{gap:6px}
+        }
+    </style>
 </head>
 
 <body>
@@ -2480,6 +2555,52 @@
             </h1>
 
             <div class="acoes">
+
+                <div class="admin-header-ferramentas">
+                    <button
+                        type="button"
+                        id="btn-entrar-site"
+                        class="btn-entrar-site"
+                    >
+                        ↗ Entrar no site
+                    </button>
+
+                    <div class="notificacoes-wrapper">
+                        <button
+                            type="button"
+                            id="btn-notificacoes"
+                            class="btn-notificacoes"
+                            aria-label="Abrir notificações"
+                            aria-expanded="false"
+                        >
+                            <span class="notificacoes-icone">●</span>
+                            <span id="notificacoes-badge" class="notificacoes-badge" hidden>0</span>
+                        </button>
+
+                        <div
+                            id="notificacoes-painel"
+                            class="notificacoes-painel"
+                            hidden
+                        >
+                            <div class="notificacoes-cabecalho">
+                                <div>
+                                    <span class="notificacoes-kicker">CENTRAL</span>
+                                    <h3>Notificações</h3>
+                                    <p id="notificacoes-resumo">Nenhuma novidade.</p>
+                                </div>
+                                <button
+                                    type="button"
+                                    id="btn-fechar-notificacoes"
+                                    class="notificacoes-fechar"
+                                    aria-label="Fechar notificações"
+                                >
+                                    ×
+                                </button>
+                            </div>
+                            <div id="notificacoes-lista" class="notificacoes-lista"></div>
+                        </div>
+                    </div>
+                </div>
 
                 <span id="admin-nome"></span>
 
@@ -2959,7 +3080,7 @@
     </div>
 
     <script
-        src="/js/admin.js?v=7"
+        src="/js/admin.js?v=8"
         defer
     ></script>
     <script

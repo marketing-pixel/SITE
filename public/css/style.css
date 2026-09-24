@@ -1044,3 +1044,75 @@ img[data-zoom] {
             0 0 0 1px rgba(249,115,22,.05);
     }
 }
+
+
+/* ===== Respostas administrativas: visíveis somente para sessão autenticada ===== */
+.pergunta-admin-acoes,
+.avaliacao-admin-acoes {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    margin-top: 4px;
+}
+.pergunta-admin-acoes .btn-responder,
+.avaliacao-admin-acoes .btn-responder {
+    border: 0;
+    border-radius: 10px;
+    padding: 10px 15px;
+    background: linear-gradient(135deg,#162d47,#2c5f8a);
+    color: #fff;
+    font-size: .78rem;
+    font-weight: 800;
+    cursor: pointer;
+    box-shadow: 0 7px 18px rgba(22,45,71,.14);
+    transition: transform .22s ease, box-shadow .22s ease, filter .22s ease;
+}
+.pergunta-admin-acoes .btn-responder:hover,
+.avaliacao-admin-acoes .btn-responder:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 25px rgba(22,45,71,.18);
+    filter: brightness(1.03);
+}
+.campo-resposta {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-top: 10px;
+    padding: 12px;
+    border-radius: 12px;
+    background: linear-gradient(135deg,#f8fbff,#ffffff);
+    border: 1px solid rgba(22,45,71,.09);
+    box-shadow: 0 8px 22px rgba(22,45,71,.06);
+}
+.campo-resposta .resposta-input {
+    flex: 1 1 320px;
+    min-height: 86px;
+    padding: 12px 14px;
+    border: 1px solid #dce4ec;
+    border-radius: 10px;
+    background: #fff;
+    color: #25364b;
+    font: inherit;
+    resize: vertical;
+}
+.campo-resposta .resposta-input:focus {
+    outline: none;
+    border-color: #2c5f8a;
+    box-shadow: 0 0 0 4px rgba(44,95,138,.10);
+}
+.campo-resposta .btn-enviar-resposta {
+    align-self: flex-end;
+    border: 0;
+    border-radius: 10px;
+    padding: 11px 16px;
+    background: linear-gradient(135deg,#f97316,#fb923c);
+    color: #fff;
+    font-weight: 850;
+    cursor: pointer;
+    box-shadow: 0 8px 18px rgba(249,115,22,.20);
+    transition: transform .2s ease, box-shadow .2s ease;
+}
+.campo-resposta .btn-enviar-resposta:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 24px rgba(249,115,22,.24);
+}
