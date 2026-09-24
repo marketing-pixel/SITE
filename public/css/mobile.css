@@ -1,0 +1,133 @@
+/* ==================================================================
+   VERSÃO MOBILE — refinamentos para celular (até 480px)
+   Produto em coluna única, toque confortável, filtros roláveis,
+   botão de orçamento fixo no rodapé, tabelas legíveis.
+   ================================================================== */
+@media (max-width: 480px) {
+
+    /* ---------- GERAL ---------- */
+    html { -webkit-text-size-adjust: 100%; }
+    body { font-size: 15px; }
+    .container { padding: 0 16px; }
+
+    /* ---------- HEADER ---------- */
+    .header { position: sticky; top: 0; z-index: 60; }
+    .header-inner { padding: 0 14px; min-height: 56px; }
+    .header-logo { max-width: 104px; }
+    .header-nav {
+        padding: 18px; gap: 14px;
+        max-height: calc(100vh - 56px); overflow-y: auto;
+    }
+    .header-nav a { padding: 10px 4px; font-size: 1rem; }
+    .header-cta { padding: 14px 18px; font-size: 0.95rem; }
+
+    /* ---------- GUIA ---------- */
+    .guia-grid { gap: 18px; }
+    .guia-num { font-size: 1.4rem; }
+    .guia-imagem { border-radius: 12px; }
+
+    /* ---------- CATÁLOGO / CARDS ---------- */
+    .catalogo-section { padding: 52px 16px; }
+    .section-head h2 { font-size: 1.55rem; }
+    .section-head p { font-size: 0.95rem; }
+    .filtro-categorias {
+        justify-content: flex-start; gap: 8px;
+        flex-wrap: nowrap; overflow-x: auto; -webkit-overflow-scrolling: touch;
+        padding-bottom: 10px; margin-bottom: 28px; scrollbar-width: none;
+    }
+    .filtro-categorias::-webkit-scrollbar { display: none; }
+    .filtro-btn { white-space: nowrap; padding: 9px 16px; font-size: 0.85rem; }
+    .grid-produtos { gap: 16px; }
+    .produto-card { border-radius: 14px; }
+    .produto-imagem-area { padding: 0; background: #fff; }
+    .produto-imagem-area img { width: 100%; height: auto; display: block; }
+    .produto-info { padding: 14px 14px 16px; }
+    .produto-nome { font-size: 1rem; }
+    .produto-preco { font-size: 1.25rem; }
+    .btn-produto { width: 100%; padding: 13px 18px; font-size: 0.95rem; }
+
+    /* ---------- PÁGINA DO PRODUTO ---------- */
+    .pagina-produto { padding: 20px 14px 96px; }
+    .pp-container { max-width: 100%; }
+    .voltar { font-size: 0.9rem; padding: 10px 14px; }
+    .pp-titulo { font-size: 1.45rem; line-height: 1.25; }
+    .pp-categoria { font-size: 0.9rem; }
+    .pp-imagem-area { padding: 26px 12px; border-radius: 14px; }
+    .pp-imagem-principal { max-width: 100%; max-height: 380px; object-fit: contain; }
+    .pp-contador { font-size: 0.78rem; padding: 4px 11px; }
+    .pp-fav { width: 40px; height: 40px; font-size: 1.15rem; }
+    .pp-compartilhar { width: 40px; height: 40px; font-size: 1rem; }
+    .pp-seta { width: 38px; height: 38px; font-size: 1.2rem; }
+    .pp-cores { gap: 12px; }
+    .pp-cor-thumb { width: 52px; height: 52px; }
+    .pp-cor-nome { font-size: 0.78rem; }
+    .pp-bloco { margin-top: 34px; }
+    .pp-bloco h3 { font-size: 1.15rem; }
+
+    /* Caixa de orçamento do produto */
+    .pp-orcamento { padding: 22px 16px; border-radius: 14px; }
+    .pp-preco { font-size: 1.5rem; }
+    .pp-parcelamento { font-size: 0.9rem; }
+    .btn-solicitar { width: 100%; padding: 15px 20px; font-size: 1rem; }
+
+    /* ---------- CARACTERÍSTICAS ---------- */
+    .carac-tabela td { padding: 9px 10px; font-size: 0.9rem; word-break: break-word; }
+    .carac-sub { font-size: 0.95rem; margin-top: 18px; }
+    .descricao-produto-texto { font-size: 0.95rem; }
+
+    /* ---------- RELACIONADOS ---------- */
+    .relacionados-grid { gap: 12px; }
+    .rel-nome { font-size: 0.9rem; }
+    .rel-preco { font-size: 1.05rem; }
+
+    /* ---------- PERGUNTAS / AVALIAÇÕES ---------- */
+    .formulario-pergunta { flex-direction: column; gap: 10px; }
+    .pergunta-input { width: 100%; padding: 13px 14px; font-size: 1rem; }
+    .btn-perguntar { width: 100%; padding: 13px; font-size: 0.95rem; }
+    .btn-ver-perguntas, .btn-avaliar { width: 100%; padding: 13px; font-size: 0.95rem; }
+    .pergunta-card, .avaliacao-card { padding: 14px; }
+    .avaliacoes-resumo { flex-direction: column; gap: 18px; text-align: center; }
+    .avaliacao-galeria { gap: 8px; }
+    .avaliacao-galeria img { width: 88px; height: 88px; }
+
+    /* ---------- MODAIS ---------- */
+    .modal-box { padding: 26px 18px; margin: 16px; }
+    .modal-opcao { width: 100%; padding: 14px; font-size: 0.95rem; }
+    .modal-interacoes-caixa { max-height: 92vh; border-radius: 14px; }
+    .modal-interacoes-conteudo { padding: 16px; }
+
+    /* ---------- ZOOM ---------- */
+    .zoom-fechar { top: 10px; right: 10px; width: 44px; height: 44px; font-size: 1.6rem; }
+
+    /* ---------- ORÇAMENTO / CONTATO / FOOTER ---------- */
+    .orcamento-section, .contato-section { padding: 52px 16px; }
+    .orcamento-card { padding: 34px 20px; }
+    .orcamento-card h2 { font-size: 1.5rem; }
+    .btn-orcamento-principal { width: 100%; padding: 15px; font-size: 1rem; }
+    .contato-item { padding: 14px; }
+    .institucional { padding: 56px 16px; }
+    .institucional h2 { font-size: 1.7rem; }
+    .institucional .subtitulo { font-size: 1rem; }
+    .cta-box { padding: 30px 18px; }
+    .cta-box h3 { font-size: 1.25rem; }
+    .btn-cta { width: 100%; padding: 15px; font-size: 0.95rem; }
+    footer { padding: 40px 16px 110px; }
+    .footer-contatos { flex-direction: column; gap: 12px; }
+    .copy { font-size: 0.8rem; }
+}
+
+/* ==================================================================
+   BOTÃO FIXO DE ORÇAMENTO (mobile) — aparece só na página do produto
+   ================================================================== */
+.btn-orcamento-fixo { display: none; }
+
+@media (max-width: 480px) {
+    body:has(#view-produto[style*="block"]) .btn-orcamento-fixo {
+        display: flex; position: fixed; left: 12px; right: 12px; bottom: 12px;
+        z-index: 55; align-items: center; justify-content: center; gap: 8px;
+        background: #16a34a; color: #fff; border: none; border-radius: 12px;
+        padding: 15px 18px; font-weight: 700; font-size: 1rem;
+        box-shadow: 0 8px 24px rgba(0,0,0,0.28); cursor: pointer;
+    }
+    .btn-orcamento-fixo:active { transform: scale(0.98); }
+}
