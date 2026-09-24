@@ -411,22 +411,18 @@
                 throw new Error("O upload de imagens do painel não está disponível.");
             }
 
-            var novoItem = await window.fazerUpload(ajustado, coresEditor);
-            if (!novoItem) throw new Error("A imagem recortada não foi adicionada.");
+            var itemAtualizado = await window.fazerUpload(ajustado, coresEditor, item);
+            if (!itemAtualizado) throw new Error("A imagem recortada não pôde substituir a imagem atual.");
 
-            var novoPrincipal = novoItem.querySelector(".cor-imagem-principal");
-            if (eraPrincipal && novoPrincipal) {
-                novoPrincipal.checked = true;
-                coresEditor.querySelectorAll(".cor-imagem-principal").forEach(function (radio) {
-                    if (radio !== novoPrincipal) radio.checked = false;
-                });
+            if (eraPrincipal) {
+                var principalAtual = itemAtualizado.querySelector(".cor-imagem-principal");
+                if (principalAtual) principalAtual.checked = true;
             }
-
-            item.remove();
 
             if (typeof window.atualizarContadorImagens === "function") {
                 window.atualizarContadorImagens(coresEditor);
             }
+
             if (typeof window.atualizarPreviaProduto === "function") {
                 window.atualizarPreviaProduto();
             }
