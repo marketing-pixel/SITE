@@ -1495,6 +1495,349 @@
             }
         }
 
+
+        /* =========================================================
+           PRÉVIA — CLONE VISUAL DA PÁGINA DE DETALHES DO CATÁLOGO
+           A prévia usa a mesma hierarquia visual do site real:
+           azul #162d47, verde #00a650, laranja #f97316 e fundo branco.
+        ========================================================= */
+        .editor-preview-panel {
+            background: #eef2f6;
+        }
+
+        .editor-preview-head {
+            padding: 3px 28px 11px 2px;
+        }
+
+        .preview-product-viewport {
+            width: min(390px, 100%);
+            margin: 0 auto;
+            overflow: hidden auto;
+            border: 1px solid #e6e9ec;
+            border-radius: 16px;
+            background: #fff;
+            box-shadow: 0 12px 30px rgba(22,45,71,.10);
+            scrollbar-width: thin;
+            scrollbar-color: #c4ccd5 transparent;
+        }
+
+        .preview-product-viewport::-webkit-scrollbar {
+            width: 7px;
+        }
+
+        .preview-product-viewport::-webkit-scrollbar-thumb {
+            background: #c7cfd8;
+            border-radius: 99px;
+        }
+
+        /* Equivale ao .pagina-produto + .pp-container do site em mobile */
+        .preview-product-page {
+            min-height: 100%;
+            padding: 20px 14px 96px;
+            background: #fff;
+            color: #2d2d2d;
+        }
+
+        .preview-product-page .pp-container {
+            max-width: 100%;
+            margin: 0 auto;
+        }
+
+        .preview-product-page .voltar {
+            display: inline-block;
+            margin: 0 0 30px;
+            padding: 10px 14px;
+            color: #162d47;
+            font-size: .9rem;
+            line-height: 1.2;
+            font-weight: 600;
+            border: 0;
+            background: transparent;
+        }
+
+        .preview-product-page .pp-titulo-area {
+            text-align: center;
+            margin-bottom: 34px;
+        }
+
+        .preview-product-page .pp-titulo {
+            margin: 0;
+            color: #162d47;
+            font-size: 1.45rem;
+            font-weight: 700;
+            line-height: 1.25;
+        }
+
+        .preview-product-page .pp-categoria {
+            margin-top: 8px;
+            color: #9aa5b1;
+            font-size: .9rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .preview-product-page .pp-avaliacao-resumo-topo {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .preview-product-page .estrelas {
+            display: inline-flex;
+            gap: 2px;
+            font-size: .95rem;
+            line-height: 1;
+        }
+
+        .preview-product-page .estrelas .estrela {
+            color: #d5dbe1;
+        }
+
+        .preview-product-page .estrelas .estrela.ativa {
+            color: #f97316;
+        }
+
+        .preview-product-page .pp-media-topo {
+            font-size: .9rem;
+            font-weight: 700;
+            color: #162d47;
+        }
+
+        .preview-product-page .pp-quantidade-topo {
+            font-size: .82rem;
+            color: #6b7684;
+        }
+
+        .preview-product-page .pp-imagem-area {
+            position: relative;
+            max-width: 640px;
+            margin: 0 auto;
+            padding: 26px 12px;
+            text-align: center;
+            background: #fff;
+            border: 1px solid #e6e9ec;
+            border-radius: 14px;
+            box-shadow: 0 2px 10px rgba(22,45,71,.06);
+        }
+
+        .preview-product-page .pp-imagem-principal {
+            width: 100%;
+            max-width: 100%;
+            max-height: 380px;
+            height: auto;
+            object-fit: contain;
+            border-radius: 10px;
+            display: block;
+            margin: 0 auto;
+        }
+
+        .preview-product-page .pp-contador {
+            position: absolute;
+            top: 16px;
+            left: 16px;
+            padding: 4px 11px;
+            border-radius: 20px;
+            background: rgba(0,0,0,.55);
+            color: #fff;
+            font-size: .78rem;
+            z-index: 2;
+        }
+
+        .preview-product-page .pp-fav,
+        .preview-product-page .pp-compartilhar {
+            position: absolute;
+            z-index: 2;
+            background: #fff;
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,.12);
+            color: #162d47;
+        }
+
+        .preview-product-page .pp-fav {
+            top: 12px;
+            right: 12px;
+            font-size: 1.15rem;
+        }
+
+        .preview-product-page .pp-compartilhar {
+            bottom: 14px;
+            right: 14px;
+            font-size: 1rem;
+        }
+
+        .preview-product-page .pp-seta {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 2;
+            width: 38px;
+            height: 38px;
+            padding: 0;
+            border: none;
+            border-radius: 50%;
+            background: rgba(255,255,255,.92);
+            color: #162d47;
+            font-size: 1.2rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,.15);
+        }
+
+        .preview-product-page .pp-seta.esq { left: 12px; }
+        .preview-product-page .pp-seta.dir { right: 12px; }
+
+        .preview-product-page .pp-cor {
+            text-align: center;
+            margin-top: 30px;
+            color: #3a4653;
+            font-size: 1rem;
+            font-weight: 600;
+        }
+
+        .preview-product-page .pp-cores {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            margin-top: 16px;
+            flex-wrap: wrap;
+        }
+
+        .preview-product-page .pp-cor-item {
+            text-align: center;
+            cursor: default;
+        }
+
+        .preview-product-page .pp-cor-thumb {
+            width: 52px;
+            height: 52px;
+            padding: 0;
+            overflow: hidden;
+            border: 2px solid #e3e7ea;
+            border-radius: 10px;
+            background: #f7f8fa;
+        }
+
+        .preview-product-page .pp-cor-thumb img {
+            width: 100%;
+            height: 100%;
+            display: block;
+            object-fit: cover;
+        }
+
+        .preview-product-page .pp-cor-item.selecionada .pp-cor-thumb {
+            border-color: #162d47;
+            box-shadow: 0 4px 14px rgba(22,45,71,.20);
+        }
+
+        .preview-product-page .pp-cor-nome {
+            margin-top: 7px;
+            color: #6b7684;
+            font-size: .78rem;
+        }
+
+        .preview-product-page .pp-bloco {
+            max-width: 800px;
+            margin: 34px auto 0;
+            padding: 22px 16px;
+            background: #fff;
+            border: 1px solid #e6e9ec;
+            border-radius: 14px;
+            box-shadow: 0 2px 10px rgba(22,45,71,.06);
+        }
+
+        .preview-product-page .pp-bloco h3 {
+            margin: 0 0 18px;
+            padding-bottom: 12px;
+            padding-right: 40px;
+            display: inline-block;
+            border-bottom: 2px solid #f97316;
+            color: #162d47;
+            font-size: 1.15rem;
+        }
+
+        .preview-product-page .pp-orcamento {
+            text-align: left;
+            padding: 22px 16px;
+            margin-top: 34px;
+        }
+
+        .preview-product-page .pp-orcamento h3 {
+            display: none;
+        }
+
+        .preview-product-page .pp-preco {
+            margin: 0 0 4px;
+            color: #162d47;
+            font-size: 1.5rem;
+            font-weight: 700;
+            line-height: 1.15;
+        }
+
+        .preview-product-page .pp-parcelamento {
+            margin-bottom: 20px;
+            color: #00a650;
+            font-size: .9rem;
+            font-weight: 600;
+        }
+
+        .preview-product-page .btn-solicitar {
+            width: 100%;
+            display: block;
+            padding: 15px 20px;
+            border: none;
+            border-radius: 8px;
+            background: #00a650;
+            color: #fff;
+            font-size: 1rem;
+            font-weight: 700;
+        }
+
+        .preview-product-page .carac-sub {
+            margin: 18px 0 6px;
+            color: #162d47;
+            font-size: .95rem;
+            font-weight: 600;
+        }
+
+        .preview-product-page .carac-tabela {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .preview-product-page .carac-tabela td {
+            padding: 9px 10px;
+            border-bottom: 1px solid #eef1f3;
+            color: #4a5563;
+            font-size: .9rem;
+            word-break: break-word;
+        }
+
+        .preview-product-page .carac-tabela td:first-child {
+            width: 45%;
+            color: #333;
+            font-weight: 600;
+        }
+
+        .preview-product-page .descricao-produto-texto {
+            color: #2d2d2d;
+            font-size: .95rem;
+            line-height: 1.55;
+            margin: 0;
+        }
+
+        @media (max-width: 1000px) {
+            .preview-product-viewport {
+                width: min(390px, 100%);
+            }
+        }
+
 </style>
 </head>
 
@@ -1944,64 +2287,14 @@
                 <aside class="editor-preview-panel">
                     <div class="editor-preview-head">
                         <div>
-                            <span class="editor-kicker">PRÉVIA DO ANÚNCIO</span>
-                            <h3>Como ficará no site</h3>
-                            <p>Visualização da página de detalhes do produto.</p>
+                            <span class="editor-kicker">PRÉVIA DO PRODUTO</span>
+                            <h3>Página de detalhes</h3>
+                            <p>Prévia no mesmo estilo do catálogo.</p>
                         </div>
                     </div>
 
-                    <div class="preview-site-frame">
-                        <div class="preview-topbar">
-                            <span class="preview-brand">Cortez Móveis</span>
-                            <span>Produto</span>
-                        </div>
-
-                        <div class="preview-detail">
-                            <button type="button" class="preview-back" aria-hidden="true">
-                                ← Voltar para produtos
-                            </button>
-
-                            <div class="preview-detail-title"></div>
-                            <div class="preview-detail-line"></div>
-                            <div class="preview-detail-rating"></div>
-
-                            <div class="preview-detail-gallery">
-                                <span class="preview-detail-counter"></span>
-                                <button type="button" class="preview-detail-fav" aria-hidden="true">♡</button>
-                                <button type="button" class="preview-detail-share" aria-hidden="true">↗</button>
-                                <button type="button" class="preview-detail-arrow preview-detail-arrow-left" data-preview-action="prev" aria-label="Imagem anterior">‹</button>
-
-                                <div class="preview-detail-image-wrap">
-                                    <img class="preview-detail-image" alt="Prévia do produto">
-                                    <div class="preview-detail-empty">
-                                        <strong>SEM IMAGEM</strong>
-                                        <span>Adicione uma foto para visualizar aqui.</span>
-                                    </div>
-                                </div>
-
-                                <button type="button" class="preview-detail-arrow preview-detail-arrow-right" data-preview-action="next" aria-label="Próxima imagem">›</button>
-                            </div>
-
-                            <div class="preview-detail-color"></div>
-                            <div class="preview-detail-colors"></div>
-
-                            <div class="preview-detail-budget">
-                                <div class="preview-budget-title">Solicite seu orçamento</div>
-                                <div class="preview-budget-price"></div>
-                                <div class="preview-budget-parcel"></div>
-                                <div class="preview-budget-button">SOLICITAR ORÇAMENTO</div>
-                            </div>
-
-                            <div class="preview-detail-section">
-                                <div class="preview-section-title">Descrição</div>
-                                <div class="preview-section-text preview-detail-description"></div>
-                            </div>
-
-                            <div class="preview-detail-section">
-                                <div class="preview-section-title">Características</div>
-                                <div class="preview-specs"></div>
-                            </div>
-                        </div>
+                    <div class="preview-product-viewport">
+                        <div id="previa-card" class="preview-product-page"></div>
                     </div>
                 </aside>
 
