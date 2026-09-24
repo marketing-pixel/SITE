@@ -10,6 +10,35 @@ const produtosRoutes = require('./routes/produtos');
 const categoriasRoutes = require('./routes/categorias');
 const uploadsRoutes = require('./routes/uploads');
 
+// ============================================================
+// AUTO-MIGRATE: garante que o banco tenha as colunas usadas
+// pelo código. Todas as migrations são idempotentes
+// (ADD COLUMN IF NOT EXISTS / CREATE TABLE IF NOT EXISTS),
+// então rodar a cada boot é seguro e rápido.
+// ============================================================
+const fs = require('fs');
+const pool = require('./config/db');
+
+async function rodarMigrations() {
+    const migrationsDir = path.join(__dirname, '..', 'migrations');
+    const files = fs.readdirSync(migrationsDir)
+        .filter(f => f.endsWith('.sql'))
+        .sort();
+
+    const client = await pool.connect();
+    try {
+        for (const file of files) {
+            const sql = fs.readFileSync(path.join(migrationsDir, file), 'utf8');
+            await client.query(sql);
+            console.log(`Migration ${file} OK`);
+        }
+    } catch (err) {
+        console.error('Erro em migrations (site continua subindo):', err.message);
+    } finally {
+        client.release();
+    }
+}
+
 const app = express();
 
 // Segurança HTTP
@@ -51,6 +80,8 @@ app.get('/api/health', (req, res) => {
 });
 
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-    console.log(`Servidor rodando em http://localhost:${PORT}`);
+rodarMigrations().finally(() => {
+    app.listen(PORT, () => {
+        console.log(`Servidor rodando em http://localhost:${PORT}`);
+    });
 });
