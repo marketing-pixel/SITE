@@ -304,9 +304,28 @@
         area.classList.remove("arrastando");
     }
 
+    function dataURLParaBlob(dataURL) {
+        var separador = dataURL.indexOf(",");
+        if (separador < 0) {
+            throw new Error("Formato de imagem recortada inválido.");
+        }
+
+        var cabecalho = dataURL.slice(0, separador);
+        var dados = dataURL.slice(separador + 1);
+        var mimeMatch = cabecalho.match(/^data:([^;]+);base64$/i);
+        var mime = mimeMatch ? mimeMatch[1] : "image/jpeg";
+        var binario = atob(dados);
+        var bytes = new Uint8Array(binario.length);
+
+        for (var i = 0; i < binario.length; i++) {
+            bytes[i] = binario.charCodeAt(i);
+        }
+
+        return new Blob([bytes], { type: mime });
+    }
+
     async function dataURLParaFile(dataURL, arquivoOriginal) {
-        var resposta = await fetch(dataURL);
-        var blob = await resposta.blob();
+        var blob = dataURLParaBlob(dataURL);
 
         var nomeBase = (arquivoOriginal && arquivoOriginal.name
             ? arquivoOriginal.name
@@ -321,15 +340,43 @@
     }
 
     async function carregarImagemComoDataURL(src) {
-        var resposta = await fetch(src, { credentials: "same-origin" });
-        if (!resposta.ok) throw new Error("Não foi possível carregar a imagem atual para o recorte.");
-        var blob = await resposta.blob();
-
         return await new Promise(function (resolve, reject) {
-            var leitor = new FileReader();
-            leitor.onload = function () { resolve(leitor.result); };
-            leitor.onerror = reject;
-            leitor.readAsDataURL(blob);
+            var imagem = new Image();
+
+            imagem.onload = function () {
+                try {
+                    var largura = imagem.naturalWidth || imagem.width;
+                    var altura = imagem.naturalHeight || imagem.height;
+
+                    if (!largura || !altura) {
+                        reject(new Error("Não foi possível ler as dimensões da imagem atual."));
+                        return;
+                    }
+
+                    var canvasTemporario = document.createElement("canvas");
+                    canvasTemporario.width = largura;
+                    canvasTemporario.height = altura;
+
+                    var contexto = canvasTemporario.getContext("2d");
+                    if (!contexto) {
+                        reject(new Error("Não foi possível preparar a imagem para o recorte."));
+                        return;
+                    }
+
+                    contexto.drawImage(imagem, 0, 0, largura, altura);
+
+                    var resultado = canvasTemporario.toDataURL("image/jpeg", 0.95);
+                    resolve(resultado);
+                } catch (erro) {
+                    reject(new Error("Não foi possível ler a imagem atual para o recorte."));
+                }
+            };
+
+            imagem.onerror = function () {
+                reject(new Error("Não foi possível carregar a imagem atual para o recorte."));
+            };
+
+            imagem.src = src;
         });
     }
 
