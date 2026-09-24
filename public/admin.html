@@ -1975,6 +1975,386 @@
             }
         }
 
+
+        /* =========================================================
+           EDITOR DE RECORTE DE IMAGENS
+        ========================================================= */
+        .editor-crop-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            z-index: 2200;
+            padding: 24px;
+            background: rgba(5, 10, 16, .78);
+            backdrop-filter: blur(8px);
+            place-items: center;
+        }
+
+        .editor-crop-overlay.aberto {
+            display: grid;
+        }
+
+        .editor-crop-modal {
+            width: min(1060px, 94vw);
+            max-height: min(900px, 92vh);
+            overflow: hidden;
+            display: grid;
+            grid-template-columns: minmax(0, 1.35fr) 330px;
+            border: 1px solid rgba(255,255,255,.25);
+            border-radius: 22px;
+            background: #fff;
+            box-shadow: 0 35px 90px rgba(0,0,0,.40);
+        }
+
+        .editor-crop-main {
+            min-width: 0;
+            display: flex;
+            flex-direction: column;
+            background: #0e1621;
+        }
+
+        .editor-crop-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 18px;
+            padding: 17px 20px;
+            color: #fff;
+            background: linear-gradient(135deg, #101820 0%, #162d47 100%);
+            border-bottom: 1px solid rgba(255,255,255,.10);
+        }
+
+        .editor-crop-title {
+            margin: 0;
+            font-size: 1rem;
+            font-weight: 850;
+            letter-spacing: -.01em;
+        }
+
+        .editor-crop-subtitle {
+            margin: 4px 0 0;
+            color: #b6c3d0;
+            font-size: .68rem;
+        }
+
+        .editor-crop-close {
+            width: 34px;
+            height: 34px;
+            display: grid;
+            place-items: center;
+            border: 0;
+            border-radius: 10px;
+            background: rgba(255,255,255,.09);
+            color: #fff;
+            font-size: 1.2rem;
+            cursor: pointer;
+        }
+
+        .editor-crop-stage-wrap {
+            flex: 1;
+            min-height: 0;
+            display: grid;
+            place-items: center;
+            padding: 22px;
+            overflow: auto;
+            background:
+                radial-gradient(circle at 50% 45%, rgba(249,115,22,.08), transparent 38%),
+                #0e1621;
+        }
+
+        #editor-crop-area {
+            position: relative;
+            display: grid;
+            place-items: center;
+            min-width: 180px;
+            min-height: 180px;
+            max-width: 100%;
+            max-height: 58vh;
+            border: 2px solid rgba(255,255,255,.90);
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 0 0 1px rgba(249,115,22,.35), 0 20px 45px rgba(0,0,0,.34);
+            cursor: grab;
+            touch-action: none;
+            background:
+                linear-gradient(45deg, #2a3440 25%, transparent 25%) 0 0/22px 22px,
+                linear-gradient(-45deg, #2a3440 25%, transparent 25%) 0 0/22px 22px,
+                linear-gradient(45deg, transparent 75%, #2a3440 75%) 0 0/22px 22px,
+                linear-gradient(-45deg, transparent 75%, #2a3440 75%) 0 0/22px 22px,
+                #1f2935;
+        }
+
+        #editor-crop-area.arrastando {
+            cursor: grabbing;
+        }
+
+        #editor-canvas {
+            display: block;
+            width: 100%;
+            height: 100%;
+            user-select: none;
+        }
+
+        .editor-crop-grid {
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            background:
+                linear-gradient(to right, transparent 33.15%, rgba(255,255,255,.30) 33.33%, transparent 33.52%),
+                linear-gradient(to right, transparent 66.15%, rgba(255,255,255,.30) 66.33%, transparent 66.52%),
+                linear-gradient(to bottom, transparent 33.15%, rgba(255,255,255,.30) 33.33%, transparent 33.52%),
+                linear-gradient(to bottom, transparent 66.15%, rgba(255,255,255,.30) 66.33%, transparent 66.52%);
+        }
+
+        .editor-crop-main-footer {
+            padding: 12px 18px;
+            color: #9eacba;
+            background: #111a25;
+            border-top: 1px solid rgba(255,255,255,.08);
+            font-size: .66rem;
+            text-align: center;
+        }
+
+        .editor-crop-panel {
+            min-height: 0;
+            padding: 22px;
+            overflow-y: auto;
+            background: #fff;
+        }
+
+        .editor-crop-kicker {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            color: var(--adm-laranja);
+            font-size: .64rem;
+            font-weight: 850;
+            letter-spacing: 1.35px;
+            text-transform: uppercase;
+        }
+
+        .editor-crop-kicker::before {
+            content: "";
+            width: 17px;
+            height: 2px;
+            background: var(--adm-laranja);
+            border-radius: 99px;
+        }
+
+        .editor-crop-panel h3 {
+            margin: 7px 0 4px;
+            color: var(--adm-azul);
+            font-size: 1.15rem;
+        }
+
+        .editor-crop-panel p {
+            margin: 0 0 18px;
+            color: #6b7a8c;
+            font-size: .70rem;
+            line-height: 1.45;
+        }
+
+        .editor-format-title {
+            margin: 0 0 9px;
+            color: #27384d;
+            font-size: .73rem;
+            font-weight: 850;
+        }
+
+        .editor-format-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+        }
+
+        .editor-format-btn {
+            min-height: 47px;
+            display: flex;
+            align-items: center;
+            gap: 9px;
+            padding: 8px 9px;
+            border: 1px solid #dce3eb;
+            border-radius: 10px;
+            background: #fff;
+            color: #35465b;
+            cursor: pointer;
+            text-align: left;
+            transition: .18s ease;
+        }
+
+        .editor-format-btn:hover {
+            border-color: #aebac8;
+            transform: translateY(-1px);
+        }
+
+        .editor-format-btn.ativo {
+            border-color: var(--adm-laranja);
+            background: rgba(249,115,22,.06);
+            box-shadow: 0 0 0 3px rgba(249,115,22,.08);
+        }
+
+        .editor-format-shape {
+            flex: none;
+            width: 26px;
+            height: 26px;
+            display: grid;
+            place-items: center;
+            border: 2px solid #9aa8b6;
+            border-radius: 5px;
+            color: transparent;
+        }
+
+        .editor-format-btn.ativo .editor-format-shape {
+            border-color: var(--adm-azul);
+        }
+
+        .editor-format-shape.r1-1 { width: 26px; height: 26px; }
+        .editor-format-shape.r4-5 { width: 22px; height: 27px; }
+        .editor-format-shape.r3-4 { width: 21px; height: 27px; }
+        .editor-format-shape.r16-9 { width: 28px; height: 18px; }
+        .editor-format-shape.original { width: 24px; height: 24px; border-style: dashed; }
+
+        .editor-format-text strong {
+            display: block;
+            color: var(--adm-azul);
+            font-size: .66rem;
+        }
+
+        .editor-format-text span {
+            display: block;
+            margin-top: 2px;
+            color: #8793a1;
+            font-size: .55rem;
+        }
+
+        .editor-control {
+            margin-top: 19px;
+            padding-top: 17px;
+            border-top: 1px solid #edf1f5;
+        }
+
+        .editor-control-label {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            color: #27384d;
+            font-size: .70rem;
+            font-weight: 800;
+        }
+
+        .editor-control-value {
+            color: var(--adm-laranja);
+            font-variant-numeric: tabular-nums;
+        }
+
+        #editor-zoom {
+            width: 100%;
+            margin-top: 10px;
+            accent-color: var(--adm-laranja);
+        }
+
+        .editor-crop-actions {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 9px;
+            margin-top: 20px;
+        }
+
+        .editor-crop-action {
+            min-height: 40px;
+            padding: 9px 10px;
+            border: 1px solid #d9e1e9;
+            border-radius: 9px;
+            background: #fff;
+            color: var(--adm-azul);
+            font-size: .64rem;
+            font-weight: 800;
+            cursor: pointer;
+        }
+
+        .editor-crop-action:hover {
+            border-color: #aebac8;
+            background: #f8fafc;
+        }
+
+        .editor-crop-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1.35fr;
+            gap: 9px;
+            margin-top: 16px;
+        }
+
+        .editor-crop-cancel,
+        .editor-crop-use {
+            min-height: 44px;
+            border: 0;
+            border-radius: 10px;
+            font-size: .68rem;
+            font-weight: 850;
+            cursor: pointer;
+        }
+
+        .editor-crop-cancel {
+            background: #eef2f6;
+            color: #4f6074;
+        }
+
+        .editor-crop-use {
+            background: linear-gradient(135deg, var(--adm-azul) 0%, var(--adm-laranja) 120%);
+            color: #fff;
+            box-shadow: 0 9px 20px rgba(249,115,22,.20);
+        }
+
+        .editor-crop-note {
+            margin-top: 13px;
+            padding: 10px 11px;
+            border-radius: 9px;
+            background: #f7f9fb;
+            color: #738195;
+            font-size: .60rem;
+            line-height: 1.45;
+        }
+
+        @media (max-width: 900px) {
+            .editor-crop-modal {
+                grid-template-columns: 1fr;
+                width: min(720px, 94vw);
+                max-height: 92vh;
+            }
+
+            .editor-crop-stage-wrap {
+                min-height: 390px;
+            }
+
+            .editor-crop-panel {
+                max-height: 44vh;
+            }
+
+            #editor-crop-area {
+                max-height: 42vh;
+            }
+        }
+
+        @media (max-width: 560px) {
+            .editor-crop-overlay {
+                padding: 10px;
+            }
+
+            .editor-crop-modal {
+                width: 100%;
+                border-radius: 17px;
+            }
+
+            .editor-crop-stage-wrap {
+                padding: 13px;
+                min-height: 320px;
+            }
+
+            .editor-format-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
 </style>
 </head>
 
@@ -2446,8 +2826,99 @@
          JAVASCRIPT
     ================================================ -->
 
+
+    <div
+        id="editor-img-overlay"
+        class="editor-crop-overlay"
+        aria-hidden="true"
+    >
+        <div class="editor-crop-modal" role="dialog" aria-modal="true" aria-labelledby="editor-crop-title">
+            <section class="editor-crop-main">
+                <header class="editor-crop-header">
+                    <div>
+                        <h2 id="editor-crop-title" class="editor-crop-title">Recortar e posicionar imagem</h2>
+                        <p class="editor-crop-subtitle">Arraste a imagem dentro do quadro para escolher o enquadramento.</p>
+                    </div>
+                    <button type="button" id="editor-fechar" class="editor-crop-close" aria-label="Fechar">×</button>
+                </header>
+
+                <div class="editor-crop-stage-wrap">
+                    <div id="editor-crop-area">
+                        <canvas id="editor-canvas" width="800" height="1000"></canvas>
+                        <div class="editor-crop-grid" aria-hidden="true"></div>
+                    </div>
+                </div>
+
+                <div class="editor-crop-main-footer">
+                    Arraste para posicionar • use o zoom para aproximar • o recorte é aplicado somente depois de clicar em “Usar imagem”
+                </div>
+            </section>
+
+            <aside class="editor-crop-panel">
+                <span class="editor-crop-kicker">EDIÇÃO DA IMAGEM</span>
+                <h3>Escolha o formato</h3>
+                <p>O formato define o enquadramento final da foto no catálogo.</p>
+
+                <div class="editor-format-title">Proporção do recorte</div>
+
+                <div class="editor-format-grid">
+                    <button type="button" class="editor-format-btn" data-aspect="1" data-label="1:1">
+                        <span class="editor-format-shape r1-1"></span>
+                        <span class="editor-format-text"><strong>Quadrado</strong><span>1 : 1</span></span>
+                    </button>
+
+                    <button type="button" class="editor-format-btn ativo" data-aspect="0.8" data-label="4:5">
+                        <span class="editor-format-shape r4-5"></span>
+                        <span class="editor-format-text"><strong>Retrato</strong><span>4 : 5</span></span>
+                    </button>
+
+                    <button type="button" class="editor-format-btn" data-aspect="0.75" data-label="3:4">
+                        <span class="editor-format-shape r3-4"></span>
+                        <span class="editor-format-text"><strong>Retrato alto</strong><span>3 : 4</span></span>
+                    </button>
+
+                    <button type="button" class="editor-format-btn" data-aspect="1.7777778" data-label="16:9">
+                        <span class="editor-format-shape r16-9"></span>
+                        <span class="editor-format-text"><strong>Panorâmico</strong><span>16 : 9</span></span>
+                    </button>
+
+                    <button type="button" class="editor-format-btn" data-aspect="original" data-label="Original" style="grid-column:1/-1">
+                        <span class="editor-format-shape original"></span>
+                        <span class="editor-format-text"><strong>Original</strong><span>Manter proporção da foto</span></span>
+                    </button>
+                </div>
+
+                <div class="editor-control">
+                    <div class="editor-control-label">
+                        <span>Zoom</span>
+                        <span id="editor-zoom-value" class="editor-control-value">100%</span>
+                    </div>
+                    <input id="editor-zoom" type="range" min="100" max="300" step="1" value="100">
+                </div>
+
+                <div class="editor-crop-actions">
+                    <button type="button" id="editor-centralizar" class="editor-crop-action">↺ Centralizar</button>
+                    <button type="button" id="editor-girar" class="editor-crop-action">↻ Girar 90°</button>
+                </div>
+
+                <div class="editor-crop-buttons">
+                    <button type="button" id="editor-cancelar" class="editor-crop-cancel">Cancelar</button>
+                    <button type="button" id="editor-usar" class="editor-crop-use">✓ Usar imagem</button>
+                </div>
+
+                <div class="editor-crop-note">
+                    O recorte será enviado já ajustado ao formato escolhido. Você poderá escolher o enquadramento de cada imagem antes de salvar.
+                </div>
+            </aside>
+        </div>
+    </div>
+
     <script
         src="/js/admin.js?v=4"
+        defer
+    ></script>
+    <script
+        src="/js/admin-editor.js?v=2"
         defer
     ></script>
 

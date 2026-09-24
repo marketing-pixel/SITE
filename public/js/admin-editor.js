@@ -1,97 +1,369 @@
 /* ==================================================================
-   EDITOR PREMIUM DE IMAGENS — prévia, recorte (4:5), zoom, posição
-   + prévia do anúncio no painel ADM
+   EDITOR DE RECORTE DE IMAGENS
+   Formatos: 1:1, 4:5, 3:4, 16:9 e Original.
+   A imagem pode ser posicionada arrastando dentro do quadro.
    ================================================================== */
 (function () {
     "use strict";
 
-    // ---------- Estado do editor ----------
-    var estado = {
-        img: null,          // Image original
-        zoom: 1,
-        offsetX: 0, offsetY: 0,
-        rotacao: 0,
-        arrastando: false,
-        inicioX: 0, inicioY: 0,
-        callback: null      // função a chamar com o dataURL final
-    };
-
     var overlay = document.getElementById("editor-img-overlay");
+    if (!overlay) return;
+
     var canvas = document.getElementById("editor-canvas");
     var area = document.getElementById("editor-crop-area");
     var zoomInput = document.getElementById("editor-zoom");
+    var zoomValue = document.getElementById("editor-zoom-value");
+    var formatButtons = Array.from(document.querySelectorAll(".editor-format-btn"));
+
+    if (!canvas || !area || !zoomInput) return;
+
     var ctx = canvas.getContext("2d");
 
-    var LARGURA = 800, ALTURA = 1000; // 4:5
+    var estado = {
+        img: null,
+        arquivoAtual: null,
+        zoom: 1,
+        offsetX: 0,
+        offsetY: 0,
+        rotacao: 0,
+        aspect: 0.8,
+        aspectLabel: "4:5",
+        originalAspect: 0.8,
+        arrastando: false,
+        inicioX: 0,
+        inicioY: 0,
+        callback: null
+    };
 
-    function desenhar() {
-        if (!estado.img) return;
-        ctx.save();
-        ctx.fillStyle = "#1a2430";
-        ctx.fillRect(0, 0, LARGURA, ALTURA);
-        ctx.translate(LARGURA / 2 + estado.offsetX, ALTURA / 2 + estado.offsetY);
-        ctx.rotate(estado.rotacao * Math.PI / 180);
-        var img = estado.img;
-        // escala base: cobrir o canvas (cover) * zoom do usuário
-        var escalaBase = Math.max(LARGURA / img.width, ALTURA / img.height);
-        var escala = escalaBase * estado.zoom;
-        ctx.drawImage(img, -img.width * escala / 2, -img.height * escala / 2, img.width * escala, img.height * escala);
-        ctx.restore();
+    var formatos = {
+        "1:1": 1,
+        "4:5": 0.8,
+        "3:4": 0.75,
+        "16:9": 16 / 9
+    };
+
+    function tamanhoCanvas(aspect) {
+        var base = 1000;
+        var largura;
+        var altura;
+
+        if (aspect >= 1) {
+            largura = base;
+            altura = Math.round(base / aspect);
+        } else {
+            altura = base;
+            largura = Math.round(base * aspect);
+        }
+
+        return {
+            largura: Math.max(300, largura),
+            altura: Math.max(300, altura)
+        };
+    }
+
+    function definirTamanhoDoFormato() {
+        var tamanho = tamanhoCanvas(estado.aspect);
+        canvas.width = tamanho.largura;
+        canvas.height = tamanho.altura;
+
+        area.style.aspectRatio = tamanho.largura + " / " + tamanho.altura;
+    }
+
+    function escalaBase() {
+        if (!estado.img) return 1;
+
+        var largura = canvas.width;
+        var altura = canvas.height;
+
+        return Math.max(
+            largura / estado.img.width,
+            altura / estado.img.height
+        );
+    }
+
+    function limitesOffset() {
+        if (!estado.img) {
+            return { maxX: 0, maxY: 0 };
+        }
+
+        var escala = escalaBase() * estado.zoom;
+        var metadeW = (estado.img.width * escala) / 2;
+        var metadeH = (estado.img.height * escala) / 2;
+
+        if (estado.rotacao % 180 !== 0) {
+            var temp = metadeW;
+            metadeW = metadeH;
+            metadeH = temp;
+        }
+
+        return {
+            maxX: Math.max(0, metadeW - canvas.width / 2),
+            maxY: Math.max(0, metadeH - canvas.height / 2)
+        };
     }
 
     function limitarOffset() {
-        if (!estado.img) return;
-        var img = estado.img;
-        var escalaBase = Math.max(LARGURA / img.width, ALTURA / img.height);
-        var escala = escalaBase * estado.zoom;
-        var metadeW = img.width * escala / 2;
-        var metadeH = img.height * escala / 2;
-        // considera rotação
-        if (estado.rotacao % 180 !== 0) {
-            var tmp = metadeW; metadeW = metadeH; metadeH = tmp;
-        }
-        var maxX = Math.max(0, metadeW - LARGURA / 2);
-        var maxY = Math.max(0, metadeH - ALTURA / 2);
-        estado.offsetX = Math.max(-maxX, Math.min(maxX, estado.offsetX));
-        estado.offsetY = Math.max(-maxY, Math.min(maxY, estado.offsetY));
+        var limites = limitesOffset();
+
+        estado.offsetX = Math.max(
+            -limites.maxX,
+            Math.min(limites.maxX, estado.offsetX)
+        );
+        estado.offsetY = Math.max(
+            -limites.maxY,
+            Math.min(limites.maxY, estado.offsetY)
+        );
     }
 
-    function abrirEditor(dataURL, callback) {
+    function desenhar() {
+        if (!estado.img) return;
+
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.save();
+        ctx.fillStyle = "#edf1f5";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        ctx.translate(
+            canvas.width / 2 + estado.offsetX,
+            canvas.height / 2 + estado.offsetY
+        );
+
+        ctx.rotate(estado.rotacao * Math.PI / 180);
+
+        var escala = escalaBase() * estado.zoom;
+        var largura = estado.img.width * escala;
+        var altura = estado.img.height * escala;
+
+        ctx.drawImage(
+            estado.img,
+            -largura / 2,
+            -altura / 2,
+            largura,
+            altura
+        );
+
+        ctx.restore();
+
+        if (zoomValue) {
+            zoomValue.textContent = Math.round(estado.zoom * 100) + "%";
+        }
+    }
+
+    function selecionarFormato(botao) {
+        formatButtons.forEach(function (btn) {
+            btn.classList.toggle("ativo", btn === botao);
+        });
+
+        var valor = botao.dataset.aspect;
+
+        if (valor === "original") {
+            estado.aspect = estado.originalAspect;
+            estado.aspectLabel = "Original";
+        } else {
+            estado.aspect = Number(valor);
+            estado.aspectLabel = botao.dataset.label || "Personalizado";
+        }
+
+        estado.offsetX = 0;
+        estado.offsetY = 0;
+        estado.zoom = 1;
+        estado.rotacao = 0;
+
+        zoomInput.value = 100;
+        definirTamanhoDoFormato();
+        limitarOffset();
+        desenhar();
+    }
+
+    function atualizarOriginalAspect() {
+        if (!estado.img || !estado.img.width || !estado.img.height) return;
+
+        estado.originalAspect = estado.img.width / estado.img.height;
+
+        var originalBotao = formatButtons.find(function (btn) {
+            return btn.dataset.aspect === "original";
+        });
+
+        if (originalBotao) {
+            var texto = originalBotao.querySelector(".editor-format-text span");
+            if (texto) {
+                texto.textContent =
+                    "Proporção " +
+                    estado.img.width +
+                    " × " +
+                    estado.img.height;
+            }
+        }
+    }
+
+    function abrirEditor(dataURL, callback, arquivo) {
         var img = new Image();
+
         img.onload = function () {
             estado.img = img;
+            estado.arquivoAtual = arquivo || null;
+            estado.callback = callback;
+            estado.originalAspect = img.width / img.height;
+            estado.aspect = formatos["4:5"];
+            estado.aspectLabel = "4:5";
             estado.zoom = 1;
             estado.offsetX = 0;
             estado.offsetY = 0;
             estado.rotacao = 0;
-            estado.callback = callback;
-            zoomInput.value = 100;
+
+            if (zoomInput) zoomInput.value = 100;
+
+            var botao45 = formatButtons.find(function (btn) {
+                return btn.dataset.label === "4:5";
+            });
+
+            formatButtons.forEach(function (btn) {
+                btn.classList.toggle("ativo", btn === botao45);
+            });
+
+            atualizarOriginalAspect();
+            definirTamanhoDoFormato();
+            limitarOffset();
             desenhar();
+
             overlay.classList.add("aberto");
+            overlay.setAttribute("aria-hidden", "false");
         };
+
+        img.onerror = function () {
+            if (typeof callback === "function") callback(null);
+        };
+
         img.src = dataURL;
     }
 
     function fecharEditor() {
         overlay.classList.remove("aberto");
+        overlay.setAttribute("aria-hidden", "true");
         estado.img = null;
+        estado.arquivoAtual = null;
         estado.callback = null;
+        estado.arrastando = false;
     }
 
     function usarImagem() {
-        if (!estado.callback) return fecharEditor();
+        if (!estado.callback || !estado.img) {
+            fecharEditor();
+            return;
+        }
+
         limitarOffset();
         desenhar();
-        var dataURL = canvas.toDataURL("image/jpeg", 0.9);
-        var cb = estado.callback;
+
+        var dataURL = canvas.toDataURL("image/jpeg", 0.92);
+        var callback = estado.callback;
+
         fecharEditor();
-        cb(dataURL);
+        callback(dataURL);
     }
 
-    // ---------- Eventos ----------
-    document.getElementById("editor-cancelar").addEventListener("click", fecharEditor);
-    document.getElementById("editor-usar").addEventListener("click", usarImagem);
-    overlay.addEventListener("click", function (e) { if (e.target === overlay) fecharEditor(); });
+    function pontoDe(evento) {
+        var rect = area.getBoundingClientRect();
+        var ponto = evento.touches ? evento.touches[0] : evento;
+
+        return {
+            x: (ponto.clientX - rect.left) * (canvas.width / rect.width),
+            y: (ponto.clientY - rect.top) * (canvas.height / rect.height)
+        };
+    }
+
+    function iniciarArrasto(evento) {
+        if (!estado.img) return;
+
+        estado.arrastando = true;
+        area.classList.add("arrastando");
+
+        var ponto = pontoDe(evento);
+        estado.inicioX = ponto.x - estado.offsetX;
+        estado.inicioY = ponto.y - estado.offsetY;
+
+        evento.preventDefault();
+    }
+
+    function moverArrasto(evento) {
+        if (!estado.arrastando || !estado.img) return;
+
+        var ponto = pontoDe(evento);
+
+        estado.offsetX = ponto.x - estado.inicioX;
+        estado.offsetY = ponto.y - estado.inicioY;
+
+        limitarOffset();
+        desenhar();
+
+        evento.preventDefault();
+    }
+
+    function terminarArrasto() {
+        estado.arrastando = false;
+        area.classList.remove("arrastando");
+    }
+
+    async function dataURLParaFile(dataURL, arquivoOriginal) {
+        var resposta = await fetch(dataURL);
+        var blob = await resposta.blob();
+
+        var nomeBase = (arquivoOriginal && arquivoOriginal.name
+            ? arquivoOriginal.name
+            : "imagem"
+        ).replace(/\.[^.]+$/, "");
+
+        return new File(
+            [blob],
+            nomeBase + "-corte.jpg",
+            { type: "image/jpeg" }
+        );
+    }
+
+    async function processarArquivos(arquivos, coresEditor) {
+        if (!Array.isArray(arquivos) || !arquivos.length) return;
+
+        for (var i = 0; i < arquivos.length; i++) {
+            var arquivo = arquivos[i];
+
+            if (!arquivo || !arquivo.type || !arquivo.type.startsWith("image/")) {
+                continue;
+            }
+
+            var dataURL = await new Promise(function (resolve, reject) {
+                var leitor = new FileReader();
+
+                leitor.onload = function () {
+                    resolve(leitor.result);
+                };
+
+                leitor.onerror = reject;
+                leitor.readAsDataURL(arquivo);
+            });
+
+            var resultado = await new Promise(function (resolve) {
+                abrirEditor(dataURL, resolve, arquivo);
+            });
+
+            if (!resultado) {
+                continue;
+            }
+
+            var ajustado = await dataURLParaFile(resultado, arquivo);
+
+            if (typeof window.fazerUpload === "function") {
+                await window.fazerUpload(ajustado, coresEditor);
+            }
+        }
+    }
+
+    window.abrirEditorImagemArquivos = processarArquivos;
+
+    formatButtons.forEach(function (botao) {
+        botao.addEventListener("click", function () {
+            selecionarFormato(botao);
+        });
+    });
 
     zoomInput.addEventListener("input", function () {
         estado.zoom = Number(zoomInput.value) / 100;
@@ -99,155 +371,51 @@
         desenhar();
     });
 
-    document.getElementById("editor-girar").addEventListener("click", function () {
-        estado.rotacao = (estado.rotacao + 90) % 360;
-        limitarOffset();
-        desenhar();
+    var centralizar = document.getElementById("editor-centralizar");
+    if (centralizar) {
+        centralizar.addEventListener("click", function () {
+            estado.offsetX = 0;
+            estado.offsetY = 0;
+            limitarOffset();
+            desenhar();
+        });
+    }
+
+    var girar = document.getElementById("editor-girar");
+    if (girar) {
+        girar.addEventListener("click", function () {
+            estado.rotacao = (estado.rotacao + 90) % 360;
+            limitarOffset();
+            desenhar();
+        });
+    }
+
+    var cancelar = document.getElementById("editor-cancelar");
+    if (cancelar) cancelar.addEventListener("click", fecharEditor);
+
+    var usar = document.getElementById("editor-usar");
+    if (usar) usar.addEventListener("click", usarImagem);
+
+    var fechar = document.getElementById("editor-fechar");
+    if (fechar) fechar.addEventListener("click", fecharEditor);
+
+    overlay.addEventListener("click", function (event) {
+        if (event.target === overlay) fecharEditor();
     });
 
-    // Arrastar (mouse e toque)
-    function pontoDe(e) {
-        var r = area.getBoundingClientRect();
-        var p = e.touches ? e.touches[0] : e;
-        return {
-            x: (p.clientX - r.left) * (LARGURA / r.width),
-            y: (p.clientY - r.top) * (ALTURA / r.height)
-        };
-    }
-    function iniciarArrasto(e) {
-        if (!estado.img) return;
-        estado.arrastando = true;
-        area.classList.add("arrastando");
-        var p = pontoDe(e);
-        estado.inicioX = p.x - estado.offsetX;
-        estado.inicioY = p.y - estado.offsetY;
-        e.preventDefault();
-    }
-    function moverArrasto(e) {
-        if (!estado.arrastando) return;
-        var p = pontoDe(e);
-        estado.offsetX = p.x - estado.inicioX;
-        estado.offsetY = p.y - estado.inicioY;
-        limitarOffset();
-        desenhar();
-        e.preventDefault();
-    }
-    function terminarArrasto() {
-        estado.arrastando = false;
-        area.classList.remove("arrastando");
-    }
     area.addEventListener("mousedown", iniciarArrasto);
     window.addEventListener("mousemove", moverArrasto);
     window.addEventListener("mouseup", terminarArrasto);
+
     area.addEventListener("touchstart", iniciarArrasto, { passive: false });
     area.addEventListener("touchmove", moverArrasto, { passive: false });
     area.addEventListener("touchend", terminarArrasto);
 
-    // ---------- Integração: interceptar o input de imagens das cores ----------
-    document.addEventListener("change", function (e) {
-        var input = e.target;
-        if (!input.classList || !input.classList.contains("cor-imagens-input")) return;
-        var arquivos = Array.from(input.files || []);
-        if (!arquivos.length) return;
-        var coresEditor = input.closest(".cores-editor");
-        var lista = coresEditor ? coresEditor.querySelector(".cor-imagens-lista") : null;
-        if (!lista) return;
+    document.addEventListener("keydown", function (event) {
+        if (!overlay.classList.contains("aberto")) return;
 
-        // Processa cada arquivo: abre o editor e, ao confirmar, converte em File e faz upload
-        (async function () {
-            for (var i = 0; i < arquivos.length; i++) {
-                var arquivo = arquivos[i];
-                var dataURL = await new Promise(function (resolve, reject) {
-                    var fr = new FileReader();
-                    fr.onload = function () { resolve(fr.result); };
-                    fr.onerror = reject;
-                    fr.readAsDataURL(arquivo);
-                });
-                // abre o editor e espera o usuário confirmar
-                var finalDataURL = await new Promise(function (resolve) {
-                    abrirEditor(dataURL, resolve);
-                });
-                // converte o dataURL ajustado em File
-                var blob = await (await fetch(finalDataURL)).blob();
-                var ajustado = new File([blob], (arquivo.name || "imagem").replace(/\.\w+$/, "") + ".jpg", { type: "image/jpeg" });
-                // usa o fazerUpload global do admin.js
-                if (typeof window.fazerUpload === "function") {
-                    await window.fazerUpload(ajustado, coresEditor);
-                }
-            }
-            input.value = "";
-        })();
-    });
-
-    // ---------- Prévia do anúncio ----------
-    var previaOverlay = document.getElementById("previa-overlay");
-    var previaCard = document.getElementById("previa-card");
-
-    function escapar(t) {
-        return String(t == null ? "" : t).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
-    }
-
-    function formatarPreco(v) {
-        var n = Number(v);
-        if (!isFinite(n)) return "";
-        return n.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
-    }
-
-    function abrirPrevia() {
-        var titulo = document.getElementById("f-titulo").value.trim() || "Produto";
-        var linha = document.getElementById("f-linha").value.trim();
-        var preco = document.getElementById("f-preco").value;
-        var parcelamento = document.getElementById("f-parcelamento").value.trim();
-        var descricao = document.getElementById("f-descricao").value.trim();
-        var categoriaSel = document.getElementById("f-categoria");
-        var categoria = categoriaSel && categoriaSel.selectedOptions[0] ? categoriaSel.selectedOptions[0].textContent : "";
-
-        // primeira imagem marcada como principal (ou a primeira que existir)
-        var imgSrc = "";
-        var principal = document.querySelector(".cor-imagem-principal:checked");
-        if (principal) {
-            var item = principal.closest(".imagem-item");
-            var img = item ? item.querySelector("img") : null;
-            if (img) imgSrc = img.src;
+        if (event.key === "Escape") {
+            fecharEditor();
         }
-        if (!imgSrc) {
-            var qualquer = document.querySelector(".imagem-item img");
-            if (qualquer) imgSrc = qualquer.src;
-        }
-
-        previaCard.innerHTML =
-            '<div class="p-img">' + (imgSrc ? '<img src="' + escapar(imgSrc) + '" alt="Prévia">' : '<div style="color:#9aa5b1;font-size:2.4rem">🪑</div>') + '</div>' +
-            '<div class="p-info">' +
-            (categoria ? '<div class="p-cat">' + escapar(categoria) + '</div>' : '') +
-            (linha ? '<div class="p-cat">' + escapar(linha) + '</div>' : '') +
-            '<div class="p-nome">' + escapar(titulo) + '</div>' +
-            (preco ? '<div class="p-preco">' + escapar(formatarPreco(preco)) + '</div>' : '') +
-            (parcelamento ? '<div class="p-parc">' + escapar(parcelamento) + '</div>' : '') +
-            (descricao ? '<div class="p-desc">' + escapar(descricao) + '</div>' : '') +
-            '</div>';
-
-        previaOverlay.classList.add("aberto");
-    }
-
-    // Botão de prévia: criar dinamicamente ao lado do botão de salvar do formulário
-    document.addEventListener("DOMContentLoaded", function () {
-        var form = document.getElementById("produto-form");
-        if (!form) return;
-        var btnSalvar = form.querySelector('button[type="submit"]');
-        if (btnSalvar) {
-            var btn = document.createElement("button");
-            btn.type = "button";
-            btn.className = "btn-previa";
-            btn.textContent = "👁 Prévia do anúncio";
-            btn.addEventListener("click", abrirPrevia);
-            btnSalvar.parentNode.insertBefore(btn, btnSalvar);
-            btn.style.marginRight = "10px";
-        }
-    });
-    document.getElementById("previa-fechar").addEventListener("click", function () {
-        previaOverlay.classList.remove("aberto");
-    });
-    previaOverlay.addEventListener("click", function (e) {
-        if (e.target === previaOverlay) previaOverlay.classList.remove("aberto");
     });
 })();
