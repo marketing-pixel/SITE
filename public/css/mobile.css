@@ -21,8 +21,17 @@
     .header-nav a { padding: 10px 4px; font-size: 1rem; }
     .header-cta { padding: 14px 18px; font-size: 0.95rem; }
 
-    /* ---------- GUIA ---------- */
-    .guia-grid { gap: 18px; }
+    /* ---------- GUIA — carrossel horizontal ---------- */
+    .guia-grid {
+        display: flex; gap: 14px;
+        overflow-x: auto; -webkit-overflow-scrolling: touch;
+        scroll-snap-type: x mandatory; scrollbar-width: none;
+        padding-bottom: 8px; max-width: 100%;
+    }
+    .guia-grid::-webkit-scrollbar { display: none; }
+    .guia-item {
+        flex: 0 0 78%; scroll-snap-align: center; margin: 0;
+    }
     .guia-num { font-size: 1.4rem; }
     .guia-imagem { border-radius: 12px; }
 
