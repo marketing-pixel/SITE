@@ -15,7 +15,7 @@ body {
     --azul-600: #2c5f8a;
     --verde-ml: #00a650;
     --verde-ml-escuro: #008a42;
-    --dourado: #c8a24a;
+    --dourado: #f97316; /* laranja Cortez */
     --texto: #2d2d2d;
     --texto-suave: #6b7684;
     --borda: #e6e9ec;
@@ -57,7 +57,7 @@ img { max-width: 100%; }
 .section-head { text-align: center; max-width: 720px; margin: 0 auto 50px; }
 .section-head .kicker {
     font-size: 0.85rem; text-transform: uppercase; letter-spacing: 3px;
-    color: #8a97a5; font-weight: 600; margin-bottom: 12px;
+    color: #f97316; font-weight: 700; margin-bottom: 12px;
 }
 .section-head h2 { font-size: 2.3rem; color: #162d47; font-weight: 700; line-height: 1.2; }
 .section-head p { color: #6b7684; font-size: 1.1rem; margin-top: 12px; }
@@ -73,7 +73,7 @@ img { max-width: 100%; }
 .guia-item:hover { transform: translateY(-6px); box-shadow: 0 16px 40px rgba(0,0,0,0.10); }
 .guia-item img { width: 100%; height: auto; display: block; }
 .guia-num {
-    position: absolute; top: 16px; left: 16px; background: rgba(22,45,71,0.85);
+    position: absolute; top: 16px; left: 16px; background: #f97316;
     color: #fff; font-size: 0.8rem; font-weight: 700; letter-spacing: 1px;
     padding: 6px 12px; border-radius: 20px;
 }
@@ -365,7 +365,7 @@ footer .copy { margin-top: 34px; font-size: 0.8rem; color: #5f768c; }
 /* Estrelas (usadas no topo e nas avaliações) */
 .estrelas { display: inline-flex; gap: 2px; font-size: 1rem; line-height: 1; }
 .estrelas .estrela { color: #d5dbe1; }
-.estrelas .estrela.ativa { color: #f5a623; }
+.estrelas .estrela.ativa { color: #f97316; }
 .estrelas.small { font-size: 0.85rem; }
 
 /* Galeria de imagem premium */
@@ -568,7 +568,7 @@ footer .copy { margin-top: 34px; font-size: 0.8rem; color: #5f768c; }
     line-height: 1;
 }
 .estrela-input:hover { transform: scale(1.15); }
-.estrela-input.selecionada { color: #f5a623; }
+.estrela-input.selecionada { color: #f97316; }
 .avaliacao-comentario {
     padding: 12px 14px; border: 1px solid #dde2e6; border-radius: 8px;
     font-size: 0.95rem; font-family: inherit; background: #fff; resize: vertical;
