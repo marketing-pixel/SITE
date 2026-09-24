@@ -320,6 +320,77 @@
         );
     }
 
+    async function carregarImagemComoDataURL(src) {
+        var resposta = await fetch(src, { credentials: "same-origin" });
+        if (!resposta.ok) throw new Error("Não foi possível carregar a imagem atual para o recorte.");
+        var blob = await resposta.blob();
+
+        return await new Promise(function (resolve, reject) {
+            var leitor = new FileReader();
+            leitor.onload = function () { resolve(leitor.result); };
+            leitor.onerror = reject;
+            leitor.readAsDataURL(blob);
+        });
+    }
+
+    async function recortarImagemExistente(item, coresEditor) {
+        if (!item || !coresEditor) return;
+        var img = item.querySelector("img");
+        if (!img) return;
+
+        var origem = img.currentSrc || img.src;
+        if (!origem) return;
+
+        var eraPrincipal = !!item.querySelector(".cor-imagem-principal")?.checked;
+        var caminhoAnterior = item.querySelector(".cor-imagem-caminho")?.value || "";
+        var nomeBase = caminhoAnterior
+            ? caminhoAnterior.split("/").pop().replace(/\.[^.]+$/, "")
+            : "imagem";
+
+        try {
+            var dataURL = await carregarImagemComoDataURL(origem);
+
+            var resultado = await new Promise(function (resolve) {
+                abrirEditor(dataURL, resolve, { name: nomeBase + ".jpg" });
+            });
+
+            if (!resultado) return;
+
+            var ajustado = await dataURLParaFile(resultado, {
+                name: nomeBase + "-recorte.jpg"
+            });
+
+            if (typeof window.fazerUpload !== "function") {
+                throw new Error("O upload de imagens do painel não está disponível.");
+            }
+
+            var novoItem = await window.fazerUpload(ajustado, coresEditor);
+            if (!novoItem) throw new Error("A imagem recortada não foi adicionada.");
+
+            var novoPrincipal = novoItem.querySelector(".cor-imagem-principal");
+            if (eraPrincipal && novoPrincipal) {
+                novoPrincipal.checked = true;
+                coresEditor.querySelectorAll(".cor-imagem-principal").forEach(function (radio) {
+                    if (radio !== novoPrincipal) radio.checked = false;
+                });
+            }
+
+            item.remove();
+
+            if (typeof window.atualizarContadorImagens === "function") {
+                window.atualizarContadorImagens(coresEditor);
+            }
+            if (typeof window.atualizarPreviaProduto === "function") {
+                window.atualizarPreviaProduto();
+            }
+        } catch (erro) {
+            console.error("Erro ao recortar imagem existente:", erro);
+            alert(erro.message || "Não foi possível recortar a imagem.");
+        }
+    }
+
+    window.recortarImagemExistente = recortarImagemExistente;
+
     async function processarArquivos(arquivos, coresEditor) {
         if (!Array.isArray(arquivos) || !arquivos.length) return;
 
