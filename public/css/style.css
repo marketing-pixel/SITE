@@ -502,6 +502,78 @@ footer .copy { margin-top: 34px; font-size: 0.8rem; color: #5f768c; }
 }
 .btn-avaliar:hover { background: var(--azul-800); color: #fff; }
 
+/* ===== MODAL DE PERGUNTAS E AVALIAÇÕES (aba centralizada premium) ===== */
+.modal-interacoes-overlay {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(10,20,32,0.62); z-index: 1200;
+    display: flex; justify-content: center; align-items: center;
+    padding: 24px; animation: modal-entrada 0.18s ease;
+}
+@keyframes modal-entrada {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+.modal-interacoes-caixa {
+    background: #fff; border-radius: 16px; width: 100%; max-width: 640px;
+    max-height: 85vh; display: flex; flex-direction: column;
+    box-shadow: 0 24px 70px rgba(0,0,0,0.35);
+    animation: modal-caixa-entrada 0.22s cubic-bezier(0.2, 0.9, 0.3, 1.2);
+}
+@keyframes modal-caixa-entrada {
+    from { opacity: 0; transform: translateY(18px) scale(0.97); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+}
+.modal-interacoes-cabecalho {
+    padding: 22px 26px 16px; border-bottom: 2px solid var(--dourado);
+    display: flex; flex-direction: column; gap: 4px; position: relative;
+    flex-shrink: 0;
+}
+.modal-interacoes-titulo {
+    font-size: 1.35rem; color: var(--azul-800); font-weight: 700; margin: 0;
+}
+.modal-interacoes-subtitulo {
+    font-size: 0.88rem; color: var(--texto-suave); margin: 0;
+}
+.modal-interacoes-fechar {
+    position: absolute; top: 14px; right: 16px; background: var(--fundo-suave);
+    border: none; border-radius: 50%; width: 36px; height: 36px;
+    font-size: 1.5rem; line-height: 1; cursor: pointer; color: var(--texto-suave);
+    display: flex; align-items: center; justify-content: center;
+    transition: background 0.2s, color 0.2s;
+}
+.modal-interacoes-fechar:hover { background: #e8ebee; color: var(--azul-800); }
+.modal-interacoes-conteudo {
+    padding: 22px 26px 26px; overflow-y: auto; flex: 1;
+}
+
+/* Formulário de avaliação dentro do modal */
+.formulario-avaliacao {
+    display: flex; flex-direction: column; gap: 12px;
+    padding: 18px 20px; background: var(--fundo-suave);
+    border: 1px solid var(--borda); border-radius: 12px; margin: 16px 0 20px;
+}
+.avaliacao-nome {
+    padding: 12px 14px; border: 1px solid #dde2e6; border-radius: 8px;
+    font-size: 0.95rem; background: #fff;
+}
+.avaliacao-nome:focus, .avaliacao-comentario:focus {
+    outline: none; border-color: var(--azul-600);
+    box-shadow: 0 0 0 3px rgba(44,95,138,0.12);
+}
+.avaliacao-titulo-estrelas { font-size: 0.9rem; font-weight: 600; color: var(--texto); }
+.avaliacao-estrelas-input { display: flex; gap: 6px; }
+.estrela-input {
+    background: none; border: none; font-size: 1.7rem; cursor: pointer;
+    color: #d5dbe1; padding: 0 2px; transition: color 0.15s, transform 0.15s;
+    line-height: 1;
+}
+.estrela-input:hover { transform: scale(1.15); }
+.estrela-input.selecionada { color: #f5a623; }
+.avaliacao-comentario {
+    padding: 12px 14px; border: 1px solid #dde2e6; border-radius: 8px;
+    font-size: 0.95rem; font-family: inherit; background: #fff; resize: vertical;
+}
+
 /* Responsivo: ajustes do layout do produto */
 @media (max-width: 900px) {
     #produto-layout .pp-orcamento {
