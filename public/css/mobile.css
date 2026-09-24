@@ -35,7 +35,7 @@
     .guia-num { font-size: 1.4rem; }
     .guia-imagem { border-radius: 12px; }
 
-    /* ---------- CATÁLOGO / CARDS ---------- */
+    /* ---------- CATÁLOGO — carrossel horizontal (cards lado a lado) ---------- */
     .catalogo-section { padding: 52px 16px; }
     .section-head h2 { font-size: 1.55rem; }
     .section-head p { font-size: 0.95rem; }
@@ -46,8 +46,17 @@
     }
     .filtro-categorias::-webkit-scrollbar { display: none; }
     .filtro-btn { white-space: nowrap; padding: 9px 16px; font-size: 0.85rem; }
-    .grid-produtos { gap: 16px; }
-    .produto-card { border-radius: 14px; }
+    .grid-produtos {
+        display: flex; gap: 14px;
+        overflow-x: auto; -webkit-overflow-scrolling: touch;
+        scroll-snap-type: x mandatory; scrollbar-width: none;
+        padding: 4px 2px 12px; max-width: 100%;
+    }
+    .grid-produtos::-webkit-scrollbar { display: none; }
+    .produto-card {
+        flex: 0 0 72%; scroll-snap-align: center; margin: 0;
+        border-radius: 14px;
+    }
     .produto-imagem-area { padding: 0; background: #fff; }
     .produto-imagem-area img { width: 100%; height: auto; display: block; }
     .produto-info { padding: 14px 14px 16px; }
