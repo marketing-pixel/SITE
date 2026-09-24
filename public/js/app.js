@@ -127,7 +127,7 @@ let produtos=[],produtoAtual=null,corAtual=0,imgAtual=0,categorias=[],categoriaF
     if ("MutationObserver" in window) {
         var observadorDOM = new MutationObserver(function () {
             atualizarRevelacoesDinamicas();
-            instalarTiltNosNovosCards();
+            window.instalarTiltNosNovosCards();
         });
         observadorDOM.observe(document.body, { childList: true, subtree: true });
     }
@@ -199,7 +199,7 @@ let produtos=[],produtoAtual=null,corAtual=0,imgAtual=0,categorias=[],categoriaF
         document.querySelectorAll(".produto-card, .guia-item, .rel-card").forEach(aplicarTilt);
     };
 
-    instalarTiltNosNovosCards();
+    window.instalarTiltNosNovosCards();
 
     document.addEventListener("click", function (evento) {
         var link = evento.target.closest('a[href^="#"]');
