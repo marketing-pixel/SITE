@@ -411,16 +411,37 @@
                 throw new Error("O upload de imagens do painel não está disponível.");
             }
 
-            var itemAtualizado = await window.fazerUpload(ajustado, coresEditor, item);
-            if (!itemAtualizado) throw new Error("A imagem recortada não pôde substituir a imagem atual.");
-
-            if (eraPrincipal) {
-                var principalAtual = itemAtualizado.querySelector(".cor-imagem-principal");
-                if (principalAtual) principalAtual.checked = true;
+            if (typeof window.enviarImagemParaArmazenamento !== "function") {
+                throw new Error("O envio da imagem recortada não está disponível.");
             }
 
-            if (typeof window.atualizarContadorImagens === "function") {
-                window.atualizarContadorImagens(coresEditor);
+            var respostaUpload = await window.enviarImagemParaArmazenamento(ajustado);
+
+            var imagemElemento = item.querySelector("img");
+            var caminhoElemento = item.querySelector(".cor-imagem-caminho");
+            var publicIdElemento = item.querySelector(".cor-imagem-public-id");
+
+            if (!imagemElemento || !caminhoElemento) {
+                throw new Error("Não foi possível atualizar a imagem que está sendo editada.");
+            }
+
+            imagemElemento.src = urlImagemAdmin(respostaUpload.caminho);
+            imagemElemento.dataset.cropVersion = String(Date.now());
+            caminhoElemento.value = respostaUpload.caminho;
+
+            if (publicIdElemento) {
+                publicIdElemento.value = respostaUpload.public_id || "";
+            } else if (respostaUpload.public_id) {
+                var novoPublicId = document.createElement("input");
+                novoPublicId.type = "hidden";
+                novoPublicId.className = "cor-imagem-public-id";
+                novoPublicId.value = respostaUpload.public_id;
+                item.appendChild(novoPublicId);
+            }
+
+            if (eraPrincipal) {
+                var principalAtual = item.querySelector(".cor-imagem-principal");
+                if (principalAtual) principalAtual.checked = true;
             }
 
             if (typeof window.atualizarPreviaProduto === "function") {
