@@ -1027,3 +1027,20 @@ img[data-zoom] {
     }
     .premium-ripple { display: none; }
 }
+
+
+/* Inclinação 3D sutil dos cards em desktop */
+@media (min-width: 901px) and (pointer: fine) {
+    .produto-card.premium-tilt-active,
+    .guia-item.premium-tilt-active,
+    .rel-card.premium-tilt-active {
+        transform:
+            perspective(900px)
+            rotateX(var(--premium-rx, 0deg))
+            rotateY(var(--premium-ry, 0deg))
+            translateY(-4px);
+        box-shadow:
+            0 24px 55px rgba(15,34,54,.15),
+            0 0 0 1px rgba(249,115,22,.05);
+    }
+}
