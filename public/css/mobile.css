@@ -10,8 +10,8 @@
     body { font-size: 15px; }
     .container { padding: 0 16px; }
 
-    /* ---------- HEADER ---------- */
-    .header { position: sticky; top: 0; z-index: 60; }
+    /* ---------- HEADER (não fixo — rola junto com a página) ---------- */
+    .header { position: relative; z-index: 60; }
     .header-inner { padding: 0 14px; min-height: 56px; }
     .header-logo { max-width: 104px; }
     .header-nav {
