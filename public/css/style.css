@@ -3211,3 +3211,17 @@ body.cart-modal-open {
     filter: drop-shadow(2px 3px 0 rgba(8,20,33,.28)) drop-shadow(0 5px 8px rgba(22,45,71,.15));
     transform: translateY(-1px);
 }
+
+
+/* ==================================================================
+   BOTÃO SOLICITAR ORÇAMENTO — VERSÃO DESKTOP
+   ================================================================== */
+@media (min-width: 601px) {
+    .pp-compra-card .pp-btn-orcamento {
+        display: block !important;
+        width: 100% !important;
+        min-height: 48px;
+        margin-top: 10px !important;
+        padding: 13px 20px !important;
+    }
+}
