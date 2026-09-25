@@ -2091,62 +2091,72 @@ img[data-zoom] {
     overflow: hidden;
 }
 
-/* A terceira prévia desaparece suavemente e indica que há mais conteúdo. */
-.pp-interacao-resumo .premium-preview-fade {
+/* A partir da terceira interação, o produto mostra somente as duas primeiras.
+   O restante fica sugerido por um desfoque que sobe a partir da metade da segunda. */
+.pp-interacao-resumo .premium-preview-has-more {
     position: relative;
-    cursor: pointer;
+    overflow: hidden;
+    padding-bottom: 2px;
 }
 
-.pp-interacao-resumo .premium-preview-fade > * {
-    transition: opacity .35s ease, filter .35s ease, transform .35s ease;
-}
-
-.pp-interacao-resumo .premium-preview-fade::after {
-    content: "Ver mais";
+.pp-interacao-resumo .premium-preview-curtain {
     position: absolute;
-    left: 50%;
-    bottom: 0;
-    transform: translate(-50%, 50%);
-    opacity: .9;
+    left: -2%;
+    right: -2%;
+    border: 0;
+    padding: 0;
+    margin: 0;
+    cursor: pointer;
+    background:
+        linear-gradient(
+            to bottom,
+            rgba(255,255,255,0) 0%,
+            rgba(255,255,255,.14) 18%,
+            rgba(255,255,255,.48) 48%,
+            rgba(255,255,255,.88) 76%,
+            rgba(255,255,255,1) 100%
+        );
+    -webkit-backdrop-filter: blur(4px);
+    backdrop-filter: blur(4px);
+    z-index: 5;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    transition: filter .25s ease;
+}
+
+.pp-interacao-resumo .premium-preview-curtain::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+        to bottom,
+        rgba(255,255,255,0) 0%,
+        rgba(255,255,255,.08) 35%,
+        rgba(255,255,255,.32) 100%
+    );
+    pointer-events: none;
+}
+
+.pp-interacao-resumo .premium-preview-curtain-label {
+    position: relative;
+    z-index: 2;
+    margin-bottom: 13px;
     padding: 7px 15px;
     border-radius: 999px;
-    background: rgba(255,255,255,.94);
+    background: rgba(255,255,255,.96);
     border: 1px solid rgba(22,45,71,.08);
-    box-shadow: 0 8px 20px rgba(15,34,54,.10);
+    box-shadow: 0 8px 20px rgba(15,34,54,.12);
     color: var(--azul-800);
     font-size: .68rem;
     font-weight: 900;
     pointer-events: none;
-    z-index: 3;
+    transition: transform .22s ease, box-shadow .22s ease;
 }
 
-.pp-interacao-resumo .premium-preview-fade::before {
-    content: "";
-    position: absolute;
-    left: -10%;
-    right: -10%;
-    bottom: 0;
-    height: 78%;
-    background: linear-gradient(
-        to top,
-        rgba(255,255,255,1) 0%,
-        rgba(255,255,255,.86) 26%,
-        rgba(255,255,255,.44) 56%,
-        rgba(255,255,255,0) 100%
-    );
-    -webkit-backdrop-filter: blur(5px);
-    backdrop-filter: blur(5px);
-    pointer-events: none;
-    z-index: 2;
-}
-
-.pp-interacao-resumo .premium-preview-fade:hover > * {
-    filter: blur(.2px);
+.pp-interacao-resumo .premium-preview-curtain:hover .premium-preview-curtain-label {
     transform: translateY(-2px);
-}
-
-.pp-interacao-resumo .premium-preview-fade:hover::after {
-    box-shadow: 0 11px 26px rgba(15,34,54,.14);
+    box-shadow: 0 11px 26px rgba(15,34,54,.15);
 }
 
 /* Área premium para fotos da avaliação */

@@ -323,7 +323,7 @@ function renderProduto(){
     const qlist=document.createElement("div");
     qlist.className="lista-perguntas";
     perguntasBox.appendChild(qlist);
-    renderPerguntas((produto.perguntas||[]).slice(0,3),qlist);
+    renderPerguntas((produto.perguntas||[]).slice(0,2),qlist);
     aplicarPreviewTerceiro(qlist,(produto.perguntas||[]).length,abrirAbaPerguntas);
     layout.appendChild(perguntasBox);
 
@@ -365,7 +365,7 @@ function renderProduto(){
     const avalList=document.createElement("div");
     avalList.className="lista-avaliacoes pp-preview-reviews";
     avalBox.appendChild(avalList);
-    renderAvaliacoes((produto.avaliacoes||[]).slice(0,3),avalList);
+    renderAvaliacoes((produto.avaliacoes||[]).slice(0,2),avalList);
     aplicarPreviewTerceiro(avalList,(produto.avaliacoes||[]).length,abrirAbaAvaliacoes);
 
     layout.appendChild(avalBox);
@@ -715,19 +715,40 @@ function renderProduto(){
     atualizarModoAdministrador();
 }
 function aplicarPreviewTerceiro(container,total,abrirTodos){
-    if(!container || Number(total)<=3 || !container.children[2]) return;
-    const item=container.children[2];
-    item.classList.add("premium-preview-fade");
+    if(!container || Number(total)<=2 || !container.children[1]) return;
+
+    container.classList.add("premium-preview-has-more");
+    let curtain=container.querySelector(":scope > .premium-preview-curtain");
+    if(!curtain){
+        curtain=document.createElement("button");
+        curtain.type="button";
+        curtain.className="premium-preview-curtain";
+        curtain.setAttribute("aria-label","Ver todas as interações");
+
+        const label=document.createElement("span");
+        label.className="premium-preview-curtain-label";
+        label.textContent="Ver mais";
+        curtain.appendChild(label);
+
+        container.appendChild(curtain);
+    }
+
+    const segundo=container.children[1];
+    const alinharCurtain=()=>{
+        if(!segundo || !curtain)return;
+        const containerRect=container.getBoundingClientRect();
+        const segundoRect=segundo.getBoundingClientRect();
+        const inicio=segundoRect.top-containerRect.top+(segundoRect.height*0.5);
+        const fim=container.scrollHeight;
+        curtain.style.top=Math.max(0,inicio)+"px";
+        curtain.style.height=Math.max(40,fim-inicio)+"px";
+    };
+
+    requestAnimationFrame(alinharCurtain);
+    window.setTimeout(alinharCurtain,120);
+
     if(typeof abrirTodos==="function"){
-        item.setAttribute("role","button");
-        item.tabIndex=0;
-        item.addEventListener("click",abrirTodos);
-        item.addEventListener("keydown",event=>{
-            if(event.key==="Enter" || event.key===" ") {
-                event.preventDefault();
-                abrirTodos(event);
-            }
-        });
+        curtain.addEventListener("click",abrirTodos);
     }
 }
 function renderPerguntas(e,t){if(!t)return;t.innerHTML="";if(!Array.isArray(e)||!e.length){const a=document.createElement("div");a.className="sem-conteudo qa-empty";a.textContent="Ainda não há perguntas sobre este produto.";t.appendChild(a);return}e.forEach(e=>{const a=document.createElement("article");a.className="pergunta-card premium-qa-item";const o=document.createElement("div");o.className="pergunta-texto";const n=document.createElement("span");n.className="qa-label";n.textContent="PERGUNTA";const r=document.createElement("p");r.className="qa-question-text";r.textContent=e.pergunta||"";const c=document.createElement("span");c.className="pergunta-autor";c.textContent=(e.nome_cliente||"Cliente")+(e.criado_em?" • "+formatarDataRelativa(e.criado_em):"");o.appendChild(n);o.appendChild(r);o.appendChild(c);a.appendChild(o);if(e.resposta){const t=document.createElement("div");t.className="pergunta-resposta";const o=document.createElement("span");o.className="qa-answer-label";o.textContent="RESPOSTA DA CORTEZ MÓVEIS";const n=document.createElement("p");n.textContent=e.resposta;t.appendChild(o);t.appendChild(n);e.respondida_em&&(t.appendChild(Object.assign(document.createElement("span"),{className:"pergunta-resposta-data",textContent:formatarDataRelativa(e.respondida_em)})));a.appendChild(t)}else if(administradorLogado){const t=document.createElement("div");t.className="pergunta-admin-acoes";const o=document.createElement("button");o.type="button";o.className="btn-responder";o.textContent="Responder";o.addEventListener("click",()=>abrirCampoResposta(e,a));t.appendChild(o);a.appendChild(t)}t.appendChild(a)})}
