@@ -18,7 +18,7 @@
 
     <link
         rel="stylesheet"
-        href="/css/mobile.css?v=12"
+        href="/css/mobile.css?v=13"
     >
 </head>
 
@@ -632,35 +632,7 @@
         defer
     ></script>
 
-    <script>
-        // Botão fixo de orçamento (mobile) — aparece só na página do produto
-        (function () {
-            function sincronizar() {
-                var vp = document.getElementById("view-produto");
-                var visivel = vp && vp.style.display === "block";
-                var btn = document.getElementById("btn-orcamento-fixo");
-                if (visivel && !btn) {
-                    btn = document.createElement("button");
-                    btn.type = "button";
-                    btn.id = "btn-orcamento-fixo";
-                    btn.className = "btn-orcamento-fixo";
-                    btn.textContent = "\uD83D\uDCAC Solicitar or\u00E7amento";
-                    btn.addEventListener("click", function () {
-                        if (typeof abrirModalOrcamento === "function") abrirModalOrcamento();
-                    });
-                    document.body.appendChild(btn);
-                } else if (!visivel && btn) {
-                    btn.remove();
-                }
-            }
-            var vp = document.getElementById("view-produto");
-            if (vp && window.MutationObserver) {
-                new MutationObserver(sincronizar).observe(vp, { attributes: true, attributeFilter: ["style"] });
-            }
-            document.addEventListener("DOMContentLoaded", sincronizar);
-            setTimeout(sincronizar, 800);
-        })();
-    </script>
+
 
 </body>
 </html>

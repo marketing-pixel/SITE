@@ -1,7 +1,7 @@
 /* ==================================================================
    VERSÃO MOBILE — refinamentos para celular (até 480px)
    Produto em coluna única, toque confortável, filtros roláveis,
-   botão de orçamento fixo no rodapé, tabelas legíveis.
+   botão de orçamento abaixo do carrinho, tabelas legíveis.
    ================================================================== */
 @media (max-width: 480px) {
 
@@ -140,23 +140,6 @@
     .footer-contatos { flex-direction: column; gap: 12px; }
     .copy { font-size: 0.8rem; }
 }
-
-/* ==================================================================
-   BOTÃO FIXO DE ORÇAMENTO (mobile) — aparece só na página do produto
-   ================================================================== */
-.btn-orcamento-fixo { display: none; }
-
-@media (max-width: 600px) {
-    body:has(#view-produto[style*="block"]) .btn-orcamento-fixo {
-        display: flex; position: fixed; left: 12px; right: 12px; bottom: 12px;
-        z-index: 55; align-items: center; justify-content: center; gap: 8px;
-        background: #16a34a; color: #fff; border: none; border-radius: 12px;
-        padding: 15px 18px; font-weight: 700; font-size: 1rem;
-        box-shadow: 0 8px 24px rgba(0,0,0,0.28); cursor: pointer;
-    }
-    .btn-orcamento-fixo:active { transform: scale(0.98); }
-}
-
 
 /* ===== Ajustes mobile do novo detalhe premium ===== */
 @media (max-width: 900px) {
@@ -888,16 +871,6 @@
         align-items: center;
     }
 
-    /* Barra fixa e botão topo não se sobrepõem */
-    .btn-orcamento-fixo {
-        left: 10px !important;
-        right: 10px !important;
-        bottom: 10px !important;
-        min-height: 50px;
-        border-radius: 14px !important;
-        z-index: 1500 !important;
-    }
-
     #premium-back-top {
         right: 12px !important;
         bottom: 76px !important;
@@ -1090,7 +1063,7 @@
     }
 
     .pagina-produto {
-        padding: 12px 10px 100px !important;
+        padding: 12px 10px 30px !important;
     }
 
     .voltar {
@@ -1201,8 +1174,11 @@
         min-height: 46px;
     }
 
-    .btn-orcamento-fixo {
-        min-height: 46px !important;
+    .pp-btn-orcamento {
+        display: block !important;
+        width: 100% !important;
+        min-height: 46px;
+        margin-top: 10px !important;
         padding: 12px 14px !important;
         font-size: .88rem !important;
         border-radius: 12px !important;
@@ -1331,9 +1307,10 @@
     }
 
     .header-cta {
-        min-height: 38px !important;
-        margin-top: 3px !important;
-        padding: 7px 10px !important;
-        font-size: .82rem !important;
+        min-height: 36px !important;
+        margin-top: 0 !important;
+        padding: 7px 9px !important;
+        font-size: .83rem !important;
+        box-shadow: none !important;
     }
 }
