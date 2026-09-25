@@ -2850,12 +2850,6 @@
             transform: translateY(-1px);
             box-shadow: 0 7px 15px rgba(22,45,71,.10);
         }
-
-        .btn-categoria-renomear {
-            background: linear-gradient(135deg,#162d47,#2c5f8a);
-            color: #fff;
-        }
-
         .btn-categoria-excluir {
             background: linear-gradient(135deg,#dc2626,#f87171);
             color: #fff;
@@ -2976,12 +2970,11 @@
 
             .categoria-acoes {
                 width: 100%;
-                display: grid;
-                grid-template-columns: 36px 1fr 1fr;
+                justify-content: flex-end;
             }
 
             .btn-categoria {
-                width: 100%;
+                width: auto;
                 justify-content: center;
             }
 
@@ -3661,7 +3654,7 @@
     </script>
 
     <script
-        src="/js/admin.js?v=12"
+        src="/js/admin.js?v=13"
         defer
     ></script>
     <script
