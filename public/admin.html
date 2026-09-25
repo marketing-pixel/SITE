@@ -4746,7 +4746,222 @@
             }
         }
 
-</style>
+
+        /* =========================================================
+           PAINEL ADM — LAYOUT FLUIDO PARA TELAS DE PC
+           O painel acompanha a largura disponível sem criar
+           overflow horizontal ou componentes apertados.
+        ========================================================= */
+        html,
+        body {
+            width: 100%;
+            max-width: 100%;
+            overflow-x: hidden;
+        }
+
+        .dashboard-header {
+            width: 100%;
+            min-width: 0;
+            padding: clamp(14px, 1.55vw, 22px) clamp(18px, 2.5vw, 34px);
+        }
+
+        .dashboard-header h1 {
+            min-width: 0;
+            font-size: clamp(1.05rem, 1.15vw, 1.3rem);
+            line-height: 1.25;
+            overflow-wrap: anywhere;
+        }
+
+        .dashboard-header .acoes {
+            min-width: 0;
+            max-width: 100%;
+            flex-wrap: wrap;
+            justify-content: flex-end;
+        }
+
+        .admin-header-ferramentas {
+            min-width: 0;
+            max-width: 100%;
+            flex-wrap: wrap;
+        }
+
+        .dashboard-content {
+            width: 100%;
+            max-width: 1440px;
+            padding: clamp(18px, 2.25vw, 32px);
+        }
+
+        .toolbar {
+            min-width: 0;
+        }
+
+        .toolbar-titulo {
+            min-width: 0;
+            flex: 1 1 360px;
+        }
+
+        .toolbar-acoes {
+            min-width: 0;
+            max-width: 100%;
+        }
+
+        .toolbar-acoes button {
+            max-width: 100%;
+        }
+
+        table {
+            width: 100%;
+            max-width: 100%;
+            table-layout: auto;
+        }
+
+        th,
+        td {
+            overflow-wrap: anywhere;
+            word-break: normal;
+        }
+
+        .btn-tabela {
+            max-width: 100%;
+        }
+
+        @media (min-width: 1201px) {
+            .dashboard-content {
+                padding-left: clamp(24px, 2.4vw, 38px);
+                padding-right: clamp(24px, 2.4vw, 38px);
+            }
+        }
+
+        @media (max-width: 1180px) and (min-width: 801px) {
+            .dashboard-header {
+                align-items: flex-start;
+            }
+
+            .dashboard-header .acoes {
+                gap: 8px;
+            }
+
+            .admin-header-ferramentas {
+                gap: 8px;
+            }
+
+            .btn-entrar-site-text {
+                max-width: min(34vw, 280px);
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+            }
+
+            .dashboard-content {
+                padding: 22px clamp(18px, 2.4vw, 28px) 30px;
+            }
+
+            .toolbar {
+                gap: 16px;
+            }
+
+            .toolbar-titulo h2 {
+                font-size: clamp(1.1rem, 1.8vw, 1.45rem);
+            }
+
+            .toolbar-titulo p {
+                max-width: 62ch;
+            }
+        }
+
+        @media (max-width: 1020px) and (min-width: 801px) {
+            .dashboard-header {
+                flex-wrap: wrap;
+            }
+
+            .dashboard-header h1 {
+                flex: 1 1 100%;
+            }
+
+            .dashboard-header .acoes {
+                width: 100%;
+                justify-content: flex-end;
+            }
+
+            .toolbar {
+                align-items: flex-start;
+            }
+
+            .toolbar-acoes {
+                width: 100%;
+                justify-content: flex-end;
+            }
+
+            .btn-categoria-topo,
+            .toolbar-acoes .btn-novo {
+                flex: 0 1 auto;
+            }
+
+            table {
+                font-size: .9rem;
+            }
+
+            th,
+            td {
+                padding: 11px 10px;
+            }
+        }
+
+        @media (max-width: 900px) and (min-width: 601px) {
+            .dashboard-header {
+                padding: 14px 18px;
+            }
+
+            .dashboard-header .acoes {
+                justify-content: flex-start;
+            }
+
+            .dashboard-content {
+                max-width: 100%;
+                padding: 18px;
+            }
+
+            .toolbar {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .toolbar-acoes {
+                width: 100%;
+                justify-content: flex-start;
+            }
+
+            table {
+                display: block;
+                overflow-x: auto;
+                white-space: nowrap;
+                -webkit-overflow-scrolling: touch;
+            }
+
+            th,
+            td {
+                white-space: nowrap;
+                overflow-wrap: normal;
+            }
+
+            .modal-overlay.aberto {
+                padding: 14px;
+            }
+
+            .modal-produto-box {
+                width: min(96vw, 900px);
+                max-width: 96vw;
+            }
+        }
+
+        @media (min-width: 601px) {
+            .modal-produto-box {
+                width: min(1180px, calc(100vw - 48px));
+                max-width: calc(100vw - 48px);
+            }
+        }
+
+    </style>
 </head>
 
 <body>
