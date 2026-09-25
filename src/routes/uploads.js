@@ -138,8 +138,9 @@ function enviarParaCloudinary(file, folder) {
         }, TIMEOUT_CLOUDINARY_MS);
 
         try {
+            const resourceType = file.mimetype.startsWith('video/') ? 'video' : 'image';
             stream = cloudinary.uploader.upload_stream(
-                { folder, resource_type: 'image' },
+                { folder, resource_type: resourceType },
                 finalizar
             );
             stream.once('error', erro => finalizar(erro));
