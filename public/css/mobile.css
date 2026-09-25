@@ -1308,9 +1308,19 @@
 
     .header-cta {
         min-height: 36px !important;
+        height: 36px !important;
         margin-top: 0 !important;
         padding: 7px 9px !important;
+        box-sizing: border-box !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: flex-start !important;
+        font-family: inherit !important;
         font-size: .83rem !important;
+        line-height: normal !important;
+        font-weight: 650 !important;
+        color: var(--azul-800) !important;
+        background: transparent !important;
         box-shadow: none !important;
     }
 }
