@@ -1,0 +1,39 @@
+name: Fix review save
+on:
+  push:
+    branches: [main]
+
+jobs:
+  fix:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - name: Corrigir variável da avaliação
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p = Path('src/routes/produtos.js')
+          s = p.read_text(encoding='utf-8')
+          old = 'const c=validarId(n.cor_id);'
+          new = 'const corId=validarId(n.cor_id);'
+          if old not in s:
+              print('Declaração já corrigida ou não encontrada; nada a fazer.')
+              raise SystemExit(0)
+          s = s.replace(old, new, 1)
+          s = s.replace('if(c&&0===(await pool.query("SELECT id FROM cores WHERE id=$1 AND produto_id=$2",[c,a])).rows.length)', 'if(corId&&0===(await pool.query("SELECT id FROM cores WHERE id=$1 AND produto_id=$2",[corId,a])).rows.length)', 1)
+          s = s.replace('[a,t,i,e,null,c]', '[a,t,i,e,null,corId]', 1)
+          p.write_text(s, encoding='utf-8')
+          PY
+      - name: Commitar correção
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add src/routes/produtos.js
+          if git diff --cached --quiet; then
+            echo "Nenhuma alteração necessária."
+          else
+            git commit -m "Corrige salvamento de avaliação"
+            git push
+          fi
