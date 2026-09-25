@@ -3225,3 +3225,121 @@ body.cart-modal-open {
         padding: 13px 20px !important;
     }
 }
+
+
+/* ==================================================================
+   DESKTOP FLUIDO — ADAPTAÇÃO AO TAMANHO DA TELA
+   ================================================================== */
+html,
+body {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: clip;
+}
+
+@media (min-width: 601px) and (max-width: 1360px) {
+    .header-inner {
+        width: 100%;
+        max-width: 1200px;
+        padding-left: clamp(14px, 2vw, 20px);
+        padding-right: clamp(14px, 2vw, 20px);
+        gap: clamp(10px, 1.6vw, 20px);
+    }
+
+    .header-logo {
+        max-width: clamp(118px, 11vw, 150px);
+    }
+
+    .header-nav {
+        gap: clamp(12px, 1.8vw, 26px);
+        min-width: 0;
+    }
+
+    .container {
+        width: 100%;
+        max-width: 1200px;
+        padding-left: clamp(14px, 2vw, 20px);
+        padding-right: clamp(14px, 2vw, 20px);
+    }
+
+    .guia-section,
+    .catalogo-section,
+    .sobre-section,
+    .orcamento-section,
+    .contato-section {
+        padding-left: clamp(14px, 2vw, 20px);
+        padding-right: clamp(14px, 2vw, 20px);
+    }
+
+    .guia-grid,
+    .grid-produtos {
+        width: 100%;
+        max-width: 1200px;
+    }
+
+    .section-head {
+        width: 100%;
+    }
+}
+
+@media (min-width: 601px) and (max-width: 1100px) {
+    .header-nav {
+        gap: 10px;
+    }
+
+    .header-nav a,
+    .header-nav button.menu-link {
+        font-size: .84rem;
+    }
+
+    .header-cta {
+        padding: 8px 13px;
+        font-size: .82rem;
+    }
+
+    .guia-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 20px;
+    }
+
+    .grid-produtos {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 18px;
+    }
+
+    .produto-card {
+        min-width: 0;
+    }
+
+    .section-head h2 {
+        font-size: clamp(1.8rem, 3.2vw, 2.3rem);
+    }
+
+    .section-head p {
+        font-size: clamp(.92rem, 1.6vw, 1.1rem);
+    }
+}
+
+@media (min-width: 601px) and (max-width: 900px) {
+    .header-inner {
+        gap: 8px;
+    }
+
+    .header-logo {
+        max-width: 112px;
+    }
+
+    .header-nav {
+        gap: 7px;
+    }
+
+    .header-nav a,
+    .header-nav button.menu-link {
+        font-size: .76rem;
+    }
+
+    .header-cta {
+        padding: 7px 10px;
+        font-size: .76rem;
+    }
+}
