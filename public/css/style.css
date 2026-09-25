@@ -3094,3 +3094,82 @@ body.cart-modal-open {
     }
 }
 
+
+/* ==================================================================
+   SETAS 3D — PADRÃO PARA TODOS OS BOTÕES DE NAVEGAÇÃO
+   ================================================================== */
+
+.seta-3d {
+    display: inline-grid;
+    place-items: center;
+    flex: 0 0 auto;
+    width: 23px;
+    height: 23px;
+    vertical-align: middle;
+    pointer-events: none;
+}
+
+.seta-3d-svg {
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+    transform: rotate(var(--seta-rotacao,0deg));
+    filter: drop-shadow(2px 3px 0 rgba(8,20,33,.23)) drop-shadow(0 5px 8px rgba(22,45,71,.16));
+}
+
+.seta-3d-sombra {
+    fill: #0d1b2a;
+    opacity: .82;
+}
+
+.seta-3d-face {
+    fill: linear-gradient(135deg,#f97316,#fb923c);
+    fill: #f97316;
+}
+
+.seta-3d-brilho {
+    fill: none;
+    stroke: rgba(255,255,255,.82);
+    stroke-width: 1.4;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    opacity: .92;
+}
+
+.pp-seta {
+    display: grid;
+    place-items: center;
+    width: 46px;
+    height: 46px;
+    padding: 0;
+    background: rgba(255,255,255,.94);
+    border: 1px solid rgba(22,45,71,.11);
+    box-shadow: 0 10px 24px rgba(15,34,54,.14);
+}
+
+.pp-seta .seta-3d {
+    width: 25px;
+    height: 25px;
+    transition: transform .22s cubic-bezier(.2,.8,.2,1), filter .22s ease;
+}
+
+.pp-seta:hover .seta-3d-svg {
+    filter: drop-shadow(3px 4px 0 rgba(8,20,33,.25)) drop-shadow(0 7px 12px rgba(22,45,71,.19));
+}
+
+.interacoes-voltar .seta-3d,
+#btn-voltar-catalogo .seta-3d {
+    width: 20px;
+    height: 20px;
+}
+
+#premium-back-top::before {
+    content: "";
+    display: block;
+    width: 20px;
+    height: 20px;
+    background: #f97316;
+    clip-path: polygon(50% 5%, 90% 45%, 68% 45%, 68% 94%, 32% 94%, 32% 45%, 10% 45%);
+    filter: drop-shadow(2px 3px 0 rgba(8,20,33,.28)) drop-shadow(0 5px 8px rgba(22,45,71,.15));
+    transform: translateY(-1px);
+}
