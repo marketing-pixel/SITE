@@ -3008,3 +3008,89 @@ body.cart-modal-open {
         padding: 12px 14px 14px;
     }
 }
+
+
+/* Compartilhamento — ícone de três pontos interligados, acabamento premium */
+.pp-compartilhar {
+    overflow: hidden;
+    isolation: isolate;
+    background:
+        linear-gradient(180deg, rgba(255,255,255,.98), rgba(247,250,253,.96));
+    border: 1px solid rgba(22,45,71,.10);
+    color: var(--azul-800);
+    box-shadow:
+        0 8px 20px rgba(15,34,54,.10),
+        inset 0 1px 0 rgba(255,255,255,.95);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+}
+
+.pp-compartilhar::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: linear-gradient(
+        120deg,
+        transparent 18%,
+        rgba(255,255,255,.82) 48%,
+        transparent 78%
+    );
+    transform: translateX(-120%);
+    transition: transform .65s cubic-bezier(.2,.75,.2,1);
+    pointer-events: none;
+    z-index: -1;
+}
+
+.pp-compartilhar:hover {
+    transform: translateY(-3px) scale(1.05);
+    border-color: rgba(249,115,22,.20);
+    box-shadow:
+        0 14px 30px rgba(15,34,54,.15),
+        0 0 0 4px rgba(249,115,22,.05);
+}
+
+.pp-compartilhar:hover::before {
+    transform: translateX(120%);
+}
+
+.pp-compartilhar-icone {
+    width: 21px;
+    height: 21px;
+    display: block;
+    overflow: visible;
+}
+
+.pp-compartilhar-icone circle {
+    fill: #fff;
+    stroke: currentColor;
+    stroke-width: 1.8;
+    vector-effect: non-scaling-stroke;
+    transition: fill .22s ease, stroke .22s ease, transform .22s ease;
+}
+
+.pp-compartilhar-icone path {
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.8;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    vector-effect: non-scaling-stroke;
+}
+
+.pp-compartilhar:hover .pp-compartilhar-icone circle {
+    fill: #f97316;
+    stroke: #f97316;
+}
+
+.pp-compartilhar:hover .pp-compartilhar-icone path {
+    stroke: #f97316;
+}
+
+@media (max-width: 600px) {
+    .pp-compartilhar-icone {
+        width: 19px;
+        height: 19px;
+    }
+}
+
