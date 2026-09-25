@@ -876,6 +876,21 @@ function alterarQuantidadeCarrinho(indice,diferenca){
     renderCarrinho();
     atualizarBotaoCarrinhoProduto();
 }
+function definirQuantidadeCarrinho(indice,valor){
+    const carrinho=obterCarrinho();
+    const item=carrinho[indice];
+    if(!item)return;
+    const texto=String(valor??"").trim().replace(",",".");
+    const quantidade=Math.floor(Number(texto));
+    if(!Number.isFinite(quantidade)||quantidade<1){
+        renderCarrinho();
+        return;
+    }
+    item.quantidade=quantidade;
+    salvarCarrinho(carrinho);
+    renderCarrinho();
+    atualizarBotaoCarrinhoProduto();
+}
 function removerItemCarrinho(indice){
     const carrinho=obterCarrinho();
     if(!carrinho[indice])return;
@@ -939,9 +954,23 @@ function renderCarrinho(){
         menos.textContent="−";
         menos.setAttribute("aria-label","Diminuir quantidade");
         menos.addEventListener("click",()=>alterarQuantidadeCarrinho(index,-1));
-        const qtd=document.createElement("span");
-        qtd.className="cart-qty";
-        qtd.textContent=String(Number(item.quantidade||1));
+        const qtd=document.createElement("input");
+        qtd.type="number";
+        qtd.className="cart-qty-input";
+        qtd.inputMode="numeric";
+        qtd.min="1";
+        qtd.step="1";
+        qtd.value=String(Math.max(1,Math.floor(Number(item.quantidade||1))));
+        qtd.setAttribute("aria-label","Quantidade de "+(item.titulo||"produto"));
+        qtd.title="Digite a quantidade";
+        qtd.addEventListener("change",()=>definirQuantidadeCarrinho(index,qtd.value));
+        qtd.addEventListener("keydown",event=>{
+            if(event.key==="Enter"){
+                event.preventDefault();
+                definirQuantidadeCarrinho(index,qtd.value);
+                qtd.blur();
+            }
+        });
         const mais=document.createElement("button");
         mais.type="button";
         mais.className="cart-qty-btn";
