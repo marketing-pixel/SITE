@@ -881,7 +881,7 @@ function definirQuantidadeCarrinho(indice,valor){
     const item=carrinho[indice];
     if(!item)return;
     const texto=String(valor??"").trim();
-    const digitos=texto.replace(/\\D/g,"");
+    const digitos=texto.replace(/\D/g,"");
     const quantidade=Number(digitos);
     if(!digitos||!Number.isSafeInteger(quantidade)||quantidade<1){
         renderCarrinho();
@@ -963,7 +963,7 @@ function renderCarrinho(){
         qtd.maxLength=15;
         qtd.value=Math.max(1,Math.floor(Number(item.quantidade||1))).toLocaleString("pt-BR");
         qtd.setAttribute("aria-label","Quantidade de "+(item.titulo||"produto"));
-        qtd.title="Digite a quantidade. Ex.: 6.000";
+
         const confirmarQuantidade=()=>{
             const texto=qtd.value.replace(/\\D/g,"");
             qtd.value=texto?Number(texto).toLocaleString("pt-BR"):"";
