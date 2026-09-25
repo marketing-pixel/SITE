@@ -463,7 +463,7 @@ async function abrirNotificacao(item){
     if(!item||!item.produto_id)return;
     await marcarNotificacaoLida(item.id);
     const pagina=item.tipo==="pergunta"?"perguntas":"avaliacoes";
-    window.open("/?produto="+encodeURIComponent(item.produto_id)+"&pagina="+pagina,"_blank","noopener");
+    window.open("/?modo=admin&produto="+encodeURIComponent(item.produto_id)+"&pagina="+pagina,"_blank","noopener");
     await carregarNotificacoes();
 }
 
