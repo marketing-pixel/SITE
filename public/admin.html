@@ -5041,6 +5041,134 @@
             }
         }
 
+
+        /* =========================================================
+           PAINEL ADM — CATEGORIAS FLUIDAS NO PC
+           Ajuste final para telas desktop e notebooks.
+        ========================================================= */
+        @media (min-width: 601px) {
+            .dashboard-content {
+                width: 100%;
+                max-width: 1600px;
+                min-width: 0;
+                padding-inline: clamp(14px, 2.2vw, 34px);
+            }
+
+            .toolbar {
+                width: 100%;
+                min-width: 0;
+            }
+
+            .toolbar-titulo {
+                min-width: 0;
+                max-width: 100%;
+            }
+
+            .toolbar-titulo h2,
+            .toolbar-titulo p {
+                max-width: 100%;
+                overflow-wrap: anywhere;
+            }
+
+            .toolbar-acoes {
+                min-width: 0;
+                max-width: 100%;
+            }
+
+            .categoria-separador,
+            .categoria-separador td {
+                width: 100%;
+                max-width: 100%;
+                min-width: 0;
+            }
+
+            .categoria-linha {
+                width: 100%;
+                max-width: 100%;
+                min-width: 0;
+                display: grid;
+                grid-template-columns: minmax(0, 1fr) auto;
+                align-items: center;
+                gap: clamp(8px, 1.5vw, 18px);
+                padding-inline: clamp(10px, 1.5vw, 16px);
+                overflow: hidden;
+            }
+
+            .categoria-nome-area {
+                min-width: 0;
+                max-width: 100%;
+                display: flex;
+                align-items: center;
+                flex-wrap: wrap;
+                gap: clamp(6px, 1vw, 10px);
+                overflow: hidden;
+            }
+
+            .categoria-nome {
+                min-width: 0;
+                max-width: 100%;
+                overflow-wrap: anywhere;
+                word-break: break-word;
+                text-overflow: ellipsis;
+            }
+
+            .categoria-contador {
+                flex: 0 0 auto;
+                white-space: nowrap;
+            }
+
+            .categoria-acoes {
+                min-width: 0;
+                flex: 0 0 auto;
+                display: inline-flex;
+                align-items: center;
+                justify-content: flex-end;
+                gap: 7px;
+                white-space: nowrap;
+            }
+
+            .categoria-lapis {
+                flex: 0 0 34px;
+            }
+
+            .btn-categoria {
+                flex: 0 0 auto;
+                white-space: nowrap;
+            }
+        }
+
+        @media (min-width: 601px) and (max-width: 1180px) {
+            .dashboard-header {
+                padding-inline: clamp(14px, 2vw, 24px);
+            }
+
+            .dashboard-content {
+                padding-inline: clamp(12px, 1.8vw, 22px);
+            }
+
+            .categoria-linha {
+                padding: 11px 12px;
+            }
+
+            .categoria-nome {
+                font-size: .86rem;
+            }
+
+            .categoria-contador {
+                font-size: .62rem;
+            }
+
+            table {
+                width: 100%;
+                max-width: 100%;
+            }
+
+            th,
+            td {
+                padding: 10px 9px;
+            }
+        }
+
     </style>
 </head>
 
