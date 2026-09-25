@@ -561,30 +561,88 @@ function renderProduto(){
     comentario.placeholder="Conte o que achou do produto.";
     composer.appendChild(comentario);
 
+    const fotoWrap=document.createElement("div");
+    fotoWrap.className="avaliacao-foto-upload";
+
     const fotoLabel=document.createElement("label");
-    fotoLabel.className="avaliacao-foto-label";
-    fotoLabel.textContent="Adicionar foto do produto (opcional)";
+    fotoLabel.className="avaliacao-foto-dropzone";
+    const fotoIcon=document.createElement("span");
+    fotoIcon.className="avaliacao-foto-icone";
+    fotoIcon.textContent="＋";
+
+    const fotoCopy=document.createElement("span");
+    fotoCopy.className="avaliacao-foto-copy";
+    const fotoStrong=document.createElement("strong");
+    fotoStrong.textContent="Adicionar fotos";
+    const fotoSmall=document.createElement("small");
+    fotoSmall.textContent="Mostre o produto e sua experiência (opcional)";
+    fotoCopy.appendChild(fotoStrong);
+    fotoCopy.appendChild(fotoSmall);
+
+    const fotoAction=document.createElement("span");
+    fotoAction.className="avaliacao-foto-action";
+    fotoAction.textContent="Selecionar";
+
     const foto=document.createElement("input");
     foto.type="file";
     foto.className="avaliacao-foto";
-    foto.accept="image/*";
+    foto.accept="image/jpeg,image/png,image/webp";
+    foto.multiple=true;
+    foto.hidden=true;
+
+    fotoLabel.appendChild(fotoIcon);
+    fotoLabel.appendChild(fotoCopy);
+    fotoLabel.appendChild(fotoAction);
     fotoLabel.appendChild(foto);
-    composer.appendChild(fotoLabel);
+    fotoWrap.appendChild(fotoLabel);
+
+    const fotoHint=document.createElement("div");
+    fotoHint.className="avaliacao-foto-hint";
+    fotoHint.textContent="PNG, JPG ou WebP • até 5 MB por foto";
+    fotoWrap.appendChild(fotoHint);
 
     const fotoPreview=document.createElement("div");
-    fotoPreview.className="avaliacao-foto-preview";
-    composer.appendChild(fotoPreview);
+    fotoPreview.className="avaliacao-foto-preview premium-foto-preview";
+    fotoWrap.appendChild(fotoPreview);
+    composer.appendChild(fotoWrap);
 
-    foto.addEventListener("change",()=>{
+    function mostrarFotos(files){
         fotoPreview.innerHTML="";
-        const file=foto.files?.[0];
-        if(!file)return;
-        if(!file.type.startsWith("image/")){foto.value="";return}
-        const image=document.createElement("img");
-        image.alt="Pré-visualização da foto";
-        const reader=new FileReader();
-        reader.onload=e=>{image.src=e.target.result;fotoPreview.appendChild(image)};
-        reader.readAsDataURL(file);
+        Array.from(files||[]).slice(0,6).forEach(file=>{
+            if(!file.type.startsWith("image/")) return;
+            const card=document.createElement("div");
+            card.className="avaliacao-foto-thumb";
+            const image=document.createElement("img");
+            image.alt="Pré-visualização da foto";
+            const reader=new FileReader();
+            reader.onload=event=>{image.src=event.target.result};
+            reader.readAsDataURL(file);
+            card.appendChild(image);
+            fotoPreview.appendChild(card);
+        });
+        const count=fotoPreview.children.length;
+        fotoStrong.textContent=count?count+" foto(s) selecionada(s)":"Adicionar fotos";
+        fotoLabel.classList.toggle("com-arquivos",count>0);
+    }
+
+    foto.addEventListener("change",()=>mostrarFotos(foto.files));
+
+    fotoLabel.addEventListener("dragover",event=>{
+        event.preventDefault();
+        fotoLabel.classList.add("arrastando");
+    });
+    fotoLabel.addEventListener("dragleave",()=>fotoLabel.classList.remove("arrastando"));
+    fotoLabel.addEventListener("drop",event=>{
+        event.preventDefault();
+        fotoLabel.classList.remove("arrastando");
+        const files=Array.from(event.dataTransfer.files||[])
+            .filter(file=>file.type.startsWith("image/"))
+            .slice(0,6);
+        if(!files.length) return;
+        const transfer=new DataTransfer();
+        files.forEach(file=>transfer.items.add(file));
+        foto.files=transfer.files;
+        mostrarFotos(foto.files);
     });
 
     const enviar=document.createElement("button");
