@@ -1954,3 +1954,94 @@ img[data-zoom] {
         display: none;
     }
 }
+
+
+/* ==================================================================
+   BOTÃO PREMIUM — VOLTAR AO PRODUTO
+   ================================================================== */
+.interacoes-page-top {
+    margin-bottom: 22px;
+}
+
+.interacoes-voltar {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    min-height: 42px;
+    padding: 10px 17px 10px 13px;
+    border: 1px solid rgba(22,45,71,.11);
+    border-radius: 999px;
+    background: linear-gradient(180deg, rgba(255,255,255,.98), rgba(248,251,254,.96));
+    color: var(--azul-800);
+    box-shadow:
+        0 8px 22px rgba(15,34,54,.08),
+        inset 0 1px 0 rgba(255,255,255,.9);
+    font-size: .82rem;
+    font-weight: 850;
+    letter-spacing: .1px;
+    cursor: pointer;
+    transition:
+        transform .24s cubic-bezier(.2,.8,.2,1),
+        box-shadow .24s ease,
+        border-color .24s ease,
+        background .24s ease;
+}
+
+.interacoes-voltar::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: linear-gradient(110deg, transparent 25%, rgba(255,255,255,.75) 50%, transparent 75%);
+    transform: translateX(-120%);
+    transition: transform .65s cubic-bezier(.2,.75,.2,1);
+    pointer-events: none;
+}
+
+.interacoes-voltar:hover {
+    transform: translateX(-3px) translateY(-2px);
+    border-color: rgba(44,95,138,.20);
+    box-shadow:
+        0 14px 30px rgba(15,34,54,.12),
+        0 0 0 3px rgba(249,115,22,.05);
+}
+
+.interacoes-voltar:hover::before {
+    transform: translateX(120%);
+}
+
+.interacoes-back-icon {
+    display: inline-grid;
+    place-items: center;
+    width: 25px;
+    height: 25px;
+    border-radius: 50%;
+    background: #eef4f9;
+    color: var(--azul-800);
+    font-size: 1rem;
+    line-height: 1;
+    transition: transform .24s ease, background .24s ease;
+}
+
+.interacoes-voltar:hover .interacoes-back-icon {
+    transform: translateX(-2px);
+    background: #e5eef7;
+}
+
+@media (max-width: 600px) {
+    .interacoes-page-top {
+        margin-bottom: 18px;
+    }
+
+    .interacoes-voltar {
+        min-height: 40px;
+        padding: 9px 15px 9px 11px;
+        font-size: .79rem;
+    }
+
+    .interacoes-back-icon {
+        width: 24px;
+        height: 24px;
+    }
+}
