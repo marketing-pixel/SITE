@@ -76,7 +76,7 @@ function renderProduto(){
     const compartilhar=document.createElement("button");
     compartilhar.type="button";
     compartilhar.className="pp-compartilhar";
-    compartilhar.textContent="↗";
+    compartilhar.innerHTML='<svg class="pp-compartilhar-icone" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="18" cy="5" r="2.35"></circle><circle cx="6" cy="12" r="2.35"></circle><circle cx="18" cy="19" r="2.35"></circle><path d="M8.05 10.95 15.95 6.05"></path><path d="M8.05 13.05 15.95 17.95"></path></svg>';
     compartilhar.setAttribute("aria-label","Compartilhar produto");
     compartilhar.addEventListener("click",event=>{event.stopPropagation();compartilharProduto()});
     palco.appendChild(compartilhar);
