@@ -2401,30 +2401,179 @@
         }
 
  
-        /* ===== CENTRAL DE NOTIFICAÇÕES PREMIUM ===== */
-        .admin-header-ferramentas { display:flex; align-items:center; gap:8px; }
-        .btn-entrar-site,.btn-notificacoes {
-            border:1px solid rgba(255,255,255,.18)!important;
-            background:rgba(255,255,255,.10)!important;
-            color:#fff!important;
-            backdrop-filter:blur(10px);
-            box-shadow:0 8px 24px rgba(0,0,0,.10);
-            transition:transform .22s ease, background .22s ease, box-shadow .22s ease;
+        /* ===== FERRAMENTAS DO CABEÇALHO ADM — ACABAMENTO PREMIUM ===== */
+        .admin-header-ferramentas {
+            display:flex;
+            align-items:center;
+            gap:10px;
         }
-        .btn-entrar-site { padding:9px 13px!important; border-radius:10px!important; white-space:nowrap; }
-        .btn-entrar-site:hover,.btn-notificacoes:hover { background:rgba(255,255,255,.18)!important; transform:translateY(-1px); }
-        .notificacoes-wrapper { position:relative; }
+
+        .btn-entrar-site,
         .btn-notificacoes {
-            position:relative; width:42px; height:40px; padding:0!important; border-radius:11px!important;
-            display:grid; place-items:center; cursor:pointer;
+            position:relative;
+            border:1px solid rgba(255,255,255,.20)!important;
+            background:
+                linear-gradient(180deg,rgba(255,255,255,.15),rgba(255,255,255,.07))!important;
+            color:#fff!important;
+            backdrop-filter:blur(12px);
+            -webkit-backdrop-filter:blur(12px);
+            box-shadow:
+                0 10px 26px rgba(0,0,0,.14),
+                inset 0 1px 0 rgba(255,255,255,.16);
+            transition:
+                transform .24s cubic-bezier(.2,.8,.2,1),
+                background .24s ease,
+                box-shadow .24s ease,
+                border-color .24s ease;
         }
-        .notificacoes-icone { font-size:.8rem; line-height:1; }
+
+        .btn-entrar-site {
+            min-height:42px;
+            padding:8px 14px!important;
+            border-radius:12px!important;
+            white-space:nowrap;
+            display:inline-flex;
+            align-items:center;
+            gap:9px;
+            font-size:.78rem!important;
+            font-weight:800!important;
+            letter-spacing:.05px;
+        }
+
+        .btn-entrar-site::before {
+            content:"";
+            position:absolute;
+            inset:0;
+            border-radius:inherit;
+            background:linear-gradient(
+                110deg,
+                transparent 18%,
+                rgba(255,255,255,.18) 48%,
+                transparent 78%
+            );
+            transform:translateX(-120%);
+            transition:transform .7s cubic-bezier(.2,.75,.2,1);
+            pointer-events:none;
+        }
+
+        .btn-entrar-site:hover::before {
+            transform:translateX(120%);
+        }
+
+        .btn-entrar-site:hover,
+        .btn-notificacoes:hover {
+            background:
+                linear-gradient(180deg,rgba(255,255,255,.21),rgba(255,255,255,.10))!important;
+            transform:translateY(-2px);
+            border-color:rgba(255,255,255,.30)!important;
+            box-shadow:
+                0 16px 34px rgba(0,0,0,.18),
+                0 0 0 4px rgba(249,115,22,.07),
+                inset 0 1px 0 rgba(255,255,255,.22);
+        }
+
+        .btn-entrar-site:active,
+        .btn-notificacoes:active {
+            transform:translateY(0) scale(.985);
+        }
+
+        .btn-entrar-site-icone {
+            width:28px;
+            height:28px;
+            flex:0 0 28px;
+            display:grid;
+            place-items:center;
+            border-radius:9px;
+            background:linear-gradient(135deg,rgba(249,115,22,.98),rgba(251,146,60,.88));
+            box-shadow:
+                0 7px 16px rgba(249,115,22,.25),
+                inset 0 1px 0 rgba(255,255,255,.25);
+        }
+
+        .btn-entrar-site-icone svg {
+            width:16px;
+            height:16px;
+            fill:none;
+            stroke:#fff;
+            stroke-width:1.65;
+            stroke-linecap:round;
+            stroke-linejoin:round;
+        }
+
+        .btn-entrar-site-text {
+            position:relative;
+            z-index:1;
+        }
+
+        .notificacoes-wrapper {
+            position:relative;
+        }
+
+        .btn-notificacoes {
+            width:46px;
+            height:42px;
+            padding:0!important;
+            border-radius:12px!important;
+            display:grid;
+            place-items:center;
+            cursor:pointer;
+        }
+
+        .notificacoes-icone {
+            display:grid;
+            place-items:center;
+            width:25px;
+            height:25px;
+            color:#fff;
+            line-height:1;
+        }
+
+        .notificacoes-icone svg {
+            width:21px;
+            height:21px;
+            fill:none;
+            stroke:currentColor;
+            stroke-width:1.75;
+            stroke-linecap:round;
+            stroke-linejoin:round;
+            filter:drop-shadow(0 2px 5px rgba(0,0,0,.16));
+            transition:transform .25s cubic-bezier(.2,.8,.2,1), filter .25s ease;
+        }
+
+        .btn-notificacoes:hover .notificacoes-icone svg {
+            transform:translateY(-1px) rotate(-5deg);
+            filter:drop-shadow(0 4px 8px rgba(249,115,22,.24));
+        }
+
         .notificacoes-badge {
-            position:absolute; top:-5px; right:-5px; min-width:19px; height:19px; padding:0 5px;
-            display:grid; place-items:center; border-radius:999px;
-            background:linear-gradient(135deg,#f97316,#fb7185); color:#fff;
-            border:2px solid #162d47; font-size:.63rem; font-weight:900;
-            box-shadow:0 5px 14px rgba(249,115,22,.35);
+            position:absolute;
+            top:-6px;
+            right:-6px;
+            min-width:20px;
+            height:20px;
+            padding:0 5px;
+            display:grid;
+            place-items:center;
+            border-radius:999px;
+            background:linear-gradient(135deg,#f97316,#fb7185);
+            color:#fff;
+            border:2px solid #162d47;
+            font-size:.61rem;
+            font-weight:900;
+            box-shadow:
+                0 6px 15px rgba(249,115,22,.38),
+                0 0 0 2px rgba(249,115,22,.08);
+        }
+
+        .notificacoes-badge.pulsar {
+            animation:notificacao-badge-pulse .85s ease;
+        }
+
+        @keyframes notificacao-badge-pulse {
+            0% { transform:scale(1); }
+            35% { transform:scale(1.18); }
+            65% { transform:scale(.96); }
+            100% { transform:scale(1); }
         }
         .notificacoes-painel {
             position:absolute; top:calc(100% + 12px); right:0;
@@ -2473,8 +2622,20 @@
         @media (max-width:800px) { .admin-header-ferramentas{width:auto}.btn-entrar-site{padding:8px 10px!important;font-size:.76rem!important} }
         @media (max-width:500px) {
             .notificacoes-painel{position:fixed;top:76px;right:10px;left:10px;width:auto}
-            .admin-header-ferramentas{gap:6px}
         }
+        @media (max-width:800px) {
+            .admin-header-ferramentas { gap:7px; }
+            .btn-entrar-site { min-height:40px; padding:7px 10px!important; font-size:.72rem!important; }
+            .btn-entrar-site-icone { width:25px; height:25px; flex-basis:25px; }
+            .btn-entrar-site-icone svg { width:14px; height:14px; }
+            .btn-notificacoes { width:43px; height:40px; }
+        }
+
+        @media (max-width:500px) {
+            .btn-entrar-site-text { max-width:150px; overflow:hidden; text-overflow:ellipsis; }
+            .notificacoes-badge { top:-5px; right:-5px; }
+        }
+
     </style>
 </head>
 
@@ -2562,7 +2723,14 @@
                         id="btn-entrar-site"
                         class="btn-entrar-site"
                     >
-                        🌐 Entrar no site como administrador
+                        <span class="btn-entrar-site-icone" aria-hidden="true">
+                            <svg viewBox="0 0 24 24" focusable="false">
+                                <circle cx="12" cy="12" r="8.5"></circle>
+                                <path d="M3.5 12h17"></path>
+                                <path d="M12 3.5c2.2 2.35 3.35 5.2 3.35 8.5S14.2 18.15 12 20.5C9.8 18.15 8.65 15.3 8.65 12S9.8 5.85 12 3.5Z"></path>
+                            </svg>
+                        </span>
+                        <span class="btn-entrar-site-text">Entrar no site como administrador</span>
                     </button>
 
                     <div class="notificacoes-wrapper">
@@ -2573,7 +2741,12 @@
                             aria-label="Abrir notificações"
                             aria-expanded="false"
                         >
-                            <span class="notificacoes-icone">●</span>
+                            <span class="notificacoes-icone" aria-hidden="true">
+                                <svg viewBox="0 0 24 24" focusable="false">
+                                    <path d="M18 9.7V9a6 6 0 0 0-12 0v.7c0 2.15-.57 3.65-1.65 4.78A1.25 1.25 0 0 0 5.27 16.6h13.46a1.25 1.25 0 0 0 .92-2.12C18.57 13.35 18 11.85 18 9.7Z"></path>
+                                    <path d="M9.5 19a2.5 2.5 0 0 0 5 0"></path>
+                                </svg>
+                            </span>
                             <span id="notificacoes-badge" class="notificacoes-badge" hidden>0</span>
                         </button>
 
