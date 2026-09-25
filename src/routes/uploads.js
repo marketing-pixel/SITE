@@ -189,7 +189,8 @@ router.post('/', (req, res) => {
 
             return res.status(201).json({
                 caminho: resultado.secure_url,
-                public_id: resultado.public_id
+                public_id: resultado.public_id,
+                tipo_midia: req.file.mimetype.startsWith('video/') ? 'video' : 'imagem'
             });
         } catch (uploadError) {
             console.error('Erro ao enviar imagem ao Cloudinary:', uploadError);
