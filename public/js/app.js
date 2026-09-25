@@ -7,7 +7,7 @@ function renderProduto(){
     if(!layout||!produto)return;
     layout.innerHTML="";
     const voltarTopoProduto=document.getElementById("btn-voltar-catalogo");
-    if(voltarTopoProduto){voltarTopoProduto.style.display="inline-flex";voltarTopoProduto.textContent="← Voltar para produtos";}
+    if(voltarTopoProduto){voltarTopoProduto.classList.remove("oculto-qa");voltarTopoProduto.style.display="inline-flex";voltarTopoProduto.textContent="← Voltar para produtos";}
 
     const imagensCor=obterImagensDaCor(produto,corAtual);
     const imagens=imagensCor.length?imagensCor:(Array.isArray(produto.imagens)?produto.imagens:[]);
@@ -360,7 +360,7 @@ function renderProduto(){
     atualizarBotoesFavorito();
     atualizarDescricaoCorNaTela();
     atualizarModoAdministrador();
-}function renderPaginaPerguntas(){const voltarCatalogo=document.getElementById("btn-voltar-catalogo");if(voltarCatalogo)voltarCatalogo.style.display="none";
+}function renderPaginaPerguntas(){const voltarCatalogo=document.getElementById("btn-voltar-catalogo");if(voltarCatalogo)voltarCatalogo.classList.add("oculto-qa");
     const produto=produtoAtual;
     const layout=document.getElementById("produto-layout");
     if(!layout||!produto)return;
