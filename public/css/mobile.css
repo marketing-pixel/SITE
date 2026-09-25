@@ -1306,21 +1306,83 @@
         font-size: .83rem !important;
     }
 
+    /* Solicitar orçamento — CTA premium e destacado no menu */
     .header-cta {
+        position: relative !important;
         min-height: 36px !important;
         height: 36px !important;
-        margin-top: 0 !important;
-        padding: 7px 9px !important;
+        margin-top: 6px !important;
+        padding: 7px 11px 7px 12px !important;
         box-sizing: border-box !important;
         display: flex !important;
         align-items: center !important;
         justify-content: flex-start !important;
+        gap: 7px !important;
         font-family: inherit !important;
         font-size: .83rem !important;
         line-height: normal !important;
-        font-weight: 650 !important;
-        color: var(--azul-800) !important;
-        background: transparent !important;
-        box-shadow: none !important;
+        font-weight: 750 !important;
+        letter-spacing: .01em;
+        color: #fff !important;
+        background: linear-gradient(135deg, #f97316 0%, #fb8c24 48%, #ea580c 100%) !important;
+        border: 1px solid rgba(234,88,12,.72) !important;
+        border-radius: 11px !important;
+        box-shadow:
+            0 7px 15px rgba(249,115,22,.22),
+            inset 0 1px 0 rgba(255,255,255,.22) !important;
+        overflow: hidden;
+        transform: translateZ(0);
+    }
+
+    .header-cta::before {
+        content: "↗";
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 18px;
+        height: 18px;
+        flex: 0 0 18px;
+        border-radius: 6px;
+        color: #fff;
+        background: rgba(255,255,255,.18);
+        border: 1px solid rgba(255,255,255,.20);
+        font-size: .72rem;
+        font-weight: 800;
+        line-height: 1;
+    }
+
+    .header-cta::after {
+        content: "";
+        position: absolute;
+        top: -18px;
+        left: -38%;
+        width: 36%;
+        height: 72px;
+        transform: rotate(18deg);
+        background: linear-gradient(
+            90deg,
+            transparent,
+            rgba(255,255,255,.20),
+            transparent
+        );
+        animation: headerCtaShine 3.8s ease-in-out infinite;
+        pointer-events: none;
+    }
+
+    .header-cta:active {
+        transform: translateY(1px) scale(.99);
+        box-shadow:
+            0 4px 10px rgba(249,115,22,.18),
+            inset 0 1px 0 rgba(255,255,255,.16) !important;
+    }
+
+    @keyframes headerCtaShine {
+        0%, 58% { left: -38%; opacity: 0; }
+        68% { opacity: 1; }
+        82%, 100% { left: 125%; opacity: 0; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        .header-cta::after { animation: none; }
     }
 }
