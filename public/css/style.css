@@ -2045,3 +2045,9 @@ img[data-zoom] {
         height: 24px;
     }
 }
+
+
+/* O botão global do catálogo não aparece dentro de Perguntas/Avaliações. */
+#btn-voltar-catalogo.oculto-qa {
+    display: none !important;
+}
