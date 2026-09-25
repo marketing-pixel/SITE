@@ -535,7 +535,7 @@ function renderProduto(){
         corWrap.className="avaliacao-cor-field";
         const corLabel=document.createElement("label");
         corLabel.className="avaliacao-field-label";
-        corLabel.textContent="Qual cor você avaliou?";
+        corLabel.textContent="Qual cor você deseja avaliar?";
         corSelect=document.createElement("select");
         corSelect.className="avaliacao-cor-select";
         const primeiro=document.createElement("option");
