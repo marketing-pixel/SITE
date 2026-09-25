@@ -442,7 +442,7 @@ function renderProduto(){
     const back=document.createElement("button");
     back.type="button";
     back.className="interacoes-voltar";
-    back.textContent="← Voltar ao produto";
+    back.innerHTML="<span class=\"interacoes-back-icon\">←</span><span>Voltar ao produto</span>";
     back.addEventListener("click",voltarParaProduto);
     top.appendChild(back);
     const kicker=document.createElement("span");
