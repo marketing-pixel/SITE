@@ -880,9 +880,10 @@ function definirQuantidadeCarrinho(indice,valor){
     const carrinho=obterCarrinho();
     const item=carrinho[indice];
     if(!item)return;
-    const texto=String(valor??"").trim().replace(",",".");
-    const quantidade=Math.floor(Number(texto));
-    if(!Number.isFinite(quantidade)||quantidade<1){
+    const texto=String(valor??"").trim();
+    const digitos=texto.replace(/\\D/g,"");
+    const quantidade=Number(digitos);
+    if(!digitos||!Number.isSafeInteger(quantidade)||quantidade<1){
         renderCarrinho();
         return;
     }
@@ -955,19 +956,25 @@ function renderCarrinho(){
         menos.setAttribute("aria-label","Diminuir quantidade");
         menos.addEventListener("click",()=>alterarQuantidadeCarrinho(index,-1));
         const qtd=document.createElement("input");
-        qtd.type="number";
+        qtd.type="text";
         qtd.className="cart-qty-input";
         qtd.inputMode="numeric";
-        qtd.min="1";
-        qtd.step="1";
-        qtd.value=String(Math.max(1,Math.floor(Number(item.quantidade||1))));
+        qtd.autocomplete="off";
+        qtd.maxLength=15;
+        qtd.value=Math.max(1,Math.floor(Number(item.quantidade||1))).toLocaleString("pt-BR");
         qtd.setAttribute("aria-label","Quantidade de "+(item.titulo||"produto"));
-        qtd.title="Digite a quantidade";
-        qtd.addEventListener("change",()=>definirQuantidadeCarrinho(index,qtd.value));
+        qtd.title="Digite a quantidade. Ex.: 6.000";
+        const confirmarQuantidade=()=>{
+            const texto=qtd.value.replace(/\\D/g,"");
+            qtd.value=texto?Number(texto).toLocaleString("pt-BR"):"";
+            definirQuantidadeCarrinho(index,qtd.value);
+        };
+        qtd.addEventListener("change",confirmarQuantidade);
+        qtd.addEventListener("blur",confirmarQuantidade);
         qtd.addEventListener("keydown",event=>{
             if(event.key==="Enter"){
                 event.preventDefault();
-                definirQuantidadeCarrinho(index,qtd.value);
+                confirmarQuantidade();
                 qtd.blur();
             }
         });
