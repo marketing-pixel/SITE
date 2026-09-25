@@ -4421,6 +4421,150 @@
             }
         }
 
+
+        /* ==================================================================
+           DESKTOP FLUIDO — PAINEL ADM
+           ================================================================== */
+        html,
+        body {
+            width: 100%;
+            max-width: 100%;
+            overflow-x: clip;
+        }
+
+        @media (min-width: 601px) and (max-width: 1280px) {
+            .dashboard-header {
+                width: 100%;
+                padding: 14px clamp(16px, 2.4vw, 30px);
+                gap: 12px;
+                flex-wrap: wrap;
+            }
+
+            .dashboard-header h1 {
+                min-width: 260px;
+                flex: 1 1 340px;
+                font-size: clamp(1.05rem, 1.7vw, 1.3rem);
+                line-height: 1.2;
+            }
+
+            .dashboard-header .acoes {
+                min-width: 0;
+                flex: 1 1 520px;
+                justify-content: flex-end;
+                flex-wrap: wrap;
+                gap: 8px;
+            }
+
+            .admin-header-ferramentas {
+                min-width: 0;
+                max-width: 100%;
+            }
+
+            .btn-entrar-site {
+                max-width: min(360px, 34vw);
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+
+            #admin-nome {
+                min-width: 0;
+                max-width: 150px;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+            }
+
+            .dashboard-content {
+                width: 100%;
+                max-width: 1280px;
+                padding: clamp(18px, 2.5vw, 30px);
+            }
+
+            .toolbar {
+                width: 100%;
+            }
+
+            .toolbar-titulo {
+                min-width: 0;
+                flex: 1 1 360px;
+            }
+
+            .toolbar-acoes {
+                min-width: 0;
+                flex: 0 1 auto;
+            }
+
+            .toolbar-acoes .btn-novo,
+            .btn-categoria-topo {
+                white-space: nowrap;
+            }
+
+            table {
+                width: 100%;
+                max-width: 100%;
+            }
+
+            th,
+            td {
+                padding: 11px 12px;
+                overflow-wrap: anywhere;
+            }
+
+            .modal-overlay.aberto {
+                padding: clamp(18px, 3vw, 36px);
+            }
+
+            .modal-produto-box {
+                width: min(1180px, calc(100vw - clamp(32px, 6vw, 72px)));
+                max-width: 1180px;
+                height: min(820px, calc(100vh - clamp(48px, 8vh, 100px)));
+                max-height: calc(100vh - clamp(48px, 8vh, 100px));
+            }
+
+            .editor-layout {
+                grid-template-columns:
+                    minmax(0, 1fr)
+                    minmax(300px, .55fr);
+            }
+        }
+
+        @media (min-width: 601px) and (max-width: 980px) {
+            .dashboard-header {
+                padding-left: 14px;
+                padding-right: 14px;
+            }
+
+            .dashboard-header h1 {
+                flex-basis: 100%;
+            }
+
+            .dashboard-header .acoes {
+                flex-basis: 100%;
+                justify-content: flex-end;
+            }
+
+            .btn-entrar-site {
+                max-width: 300px;
+            }
+
+            .dashboard-content {
+                padding-left: 14px;
+                padding-right: 14px;
+            }
+
+            .toolbar {
+                align-items: flex-start;
+            }
+
+            .toolbar-titulo {
+                flex-basis: 100%;
+            }
+
+            .toolbar-acoes {
+                width: 100%;
+                justify-content: flex-start;
+            }
+        }
 </style>
 </head>
 
