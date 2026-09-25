@@ -1012,7 +1012,11 @@ function renderCarrinho(){
         row.appendChild(info);
         lista.appendChild(row);
     });
-    if(totalEl)totalEl.textContent=formatarQuantidadeCarrinho(totalItensCarrinho());
+    if(totalEl){
+        totalEl.textContent=new Intl.NumberFormat("pt-BR",{
+            maximumFractionDigits:0
+        }).format(totalItensCarrinho());
+    }
     atualizarCarrinhoHeader();
 }
 function adicionarAoCarrinho(){
