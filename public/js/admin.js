@@ -59,6 +59,14 @@ function obterDadosPreviaProduto() {
     };
 }
 
+function criarIconeSeta3D(direcao) {
+    const rotacao = { esquerda: "180", direita: "0", cima: "-90", baixo: "90" }[direcao] ?? "0";
+    const span = document.createElement("span");
+    span.className = "seta-3d";
+    span.setAttribute("aria-hidden", "true");
+    span.innerHTML = '<svg class="seta-3d-svg" viewBox="0 0 28 28" focusable="false" style="--seta-rotacao:' + rotacao + 'deg"><path class="seta-3d-sombra" d="M4 12h11.4L11 7.6 14.8 4 25 14 14.8 24 11 20.4l4.4-4.4H4z"></path><path class="seta-3d-face" d="M3 10h11.4L10 5.6 13.8 2 24 12 13.8 22 10 18.4l4.4-4.4H3z"></path><path class="seta-3d-brilho" d="M5 10h9.8l-2.2-2.2" /></svg>';
+    return span;
+}
 function imagensDaCorPrevia(dados) {
     const cor = dados.cores[corPreviaSelecionada];
     if (cor?.imagens?.length) return cor.imagens.slice();
@@ -82,7 +90,9 @@ function montarPaginaPrevia() {
     const voltar = document.createElement("button");
     voltar.type = "button";
     voltar.className = "voltar";
-    voltar.textContent = "← Voltar para produtos";
+    voltar.innerHTML = "";
+    voltar.appendChild(criarIconeSeta3D("esquerda"));
+    voltar.appendChild(document.createTextNode("Voltar para produtos"));
     container.appendChild(voltar);
 
     const tituloArea = document.createElement("div");
@@ -164,7 +174,7 @@ function montarPaginaPrevia() {
     const compartilhar = document.createElement("button");
     compartilhar.type = "button";
     compartilhar.className = "pp-compartilhar";
-    compartilhar.textContent = "↗";
+    compartilhar.innerHTML = '<svg class="pp-compartilhar-icone" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="18" cy="5" r="2.35"></circle><circle cx="6" cy="12" r="2.35"></circle><circle cx="18" cy="19" r="2.35"></circle><path d="M8.05 10.95 15.95 6.05"></path><path d="M8.05 13.05 15.95 17.95"></path></svg>';
     compartilhar.setAttribute("aria-hidden", "true");
     imagemArea.appendChild(compartilhar);
 
@@ -172,7 +182,8 @@ function montarPaginaPrevia() {
         const anterior = document.createElement("button");
         anterior.type = "button";
         anterior.className = "pp-seta esq";
-        anterior.textContent = "‹";
+        anterior.innerHTML = "";
+        anterior.appendChild(criarIconeSeta3D("esquerda"));
         anterior.addEventListener("click", () => {
             indiceImagemPrevia = (indiceImagemPrevia - 1 + imagens.length) % imagens.length;
             montarPaginaPrevia();
@@ -181,7 +192,8 @@ function montarPaginaPrevia() {
         const proxima = document.createElement("button");
         proxima.type = "button";
         proxima.className = "pp-seta dir";
-        proxima.textContent = "›";
+        proxima.innerHTML = "";
+        proxima.appendChild(criarIconeSeta3D("direita"));
         proxima.addEventListener("click", () => {
             indiceImagemPrevia = (indiceImagemPrevia + 1) % imagens.length;
             montarPaginaPrevia();
