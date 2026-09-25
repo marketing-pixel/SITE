@@ -324,6 +324,7 @@ function renderProduto(){
     qlist.className="lista-perguntas";
     perguntasBox.appendChild(qlist);
     renderPerguntas((produto.perguntas||[]).slice(0,3),qlist);
+    aplicarPreviewTerceiro(qlist,(produto.perguntas||[]).length,abrirAbaPerguntas);
     layout.appendChild(perguntasBox);
 
     const avalBox=document.createElement("section");
@@ -355,6 +356,18 @@ function renderProduto(){
         avalResumo.textContent="Ainda não há avaliações.";
     }
     avalBox.appendChild(avalResumo);
+
+    const avalListTitle=document.createElement("div");
+    avalListTitle.className="pp-preview-list-title";
+    avalListTitle.textContent="Últimas avaliações";
+    avalBox.appendChild(avalListTitle);
+
+    const avalList=document.createElement("div");
+    avalList.className="lista-avaliacoes pp-preview-reviews";
+    avalBox.appendChild(avalList);
+    renderAvaliacoes((produto.avaliacoes||[]).slice(0,3),avalList);
+    aplicarPreviewTerceiro(avalList,(produto.avaliacoes||[]).length,abrirAbaAvaliacoes);
+
     layout.appendChild(avalBox);
 
     atualizarBotoesFavorito();
@@ -548,30 +561,88 @@ function renderProduto(){
     comentario.placeholder="Conte o que achou do produto.";
     composer.appendChild(comentario);
 
+    const fotoWrap=document.createElement("div");
+    fotoWrap.className="avaliacao-foto-upload";
+
     const fotoLabel=document.createElement("label");
-    fotoLabel.className="avaliacao-foto-label";
-    fotoLabel.textContent="Adicionar foto do produto (opcional)";
+    fotoLabel.className="avaliacao-foto-dropzone";
+    const fotoIcon=document.createElement("span");
+    fotoIcon.className="avaliacao-foto-icone";
+    fotoIcon.textContent="＋";
+
+    const fotoCopy=document.createElement("span");
+    fotoCopy.className="avaliacao-foto-copy";
+    const fotoStrong=document.createElement("strong");
+    fotoStrong.textContent="Adicionar fotos";
+    const fotoSmall=document.createElement("small");
+    fotoSmall.textContent="Mostre o produto e sua experiência (opcional)";
+    fotoCopy.appendChild(fotoStrong);
+    fotoCopy.appendChild(fotoSmall);
+
+    const fotoAction=document.createElement("span");
+    fotoAction.className="avaliacao-foto-action";
+    fotoAction.textContent="Selecionar";
+
     const foto=document.createElement("input");
     foto.type="file";
     foto.className="avaliacao-foto";
-    foto.accept="image/*";
+    foto.accept="image/jpeg,image/png,image/webp";
+    foto.multiple=true;
+    foto.hidden=true;
+
+    fotoLabel.appendChild(fotoIcon);
+    fotoLabel.appendChild(fotoCopy);
+    fotoLabel.appendChild(fotoAction);
     fotoLabel.appendChild(foto);
-    composer.appendChild(fotoLabel);
+    fotoWrap.appendChild(fotoLabel);
+
+    const fotoHint=document.createElement("div");
+    fotoHint.className="avaliacao-foto-hint";
+    fotoHint.textContent="PNG, JPG ou WebP • até 5 MB por foto";
+    fotoWrap.appendChild(fotoHint);
 
     const fotoPreview=document.createElement("div");
-    fotoPreview.className="avaliacao-foto-preview";
-    composer.appendChild(fotoPreview);
+    fotoPreview.className="avaliacao-foto-preview premium-foto-preview";
+    fotoWrap.appendChild(fotoPreview);
+    composer.appendChild(fotoWrap);
 
-    foto.addEventListener("change",()=>{
+    function mostrarFotos(files){
         fotoPreview.innerHTML="";
-        const file=foto.files?.[0];
-        if(!file)return;
-        if(!file.type.startsWith("image/")){foto.value="";return}
-        const image=document.createElement("img");
-        image.alt="Pré-visualização da foto";
-        const reader=new FileReader();
-        reader.onload=e=>{image.src=e.target.result;fotoPreview.appendChild(image)};
-        reader.readAsDataURL(file);
+        Array.from(files||[]).slice(0,6).forEach(file=>{
+            if(!file.type.startsWith("image/")) return;
+            const card=document.createElement("div");
+            card.className="avaliacao-foto-thumb";
+            const image=document.createElement("img");
+            image.alt="Pré-visualização da foto";
+            const reader=new FileReader();
+            reader.onload=event=>{image.src=event.target.result};
+            reader.readAsDataURL(file);
+            card.appendChild(image);
+            fotoPreview.appendChild(card);
+        });
+        const count=fotoPreview.children.length;
+        fotoStrong.textContent=count?count+" foto(s) selecionada(s)":"Adicionar fotos";
+        fotoLabel.classList.toggle("com-arquivos",count>0);
+    }
+
+    foto.addEventListener("change",()=>mostrarFotos(foto.files));
+
+    fotoLabel.addEventListener("dragover",event=>{
+        event.preventDefault();
+        fotoLabel.classList.add("arrastando");
+    });
+    fotoLabel.addEventListener("dragleave",()=>fotoLabel.classList.remove("arrastando"));
+    fotoLabel.addEventListener("drop",event=>{
+        event.preventDefault();
+        fotoLabel.classList.remove("arrastando");
+        const files=Array.from(event.dataTransfer.files||[])
+            .filter(file=>file.type.startsWith("image/"))
+            .slice(0,6);
+        if(!files.length) return;
+        const transfer=new DataTransfer();
+        files.forEach(file=>transfer.items.add(file));
+        foto.files=transfer.files;
+        mostrarFotos(foto.files);
     });
 
     const enviar=document.createElement("button");
@@ -595,7 +666,24 @@ function renderProduto(){
 
     layout.appendChild(page);
     atualizarModoAdministrador();
-}function renderPerguntas(e,t){if(!t)return;t.innerHTML="";if(!Array.isArray(e)||!e.length){const a=document.createElement("div");a.className="sem-conteudo qa-empty";a.textContent="Ainda não há perguntas sobre este produto.";t.appendChild(a);return}e.forEach(e=>{const a=document.createElement("article");a.className="pergunta-card premium-qa-item";const o=document.createElement("div");o.className="pergunta-texto";const n=document.createElement("span");n.className="qa-label";n.textContent="PERGUNTA";const r=document.createElement("p");r.className="qa-question-text";r.textContent=e.pergunta||"";const c=document.createElement("span");c.className="pergunta-autor";c.textContent=(e.nome_cliente||"Cliente")+(e.criado_em?" • "+formatarDataRelativa(e.criado_em):"");o.appendChild(n);o.appendChild(r);o.appendChild(c);a.appendChild(o);if(e.resposta){const t=document.createElement("div");t.className="pergunta-resposta";const o=document.createElement("span");o.className="qa-answer-label";o.textContent="RESPOSTA DA CORTEZ MÓVEIS";const n=document.createElement("p");n.textContent=e.resposta;t.appendChild(o);t.appendChild(n);e.respondida_em&&(t.appendChild(Object.assign(document.createElement("span"),{className:"pergunta-resposta-data",textContent:formatarDataRelativa(e.respondida_em)})));a.appendChild(t)}else if(administradorLogado){const t=document.createElement("div");t.className="pergunta-admin-acoes";const o=document.createElement("button");o.type="button";o.className="btn-responder";o.textContent="Responder";o.addEventListener("click",()=>abrirCampoResposta(e,a));t.appendChild(o);a.appendChild(t)}t.appendChild(a)})}
+}
+function aplicarPreviewTerceiro(container,total,abrirTodos){
+    if(!container || Number(total)<=3 || !container.children[2]) return;
+    const item=container.children[2];
+    item.classList.add("premium-preview-fade");
+    if(typeof abrirTodos==="function"){
+        item.setAttribute("role","button");
+        item.tabIndex=0;
+        item.addEventListener("click",abrirTodos);
+        item.addEventListener("keydown",event=>{
+            if(event.key==="Enter" || event.key===" ") {
+                event.preventDefault();
+                abrirTodos(event);
+            }
+        });
+    }
+}
+function renderPerguntas(e,t){if(!t)return;t.innerHTML="";if(!Array.isArray(e)||!e.length){const a=document.createElement("div");a.className="sem-conteudo qa-empty";a.textContent="Ainda não há perguntas sobre este produto.";t.appendChild(a);return}e.forEach(e=>{const a=document.createElement("article");a.className="pergunta-card premium-qa-item";const o=document.createElement("div");o.className="pergunta-texto";const n=document.createElement("span");n.className="qa-label";n.textContent="PERGUNTA";const r=document.createElement("p");r.className="qa-question-text";r.textContent=e.pergunta||"";const c=document.createElement("span");c.className="pergunta-autor";c.textContent=(e.nome_cliente||"Cliente")+(e.criado_em?" • "+formatarDataRelativa(e.criado_em):"");o.appendChild(n);o.appendChild(r);o.appendChild(c);a.appendChild(o);if(e.resposta){const t=document.createElement("div");t.className="pergunta-resposta";const o=document.createElement("span");o.className="qa-answer-label";o.textContent="RESPOSTA DA CORTEZ MÓVEIS";const n=document.createElement("p");n.textContent=e.resposta;t.appendChild(o);t.appendChild(n);e.respondida_em&&(t.appendChild(Object.assign(document.createElement("span"),{className:"pergunta-resposta-data",textContent:formatarDataRelativa(e.respondida_em)})));a.appendChild(t)}else if(administradorLogado){const t=document.createElement("div");t.className="pergunta-admin-acoes";const o=document.createElement("button");o.type="button";o.className="btn-responder";o.textContent="Responder";o.addEventListener("click",()=>abrirCampoResposta(e,a));t.appendChild(o);a.appendChild(t)}t.appendChild(a)})}
 function abrirCampoResposta(e,t){if(!administradorLogado)return;if(t.querySelector(".campo-resposta"))return;const a=document.createElement("div");a.className="campo-resposta";const o=document.createElement("textarea");o.className="resposta-input";o.placeholder="Digite sua resposta...";o.rows=4;const n=document.createElement("button");n.type="button";n.className="btn-enviar-resposta";n.textContent="Enviar resposta";a.appendChild(o);a.appendChild(n);t.appendChild(a);n.addEventListener("click",async()=>{const a=o.value.trim();if(!a){o.focus();return}const r=n.textContent;n.disabled=!0;n.textContent="Enviando...";try{const t=await api("/api/produtos/"+produtoAtual.id+"/perguntas/"+e.id+"/responder",{method:"PUT",body:JSON.stringify({resposta:a})});if(t&&t.pergunta){Array.isArray(produtoAtual.perguntas)||(produtoAtual.perguntas=[]);const o=produtoAtual.perguntas.findIndex(t=>Number(t.id)===Number(e.id));-1===o?produtoAtual.perguntas.unshift(t.pergunta):produtoAtual.perguntas[o]=t.pergunta}const a=document.getElementById("lista-perguntas");a&&renderPerguntas(produtoAtual.perguntas||[],a)}catch(e){console.error("Erro ao responder pergunta:",e);alert(e.message||"Não foi possível enviar a resposta.")}finally{n.disabled=!1;n.textContent=r}})}
 function renderAvaliacoes(e,t){if(!t)return;t.innerHTML="";if(!Array.isArray(e)||!e.length){const a=document.createElement("div");a.className="sem-conteudo reviews-empty";a.textContent="Ainda não há avaliações.";t.appendChild(a);return}e.forEach(e=>{const a=document.createElement("article");a.className="avaliacao-card premium-review-item";const o=document.createElement("div");o.className="avaliacao-card-cabecalho";const n=document.createElement("strong");n.className="avaliacao-cliente";n.textContent=e.cliente||"Cliente";const r=document.createElement("span");r.className="avaliacao-data";r.textContent=e.criado_em?formatarDataRelativa(e.criado_em):"";o.appendChild(n);o.appendChild(r);a.appendChild(o);const c=document.createElement("div");c.className="avaliacao-card-estrelas";c.innerHTML=gerarEstrelas(Number(e.nota),"normal");a.appendChild(c);if(e.comentario){const t=document.createElement("p");t.className="avaliacao-comentario-exibido";t.textContent=e.comentario;a.appendChild(t)}if(Array.isArray(e.imagens)&&e.imagens.length){const t=document.createElement("div");t.className="avaliacao-galeria";e.imagens.forEach(e=>{if(!e||!e.caminho)return;const a=document.createElement("img");a.src=urlImagem(e.caminho);a.alt="Foto enviada na avaliação";a.loading="lazy";t.appendChild(a)});a.appendChild(t)}if(e.resposta_vendedor){const t=document.createElement("div");t.className="avaliacao-resposta";const o=document.createElement("span");o.className="qa-answer-label";o.textContent="RESPOSTA DA CORTEZ MÓVEIS";const n=document.createElement("p");n.textContent=e.resposta_vendedor;t.appendChild(o);t.appendChild(n);a.appendChild(t)}else if(administradorLogado){const t=document.createElement("div");t.className="avaliacao-admin-acoes";const o=document.createElement("button");o.type="button";o.className="btn-responder";o.textContent="Responder avaliação";o.addEventListener("click",()=>abrirCampoRespostaAvaliacao(e,a));t.appendChild(o);a.appendChild(t)}t.appendChild(a)})}
 function abrirCampoRespostaAvaliacao(e,t){if(!administradorLogado)return;if(t.querySelector(".campo-resposta"))return;const a=document.createElement("div");a.className="campo-resposta";const o=document.createElement("textarea");o.className="resposta-input";o.placeholder="Digite a resposta para o cliente...";o.rows=4;const n=document.createElement("button");n.type="button";n.className="btn-enviar-resposta";n.textContent="Enviar resposta";a.appendChild(o);a.appendChild(n);t.appendChild(a);n.addEventListener("click",async()=>{const a=o.value.trim();if(!a){o.focus();return}const r=n.textContent;n.disabled=!0;n.textContent="Enviando...";try{const t=await api("/api/produtos/"+produtoAtual.id+"/avaliacoes/"+e.id+"/responder",{method:"PUT",body:JSON.stringify({resposta:a})});if(t&&t.avaliacao){Array.isArray(produtoAtual.avaliacoes)||(produtoAtual.avaliacoes=[]);const o=produtoAtual.avaliacoes.findIndex(t=>Number(t.id)===Number(e.id));-1===o?produtoAtual.avaliacoes.unshift(t.avaliacao):produtoAtual.avaliacoes[o]=t.avaliacao}const a=document.getElementById("lista-avaliacoes");a&&renderAvaliacoes(produtoAtual.avaliacoes||[],a)}catch(e){console.error("Erro ao responder avaliação:",e);alert(e.message||"Não foi possível enviar a resposta.")}finally{n.disabled=!1;n.textContent=r}})}
