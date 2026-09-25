@@ -360,7 +360,7 @@ function renderProduto(){
     atualizarBotoesFavorito();
     atualizarDescricaoCorNaTela();
     atualizarModoAdministrador();
-}function renderPaginaPerguntas(){
+}function renderPaginaPerguntas(){const voltarCatalogo=document.getElementById("btn-voltar-catalogo");if(voltarCatalogo)voltarCatalogo.style.display="none";
     const produto=produtoAtual;
     const layout=document.getElementById("produto-layout");
     if(!layout||!produto)return;
@@ -373,7 +373,7 @@ function renderProduto(){
     const back=document.createElement("button");
     back.type="button";
     back.className="interacoes-voltar";
-    back.textContent="← Voltar ao produto";
+    back.innerHTML="<span class=\"interacoes-back-icon\">←</span><span>Voltar ao produto</span>";
     back.addEventListener("click",voltarParaProduto);
     top.appendChild(back);
     const kicker=document.createElement("span");
@@ -428,7 +428,7 @@ function renderProduto(){
 
     layout.appendChild(page);
     atualizarModoAdministrador();
-}function renderPaginaAvaliacoes(){
+}function renderPaginaAvaliacoes(){const voltarCatalogo=document.getElementById("btn-voltar-catalogo");if(voltarCatalogo)voltarCatalogo.style.display="none";
     const produto=produtoAtual;
     const layout=document.getElementById("produto-layout");
     if(!layout||!produto)return;
