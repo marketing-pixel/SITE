@@ -1083,11 +1083,10 @@
         margin-bottom: 8px;
     }
 
-    /* “Ver detalhes” permanece com o tamanho atual. */
+    /* “Ver detalhes” permanece exatamente com o tamanho já definido anteriormente. */
     .btn-produto {
         min-height: 46px;
         padding: 12px 14px !important;
-        font-size: inherit;
     }
 
     .pagina-produto {
