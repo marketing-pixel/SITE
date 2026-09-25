@@ -66,7 +66,7 @@ img { max-width: 100%; }
 .guia-section { background: #f7f8fa; padding: 90px 20px; }
 .guia-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 32px; max-width: 1200px; margin: 0 auto; }
 .guia-item {
-    background: #ffffff; border-radius: 16px; overflow: hidden; cursor: zoom-in;
+    background: #ffffff; border-radius: 16px; overflow: hidden;
     box-shadow: 0 8px 30px rgba(0,0,0,0.06); transition: transform 0.3s ease, box-shadow 0.3s ease;
     position: relative;
 }
