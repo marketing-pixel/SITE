@@ -4565,6 +4565,187 @@
                 justify-content: flex-start;
             }
         }
+
+        /* =========================================================
+           PAINEL ADM — ESCALA FLUIDA FINAL PARA DESKTOP
+           ========================================================= */
+        @media (min-width: 601px) {
+            html,
+            body {
+                width: 100%;
+                min-width: 0;
+                max-width: 100%;
+                overflow-x: hidden;
+            }
+
+            .dashboard {
+                width: 100%;
+                min-width: 0;
+            }
+
+            .dashboard-header {
+                width: 100%;
+                min-width: 0;
+                padding-inline: clamp(14px, 2.2vw, 36px);
+                gap: clamp(10px, 1.5vw, 22px);
+            }
+
+            .dashboard-header h1 {
+                min-width: 0;
+                flex: 1 1 280px;
+                font-size: clamp(1rem, 1.15vw, 1.3rem);
+                line-height: 1.2;
+            }
+
+            .dashboard-header .acoes {
+                min-width: 0;
+                flex: 1 1 auto;
+                justify-content: flex-end;
+                flex-wrap: wrap;
+                gap: 8px;
+            }
+
+            .admin-header-ferramentas {
+                min-width: 0;
+                max-width: 100%;
+                flex-wrap: wrap;
+            }
+
+            .btn-entrar-site {
+                min-width: 0;
+                max-width: min(360px, 38vw);
+            }
+
+            #admin-nome {
+                min-width: 0;
+                max-width: min(180px, 15vw);
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+            }
+
+            #btn-logout {
+                flex: 0 0 auto;
+                white-space: nowrap;
+            }
+
+            .dashboard-content {
+                width: min(100%, 1600px);
+                max-width: 1600px;
+                margin-inline: auto;
+                padding: clamp(16px, 2vw, 32px);
+            }
+
+            .toolbar {
+                width: 100%;
+                min-width: 0;
+                gap: clamp(10px, 1.5vw, 20px);
+            }
+
+            .toolbar-titulo {
+                min-width: 0;
+                flex: 1 1 360px;
+            }
+
+            .toolbar-titulo h2,
+            .toolbar-titulo p {
+                overflow-wrap: anywhere;
+            }
+
+            .toolbar-acoes {
+                min-width: 0;
+                max-width: 100%;
+                display: flex;
+                flex-wrap: wrap;
+                justify-content: flex-end;
+                gap: 8px;
+            }
+
+            .toolbar-acoes button {
+                max-width: 100%;
+            }
+
+            table {
+                width: 100%;
+                max-width: 100%;
+                table-layout: auto;
+            }
+
+            th,
+            td {
+                max-width: 1px;
+                overflow-wrap: anywhere;
+            }
+
+            th:last-child,
+            td:last-child {
+                width: 1%;
+                white-space: nowrap;
+            }
+
+            .modal-overlay.aberto {
+                padding: clamp(14px, 2.5vw, 36px);
+            }
+
+            .modal-box {
+                width: min(1180px, calc(100vw - clamp(28px, 5vw, 80px)));
+                max-width: 1180px;
+                max-height: calc(100vh - clamp(28px, 7vh, 72px));
+                margin: auto;
+            }
+
+            .modal-produto-box {
+                width: min(1400px, calc(100vw - clamp(28px, 5vw, 80px)));
+                max-width: 1400px;
+                height: min(900px, calc(100vh - clamp(28px, 7vh, 72px)));
+                max-height: calc(100vh - clamp(28px, 7vh, 72px));
+            }
+
+            .editor-layout {
+                grid-template-columns:
+                    minmax(0, 1.58fr)
+                    minmax(300px, .78fr);
+            }
+        }
+
+        @media (min-width: 601px) and (max-width: 1100px) {
+            .dashboard-header {
+                align-items: flex-start;
+            }
+
+            .dashboard-header h1 {
+                flex-basis: 100%;
+            }
+
+            .dashboard-header .acoes {
+                width: 100%;
+                flex-basis: 100%;
+                justify-content: flex-start;
+            }
+
+            .dashboard-content {
+                padding-inline: clamp(12px, 2vw, 20px);
+            }
+
+            .toolbar {
+                align-items: flex-start;
+            }
+
+            .toolbar-titulo {
+                flex-basis: 100%;
+            }
+
+            .toolbar-acoes {
+                width: 100%;
+                justify-content: flex-start;
+            }
+
+            .modal-produto-box {
+                width: calc(100vw - 24px);
+                height: calc(100vh - 24px);
+            }
+        }
+
 </style>
 </head>
 
