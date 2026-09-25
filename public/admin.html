@@ -3291,12 +3291,51 @@
         </div>
     </div>
 
+    <script>
+        // Fallback de segurança: o painel nunca deve ficar em branco se um script falhar.
+        (function () {
+            "use strict";
+
+            function garantirTelaDeLogin() {
+                var login = document.getElementById("login-view");
+                var dashboard = document.getElementById("dashboard-view");
+                if (!login || !dashboard) return;
+
+                var dashboardVisivel = dashboard.style.display === "block";
+                if (!dashboardVisivel) {
+                    login.style.display = "block";
+                    dashboard.style.display = "none";
+                }
+            }
+
+            window.addEventListener("error", function (event) {
+                console.error("Falha ao iniciar o painel ADM:", event.error || event.message);
+                garantirTelaDeLogin();
+            });
+
+            window.addEventListener("unhandledrejection", function (event) {
+                console.error("Falha assíncrona no painel ADM:", event.reason);
+                garantirTelaDeLogin();
+            });
+
+            window.setTimeout(function () {
+                var login = document.getElementById("login-view");
+                var dashboard = document.getElementById("dashboard-view");
+                if (!login || !dashboard) return;
+
+                if (login.style.display === "none" && dashboard.style.display !== "block") {
+                    garantirTelaDeLogin();
+                }
+            }, 2500);
+        })();
+    </script>
+
     <script
-        src="/js/admin.js?v=10"
+        src="/js/admin.js?v=11"
         defer
     ></script>
     <script
-        src="/js/admin-editor.js?v=8"
+        src="/js/admin-editor.js?v=9"
         defer
     ></script>
 
