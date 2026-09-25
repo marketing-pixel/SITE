@@ -4,11 +4,14 @@ const { autenticar } = require('../middleware/auth');
 const { cloudinary, cloudinaryConfigurado } = require('../config/cloudinary');
 
 const router = express.Router();
-const LIMITE_UPLOAD = 5 * 1024 * 1024;
+const LIMITE_UPLOAD = 20 * 1024 * 1024;
+const LIMITE_IMAGEM = 5 * 1024 * 1024;
 const TIMEOUT_CLOUDINARY_MS = 30000;
 const LIMPEZA_PENDENTE_MS = 60 * 60 * 1000;
 const uploadsPendentes = new Map();
-const MIMES_PERMITIDOS = ['image/png', 'image/jpeg', 'image/webp'];
+const MIMES_IMAGEM = ['image/png', 'image/jpeg', 'image/webp'];
+const MIMES_VIDEO = ['video/mp4', 'video/webm', 'video/quicktime'];
+const MIMES_PERMITIDOS = [...MIMES_IMAGEM, ...MIMES_VIDEO];
 const PASTAS_CLOUDINARY = {
     produto: 'cortez-moveis/produtos',
     cor: 'cortez-moveis/cores',
@@ -24,7 +27,7 @@ const upload = multer({
             return;
         }
 
-        cb(new Error('Formato de imagem não permitido. Use PNG, JPG ou WebP.'));
+        cb(new Error('Formato não permitido. Use PNG, JPG, WebP, MP4, WebM ou MOV.'));
     }
 });
 
@@ -54,18 +57,42 @@ function tipoRealImagem(buffer) {
     return null;
 }
 
-function agendarLimpezaPendente(publicId) {
+function tipoRealMidia(buffer, mime) {
+    if (!Buffer.isBuffer(buffer)) return null;
+    if (MIMES_IMAGEM.includes(mime)) return tipoRealImagem(buffer);
+
+    if (mime === 'video/mp4' || mime === 'video/quicktime') {
+        if (buffer.length >= 12) {
+            const tipo = buffer.subarray(4, 8).toString('ascii');
+            const marca = buffer.subarray(8, 12).toString('ascii');
+            if (tipo === 'ftyp' || marca === 'ftyp') return mime;
+        }
+        return null;
+    }
+
+    if (mime === 'video/webm') {
+        if (buffer.length >= 4 &&
+            buffer.subarray(0, 4).equals(Buffer.from([0x1A, 0x45, 0xDF, 0xA3]))) {
+            return mime;
+        }
+        return null;
+    }
+
+    return null;
+}
+
+function agendarLimpezaPendente(publicId, resourceType = 'image') {
     if (!publicId || !publicId.startsWith('cortez-moveis/')) return;
 
     const anterior = uploadsPendentes.get(publicId);
-    if (anterior) clearTimeout(anterior);
+    if (anterior && anterior.timer) clearTimeout(anterior.timer);
 
     const timer = setTimeout(async () => {
         uploadsPendentes.delete(publicId);
         try {
             const resultado = await cloudinary.uploader.destroy(
                 publicId,
-                { resource_type: 'image' }
+                { resource_type: resourceType }
             );
             console.warn('Upload Cloudinary pendente removido.', {
                 publicId,
@@ -79,13 +106,13 @@ function agendarLimpezaPendente(publicId) {
         }
     }, LIMPEZA_PENDENTE_MS);
 
-    uploadsPendentes.set(publicId, timer);
+    uploadsPendentes.set(publicId, { timer, resourceType });
 }
 
 function confirmarUpload(publicId) {
-    const timer = uploadsPendentes.get(publicId);
-    if (!timer) return;
-    clearTimeout(timer);
+    const pendente = uploadsPendentes.get(publicId);
+    if (!pendente) return;
+    clearTimeout(pendente.timer || pendente);
     uploadsPendentes.delete(publicId);
 }
 
@@ -123,7 +150,7 @@ function enviarParaCloudinary(file, folder) {
     });
 }
 
-router.post('/', autenticar, (req, res) => {
+router.post('/', (req, res) => {
     upload.single('imagem')(req, res, async err => {
         if (err instanceof multer.MulterError) {
             const erro = err.code === 'LIMIT_FILE_SIZE'
@@ -135,11 +162,15 @@ router.post('/', autenticar, (req, res) => {
         if (err) return res.status(400).json({ erro: err.message });
         if (!req.file) return res.status(400).json({ erro: 'Nenhuma imagem enviada.' });
 
-        const tipoReal = tipoRealImagem(req.file.buffer);
+        const tipoReal = tipoRealMidia(req.file.buffer, req.file.mimetype);
         if (!tipoReal || tipoReal !== req.file.mimetype) {
             return res.status(400).json({
-                erro: 'O conteúdo do arquivo não corresponde a uma imagem PNG, JPG ou WebP válida.'
+                erro: 'O conteúdo do arquivo não corresponde ao formato de mídia informado.'
             });
+        }
+
+        if (req.file.mimetype.startsWith('image/') && req.file.size > LIMITE_IMAGEM) {
+            return res.status(400).json({ erro: 'Cada imagem deve ter no máximo 5MB.' });
         }
 
         if (!cloudinaryConfigurado()) {
