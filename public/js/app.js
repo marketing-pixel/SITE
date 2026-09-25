@@ -1,14 +1,617 @@
-let produtos=[],produtoAtual=null,corAtual=0,imgAtual=0,categorias=[],categoriaFiltro=null,administradorLogado=!1,dadosAdministrador=null,modoAdminSite=new URLSearchParams(window.location.search).get("modo")==="admin";async function api(e,t={}){const a={...t,credentials:"same-origin",headers:{...t.body instanceof FormData?{}:{"Content-Type":"application/json"},...t.headers||{}}},o=await fetch(e,a),n=await o.json().catch(()=>({}));if(!o.ok)throw new Error(n.erro||"Erro na requisição.");return n}async function verificarAdministrador(){administradorLogado=!1,dadosAdministrador=null;try{const e=await api("/api/auth/me");e&&e.admin&&modoAdminSite&&(administradorLogado=!0,dadosAdministrador=e.admin)}catch(e){administradorLogado=!1,dadosAdministrador=null}}function atualizarModoAdministrador(){document.querySelectorAll("[data-apenas-admin]").forEach(e=>{e.style.display=administradorLogado?"":"none"})}function escaparHtml(e){return String(e??"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#039;")}function urlImagem(e){if(!e)return e;if(e.startsWith("https://res.cloudinary.com/")){const t=e.indexOf("/image/upload/");if(t>=0){let a=e.substring(t+"/image/upload/".length);const o=a.split("/");o.length>0&&/^(q_|c_|w_|h_|f_|dpr_|v\d)/.test(o[0])&&o.shift();let r=o.join("/");const n=r.lastIndexOf(".");n>0&&(r=r.substring(0,n));return"/api/imagens/cloudinary/"+r}}return e}function formatarPreco(e){if(null==e||""===e)return"";const t=Number(e);return Number.isFinite(t)?t.toLocaleString("pt-BR",{style:"currency",currency:"BRL"}):""}function gerarEstrelas(e,t="normal"){const a=Number(e),o=Number.isFinite(a)?Math.max(0,Math.min(5,a)):0;let n='<span class="estrelas '+t+'" aria-label="'+escaparHtml(o.toFixed(1)+" de 5 estrelas")+'">';for(let e=1;e<=5;e++)n+=e<=Math.round(o)?'<span class="estrela ativa">★</span>':'<span class="estrela">☆</span>';return n+="</span>",n}function gerarEstrelasInteiras(e){const t=Number(e);let a="";for(let e=1;e<=5;e++)a+=e<=t?"★":"☆";return a}function formatarDataRelativa(e){if(!e)return"";const t=new Date(e);if(Number.isNaN(t.getTime()))return"";const a=(new Date).getTime()-t.getTime(),o=Math.floor(a/864e5);if(o<=0)return"Hoje";if(1===o)return"Há 1 dia";if(o<30)return"Há "+o+" dias";const n=Math.floor(o/30);if(1===n)return"Há 1 mês";if(n<12)return"Há "+n+" meses";const r=Math.floor(n/12);return 1===r?"Há 1 ano":"Há "+r+" anos"}function criarBotaoEstrela(e,t){const a=document.createElement("button");return a.type="button",a.className="estrela-input"+(t?" selecionada":""),a.dataset.nota=e,a.setAttribute("aria-label",e+(1===e?" estrela":" estrelas")),a.textContent="★",a}function getFavoritos(){try{return JSON.parse(localStorage.getItem("cortez_favoritos")||"[]")}catch(e){return[]}}function toggleFavorito(e){let t=getFavoritos();e=Number(e),t.includes(e)?t=t.filter(t=>t!==e):t.push(e),localStorage.setItem("cortez_favoritos",JSON.stringify(t)),atualizarBotoesFavorito()}function isFavorito(e){return getFavoritos().includes(Number(e))}function atualizarBotoesFavorito(){document.querySelectorAll(".fav-btn, .rel-fav, .pp-fav").forEach(e=>{const t=Number(e.dataset.produtoId||e.closest("[data-id]")?.dataset.id||produtoAtual?.id);if(!t)return;const a=isFavorito(t);e.classList.toggle("favoritado",a),e.textContent=a?"♥":"♡",e.setAttribute("aria-pressed",a?"true":"false")})}function normalizarProduto(e){if(!e)return e;const t=Array.isArray(e.imagens)?e.imagens:[],r=t.filter(e=>!e.cor_id).sort((e,t)=>Number(e.ordem||0)-Number(t.ordem||0)),a=(Array.isArray(e.cores)?e.cores:[]).map((e,a)=>{const n=t.filter(t=>Number(t.cor_id)===Number(e.id)).sort((e,t)=>Number(e.ordem||0)-Number(t.ordem||0));const o=0===a&&0===n.length?r:n;return{...e,imagens:o}});return{...e,cores:a}}async function carregarProdutos(){const e=document.getElementById("grid-produtos");try{produtos=await api("/api/produtos"),produtos=Array.isArray(produtos)?produtos.map(normalizarProduto):[],renderGrade()}catch(t){if(console.error("Erro ao carregar produtos:",t),e){e.innerHTML="";const t=document.createElement("p");t.className="produtos-estado",t.textContent="Não foi possível carregar os produtos.",e.appendChild(t)}}}async function carregarCategorias(){const e=document.getElementById("filtro-categorias");if(e)try{categorias=await api("/api/categorias"),Array.isArray(categorias)||(categorias=[]),e.innerHTML="";const t=document.createElement("button");t.type="button",t.className="filtro-btn ativo",t.textContent="Todos",t.dataset.categoria="",t.addEventListener("click",()=>{filtrarCategoria(null,t)}),e.appendChild(t),categorias.forEach(t=>{const a=document.createElement("button");a.type="button",a.className="filtro-btn",a.textContent=t.nome||"",a.dataset.categoria=t.id,a.addEventListener("click",()=>{filtrarCategoria(t.id,a)}),e.appendChild(a)}),renderGrade()}catch(e){console.error("Erro ao carregar categorias:",e)}}function filtrarCategoria(e,t){categoriaFiltro=null===e?null:Number(e),document.querySelectorAll(".filtro-btn").forEach(e=>e.classList.remove("ativo")),t&&t.classList.add("ativo"),renderGrade()}function renderGrade(){const e=document.getElementById("grid-produtos");if(!e)return;e.innerHTML="";let t=Array.isArray(produtos)?produtos:[];if(null!=categoriaFiltro&&(t=t.filter(e=>Number(e.categoria_id)===Number(categoriaFiltro))),0===t.length){const t=document.createElement("p");return t.className="produtos-estado",t.textContent="Nenhum produto encontrado.",void e.appendChild(t)}t.forEach(t=>criarCardProduto(t,e)),atualizarBotoesFavorito()}function criarCardProduto(e,t){const a=document.createElement("article");a.className="produto-card",a.dataset.id=e.id;const o=document.createElement("div");o.className="produto-imagem-area";const n=document.createElement("button");if(n.type="button",n.className="fav-btn"+(isFavorito(e.id)?" favoritado":""),n.dataset.produtoId=e.id,n.setAttribute("aria-label","Adicionar aos favoritos"),n.setAttribute("aria-pressed",isFavorito(e.id)?"true":"false"),n.textContent=isFavorito(e.id)?"♥":"♡",n.addEventListener("click",t=>{t.stopPropagation(),toggleFavorito(e.id)}),o.appendChild(n),e.imagem_principal){const t=document.createElement("img");t.src=urlImagem(e.imagem_principal),t.alt=e.titulo||"Produto",t.loading="lazy",t.addEventListener("error",()=>{t.remove();const e=document.createElement("div");e.className="produto-imagem-placeholder",e.textContent="🪑",o.appendChild(e)}),o.appendChild(t)}else{const e=document.createElement("div");e.className="produto-imagem-placeholder",e.textContent="🪑",o.appendChild(e)}a.appendChild(o);const r=document.createElement("div");r.className="produto-info";const c=document.createElement("div");c.className="produto-categoria",c.textContent=e.linha||"",r.appendChild(c);const d=document.createElement("div");if(d.className="produto-nome",d.textContent=e.titulo||"",r.appendChild(d),null!==e.preco&&void 0!==e.preco&&""!==e.preco){const t=document.createElement("div");if(t.className="produto-preco",t.textContent=formatarPreco(e.preco),r.appendChild(t),e.parcelamento){const t=document.createElement("div");t.className="produto-parcelas",t.textContent=e.parcelamento,r.appendChild(t)}}const i=document.createElement("button");i.type="button",i.className="btn-produto",i.textContent="Ver detalhes",i.addEventListener("click",t=>{t.stopPropagation(),abrirProduto(e.id)}),r.appendChild(i),a.appendChild(r),a.addEventListener("click",()=>abrirProduto(e.id)),t.appendChild(a)}async function abrirProduto(e,t=!0){try{const a=await api("/api/produtos/"+e);produtoAtual=normalizarProduto(a),corAtual=0,imgAtual=0;const o=document.getElementById("view-home"),n=document.getElementById("view-produto");o&&(o.style.display="none"),n&&(n.style.display="block"),atualizarModoAdministrador();const r=new URLSearchParams(window.location.search).get("pagina");if("perguntas"===r?renderPaginaPerguntas():"avaliacoes"===r?renderPaginaAvaliacoes():renderProduto(),atualizarModoAdministrador(),t){let e="?produto="+encodeURIComponent(produtoAtual.id);modoAdminSite&&(e+="&modo=admin"),r?history.pushState({},"",e+"&pagina="+encodeURIComponent(r)):history.pushState({},"",e)}window.scrollTo({top:0,behavior:"auto"})}catch(e){console.error("Erro ao abrir produto:",e),alert(e.message||"Não foi possível carregar o produto.")}}function abrirAbaPerguntas(){produtoAtual&&abrirModalInteracoes("perguntas")}function abrirAbaAvaliacoes(){produtoAtual&&abrirModalInteracoes("avaliacoes")}function abrirModalInteracoes(e){if(!produtoAtual||"perguntas"!==e&&"avaliacoes"!==e)return;const t=document.getElementById("modal-interacoes");t&&t.remove();const a=document.createElement("div");a.className="modal-interacoes-overlay",a.id="modal-interacoes";const o=document.createElement("div");o.className="modal-interacoes-caixa";const n=document.createElement("div");n.className="modal-interacoes-cabecalho";const r=document.createElement("h3");r.className="modal-interacoes-titulo",r.textContent="perguntas"===e?"Perguntas e Respostas":"Avaliações do produto";const c=document.createElement("p");c.className="modal-interacoes-subtitulo",c.textContent=produtoAtual.titulo||"",n.appendChild(r),n.appendChild(c);const d=document.createElement("button");d.type="button",d.className="modal-interacoes-fechar",d.textContent="×",d.setAttribute("aria-label","Fechar"),d.addEventListener("click",fecharModalInteracoes),n.appendChild(d);const i=document.createElement("div");if(i.className="modal-interacoes-conteudo","perguntas"===e){const e=document.createElement("div");e.className="formulario-pergunta";const t=document.createElement("input");t.type="text",t.className="pergunta-input",t.placeholder="Digite sua pergunta";const a=document.createElement("button");a.type="button",a.className="btn-perguntar",a.textContent="Enviar";const o=()=>renderPerguntas(produtoAtual.perguntas||[],n);a.addEventListener("click",()=>enviarPergunta(t,a,o)),t.addEventListener("keydown",e=>{"Enter"===e.key&&(e.preventDefault(),enviarPergunta(t,a,o))}),e.appendChild(t),e.appendChild(a),i.appendChild(e);const n=document.createElement("div");n.className="lista-perguntas",i.appendChild(n),renderPerguntas(produtoAtual.perguntas||[],n)}else{const e=produtoAtual.avaliacao_resumo||{media:0,total:0},t=Number(e.media||0),a=Number(e.total||0),n=document.createElement("div");if(n.className="avaliacao-resumo-produto",a>0){const e=document.createElement("span");e.className="avaliacao-resumo-estrelas",e.innerHTML=gerarEstrelas(t,"normal");const o=document.createElement("span");o.className="avaliacao-resumo-media",o.textContent=t.toFixed(1);const r=document.createElement("span");r.className="avaliacao-resumo-quantidade",r.textContent=1===a?"(1 avaliação)":"("+a+" avaliações)",n.appendChild(e),n.appendChild(o),n.appendChild(r)}else{const e=document.createElement("span");e.className="sem-avaliacoes-resumo",e.textContent="Sem avaliações ainda.",n.appendChild(e)}i.appendChild(n);const r=document.createElement("button");r.type="button",r.className="btn-avaliar",r.textContent="Avaliar produto",r.addEventListener("click",()=>{const e=o.querySelector(".formulario-avaliacao");e&&(e.style.display="none"===e.style.display?"block":"none")}),i.appendChild(r);const c=document.createElement("div");c.className="formulario-avaliacao",c.style.display="none";const d=document.createElement("input");d.type="text",d.className="avaliacao-nome",d.placeholder="Seu nome";const l=document.createElement("div");l.className="avaliacao-titulo-estrelas",l.textContent="Sua nota:";const s=document.createElement("div");s.className="avaliacao-estrelas-input";let m=0;for(let e=1;e<=5;e++){const t=criarBotaoEstrela(e,!1);t.addEventListener("click",()=>{m=e,s.querySelectorAll(".estrela-input").forEach((t,a)=>t.classList.toggle("selecionada",a<e))}),s.appendChild(t)}const u=document.createElement("textarea");u.className="avaliacao-comentario",u.placeholder="Conte como foi sua experiência...",u.rows=3;const p=document.createElement("button");p.type="button",p.className="btn-perguntar",p.textContent="Enviar avaliação",p.addEventListener("click",async()=>{if(m<1)alert("Escolha uma nota de 1 a 5 estrelas.");else try{await api("/api/produtos/"+produtoAtual.id+"/avaliacoes",{method:"POST",body:JSON.stringify({cliente:d.value.trim()||"Cliente",nota:m,comentario:u.value.trim()})}),fecharModalInteracoes(),abrirProduto(produtoAtual.id,!1)}catch(e){alert(e.message||"Não foi possível enviar a avaliação.")}}),c.appendChild(d),c.appendChild(l),c.appendChild(s),c.appendChild(u),c.appendChild(p),i.appendChild(c);const v=document.createElement("div");v.className="lista-avaliacoes",i.appendChild(v),renderAvaliacoes(produtoAtual.avaliacoes||[],v)}o.appendChild(n),o.appendChild(i),a.appendChild(o),a.addEventListener("click",e=>{e.target===a&&fecharModalInteracoes()}),document.body.appendChild(a),document.body.style.overflow="hidden"}function fecharModalInteracoes(){const e=document.getElementById("modal-interacoes");e&&e.remove(),document.body.style.overflow=""}function voltarCatalogo(){const e=document.getElementById("view-home"),t=document.getElementById("view-produto");t&&(t.style.display="none"),e&&(e.style.display="block"),produtoAtual=null;modoAdminSite=!1;history.pushState({},"",window.location.pathname),window.scrollTo({top:0,behavior:"auto"})}function renderProduto(){const e=produtoAtual,t=document.getElementById("produto-layout");if(!t||!e)return;t.innerHTML="";const a=document.createElement("div");a.className="pp-titulo-area";const o=document.createElement("h1");o.className="pp-titulo",o.textContent=e.titulo||"",a.appendChild(o);const n=document.createElement("div");n.className="pp-categoria",n.textContent=e.linha||"",a.appendChild(n);const r=document.createElement("div");r.className="pp-avaliacao-resumo-topo";const c=e.avaliacao_resumo||{media:0,total:0},d=Number(c.media||0),i=Number(c.total||0),l=document.createElement("span");l.className="pp-estrelas-topo",l.innerHTML=gerarEstrelas(d,"normal");const s=document.createElement("span");s.className="pp-media-topo",s.textContent=i>0?d.toFixed(1):"Sem avaliações";const m=document.createElement("span");m.className="pp-quantidade-topo",m.textContent=0===i?"":1===i?"(1 avaliação)":"("+i+" avaliações)",r.appendChild(l),r.appendChild(s),r.appendChild(m),a.appendChild(r),t.appendChild(a);const u=document.createElement("div");u.className="pp-imagem-area";const p=obterImagensDaCor(e,corAtual),v=p.length,g=document.createElement("span");g.className="pp-contador",g.id="pp-contador",g.textContent=v>0?`1 / ${v}`:"1 / 1",u.appendChild(g);const C=document.createElement("img");C.id="pp-img",C.className="pp-imagem-principal";let h="";if(p.length>0){h=(p.find(e=>!0===e.principal)||p[0]).caminho}else if(Array.isArray(e.imagens)&&e.imagens.length>0){h=(e.imagens.find(e=>!0===e.principal)||e.imagens[0]).caminho}h&&(C.src=urlImagem(h)),C.alt=e.titulo||"Produto",C.addEventListener("error",function(){C.style.display="none";const ph=document.createElement("div");ph.className="produto-imagem-placeholder";ph.textContent="🪑";ph.style.fontSize="80px";u.appendChild(ph);}),u.appendChild(C);const E=document.createElement("button");E.type="button",E.className="pp-fav"+(isFavorito(e.id)?" favoritado":""),E.dataset.produtoId=e.id,E.textContent=isFavorito(e.id)?"♥":"♡",E.setAttribute("aria-label","Adicionar aos favoritos"),E.addEventListener("click",t=>{t.stopPropagation(),toggleFavorito(e.id)}),u.appendChild(E);const f=document.createElement("button");if(f.type="button",f.className="pp-compartilhar",f.textContent="↗",f.setAttribute("aria-label","Compartilhar produto"),f.addEventListener("click",e=>{e.stopPropagation(),compartilharProduto()}),u.appendChild(f),v>1){const e=document.createElement("button");e.type="button",e.className="pp-seta esq",e.textContent="‹",e.addEventListener("click",e=>{e.stopPropagation(),mudarImagem(-1)});const t=document.createElement("button");t.type="button",t.className="pp-seta dir",t.textContent="›",t.addEventListener("click",e=>{e.stopPropagation(),mudarImagem(1)}),u.appendChild(e),u.appendChild(t)}t.appendChild(u);const b=document.createElement("div");if(Array.isArray(e.cores)&&e.cores.length>0){const t=document.createElement("div");t.className="pp-cor",t.id="pp-cor",t.textContent="Cor: "+(e.cores[corAtual].nome||""),b.appendChild(t);const a=document.createElement("div");a.className="pp-cores",e.cores.forEach((t,o)=>{const n=document.createElement("div");n.className="pp-cor-item"+(o===corAtual?" selecionada":"");const r=document.createElement("div");r.className="pp-cor-thumb";const c=obterImagensDaCor(e,o);if(c.length>0){const e=c.find(e=>!0===e.principal),a=document.createElement("img");a.src=urlImagem((e||c[0]).caminho),a.alt=t.nome||"Cor",a.loading="lazy",r.appendChild(a)}const d=document.createElement("div");d.className="pp-cor-nome",d.textContent=t.nome||"",n.appendChild(r),n.appendChild(d),n.addEventListener("click",()=>mudarCor(o)),a.appendChild(n)}),b.appendChild(a)}t.appendChild(b);const y=document.createElement("div");y.className="pp-bloco pp-orcamento";const A=document.createElement("h3");if(A.textContent="Solicite seu orçamento",y.appendChild(A),null!==e.preco&&void 0!==e.preco&&""!==e.preco){const t=document.createElement("div");if(t.className="pp-preco",t.textContent=formatarPreco(e.preco),y.appendChild(t),e.parcelamento){const t=document.createElement("div");t.className="pp-parcelamento",t.textContent=e.parcelamento,y.appendChild(t)}}const N=document.createElement("button");N.type="button",N.className="btn-solicitar",N.textContent="SOLICITAR ORÇAMENTO",N.addEventListener("click",abrirModalOrcamento),y.appendChild(N),t.appendChild(y);const x=document.createElement("div");x.className="pp-bloco";const L=document.createElement("h3");if(L.textContent="Produtos relacionados",x.appendChild(L),Array.isArray(e.relacionados)&&e.relacionados.length>0){const t=document.createElement("div");t.className="relacionados-grid",e.relacionados.forEach(e=>{const a=document.createElement("div");a.className="rel-card",a.dataset.id=e.id;const o=document.createElement("div");if(o.className="rel-imagem-area",e.imagem_principal){const t=document.createElement("img");t.src=urlImagem(e.imagem_principal),t.alt=e.titulo||"Produto relacionado",t.loading="lazy",o.appendChild(t)}else{const e=document.createElement("div");e.className="rel-imagem-placeholder",e.textContent="🪑",o.appendChild(e)}const n=document.createElement("button");n.type="button",n.className="rel-fav"+(isFavorito(e.id)?" favoritado":""),n.dataset.produtoId=e.id,n.textContent=isFavorito(e.id)?"♥":"♡",n.addEventListener("click",t=>{t.stopPropagation(),toggleFavorito(e.id)}),o.appendChild(n),a.appendChild(o);const r=document.createElement("div");r.className="rel-info";const c=document.createElement("div");c.className="rel-categoria",c.textContent=e.linha||"";const d=document.createElement("div");if(d.className="rel-nome",d.textContent=e.titulo||"",r.appendChild(c),r.appendChild(d),null!==e.preco&&void 0!==e.preco&&""!==e.preco){const t=document.createElement("div");if(t.className="rel-preco",t.textContent=formatarPreco(e.preco),r.appendChild(t),e.parcelamento){const t=document.createElement("div");t.className="rel-parcelas",t.textContent=e.parcelamento,r.appendChild(t)}}a.appendChild(r),a.addEventListener("click",()=>abrirProduto(e.id)),t.appendChild(a)}),x.appendChild(t)}else{const e=document.createElement("p");e.className="sem-conteudo",e.textContent="Nenhum produto relacionado disponível.",x.appendChild(e)}t.appendChild(x);const I=document.createElement("div");I.className="pp-bloco";const P=document.createElement("h3");P.textContent="Características do produto",I.appendChild(P);const B=e.caracteristicas||{},w=document.createElement("div");w.className="carac-sub",w.textContent="Características Principais",I.appendChild(w);const M=document.createElement("table");M.className="carac-tabela",adicionarLinhaTabela(M,"Modelo",B.modelo||"—");const k=document.createElement("tr"),S=document.createElement("td");S.textContent="Cor";const z=document.createElement("td");z.id="carac-cor",z.textContent=obterNomeCorAtual(),k.appendChild(S),k.appendChild(z),M.appendChild(k),I.appendChild(M);const T=document.createElement("div");T.className="carac-sub",T.textContent="Dimensões",I.appendChild(T);const F=document.createElement("table");F.className="carac-tabela",adicionarLinhaTabela(F,"Largura x Comprimento",B.largura&&B.comprimento?B.largura+" x "+B.comprimento:"—");const D=document.createElement("tr"),R=document.createElement("td");R.textContent="Altura";const q=document.createElement("td");q.id="carac-altura",q.textContent=obterAlturaAtual(),D.appendChild(R),D.appendChild(q),F.appendChild(D),I.appendChild(F);const _=document.createElement("div");_.className="carac-sub",_.textContent="Outras características",I.appendChild(_);const O=document.createElement("table");O.className="carac-tabela",adicionarLinhaTabela(O,"Outros",B.outros||"—"),adicionarLinhaTabela(O,"Quantidade de assentos",B.quantidade_assentos||"—"),adicionarLinhaTabela(O,"Compartimento para livros",B.compartimento_livros||"—"),I.appendChild(O);const H=document.createElement("div");H.className="carac-sub",H.textContent="Descrição",I.appendChild(H);const U=document.createElement("p");U.id="descricao-cor-atual",U.className="descricao-produto-texto",U.textContent=obterDescricaoCorAtual(),I.appendChild(U),t.appendChild(I);const G=document.createElement("div");G.className="pp-bloco",G.id="bloco-perguntas";const J=document.createElement("h3");J.textContent="Perguntas e Respostas",G.appendChild(J);const Z=document.createElement("div");Z.className="formulario-pergunta";const j=document.createElement("input");j.type="text",j.className="pergunta-input",j.placeholder="Digite sua pergunta";const V=document.createElement("button");V.type="button",V.className="btn-perguntar",V.textContent="Enviar",Z.appendChild(j),Z.appendChild(V),G.appendChild(Z),V.addEventListener("click",()=>enviarPergunta(j,V)),j.addEventListener("keydown",e=>{"Enter"===e.key&&(e.preventDefault(),enviarPergunta(j,V))});const $=document.createElement("button");$.type="button",$.className="btn-ver-perguntas",$.textContent="Ver Todas as Perguntas",$.addEventListener("click",abrirAbaPerguntas),G.appendChild($),t.appendChild(G);const Q=document.createElement("div");Q.className="pp-bloco",Q.id="bloco-avaliacoes";const W=document.createElement("h3");W.textContent="Avaliações do produto",Q.appendChild(W);const K=e.avaliacao_resumo||{media:0,total:0},X=Number(K.media||0),Y=Number(K.total||0),ee=document.createElement("div");if(ee.className="avaliacao-resumo-produto",Y>0){const e=document.createElement("span");e.className="avaliacao-resumo-estrelas",e.innerHTML=gerarEstrelas(X,"normal");const t=document.createElement("span");t.className="avaliacao-resumo-media",t.textContent=X.toFixed(1);const a=document.createElement("span");a.className="avaliacao-resumo-quantidade",a.textContent=1===Y?"(1 avaliação)":"("+Y+" avaliações)",ee.appendChild(e),ee.appendChild(t),ee.appendChild(a)}else{const e=document.createElement("span");e.className="sem-avaliacoes-resumo",e.textContent="Sem avaliações ainda.",ee.appendChild(e)}Q.appendChild(ee);const te=document.createElement("button");te.type="button",te.className="btn-avaliar",te.textContent="Avaliar produto",te.addEventListener("click",abrirAbaAvaliacoes),Q.appendChild(te),t.appendChild(Q),atualizarBotoesFavorito(),atualizarDescricaoCorNaTela(),atualizarModoAdministrador()}function renderPaginaPerguntas(){const e=produtoAtual,t=document.getElementById("produto-layout");if(!t||!e)return;t.innerHTML="";const a=document.createElement("div");a.className="pagina-interacoes";const o=document.createElement("h1");o.className="pp-titulo",o.textContent="Perguntas e Respostas",a.appendChild(o);const n=document.createElement("p");n.className="pp-categoria",n.textContent=e.titulo||"Produto",a.appendChild(n);const r=document.createElement("div");r.id="lista-perguntas",r.className="lista-perguntas",a.appendChild(r),renderPerguntas(e.perguntas||[],r),t.appendChild(a),atualizarModoAdministrador()}function renderPaginaAvaliacoes(){const e=produtoAtual,t=document.getElementById("produto-layout");if(!t||!e)return;t.innerHTML="";const a=document.createElement("div");a.className="pagina-interacoes";const o=document.createElement("h1");o.className="pp-titulo",o.textContent="Avaliações do produto",a.appendChild(o);const n=document.createElement("p");n.className="pp-categoria",n.textContent=e.titulo||"Produto",a.appendChild(n);const r=e.avaliacao_resumo||{media:0,total:0,distribuicao:{1:0,2:0,3:0,4:0,5:0}},c=Number(r.total||0),d=Number(r.media||0),i=document.createElement("div");i.className="avaliacoes-resumo";const l=document.createElement("div");l.className="avaliacoes-resumo-esquerda";const s=document.createElement("div");s.className="avaliacoes-media-grande",s.textContent=c>0?d.toFixed(1):"0,0";const m=document.createElement("div");m.className="avaliacoes-estrelas-media",m.innerHTML=gerarEstrelas(d,"grande");const u=document.createElement("div");u.className="avaliacoes-total-media",u.textContent=0===c?"Sem avaliações ainda.":1===c?"1 avaliação":c+" avaliações",l.appendChild(s),l.appendChild(m),l.appendChild(u);const p=document.createElement("div");p.className="avaliacoes-distribuicao";for(let e=5;e>=1;e--){const t=Number(r.distribuicao?.[e]||0),a=document.createElement("div");a.className="avaliacao-distribuicao-linha";const o=document.createElement("span");o.className="avaliacao-distribuicao-label",o.textContent=e+" ★";const n=document.createElement("div");n.className="avaliacao-distribuicao-barra";const d=document.createElement("span");d.className="avaliacao-distribuicao-preenchimento";const i=c>0?t/c*100:0;d.style.width=i+"%";const l=document.createElement("span");l.className="avaliacao-distribuicao-quantidade",l.textContent=t,n.appendChild(d),a.appendChild(o),a.appendChild(n),a.appendChild(l),p.appendChild(a)}i.appendChild(l),i.appendChild(p),a.appendChild(i);const v=document.createElement("button");v.type="button",v.className="btn-avaliar",v.textContent="Avaliar produto",a.appendChild(v);const g=document.createElement("div");g.className="formulario-avaliacao",g.style.display="none";const C=document.createElement("input");C.type="text",C.className="avaliacao-nome",C.placeholder="Seu nome",g.appendChild(C);const h=document.createElement("div");h.className="avaliacao-estrelas-label",h.textContent="Sua nota *",g.appendChild(h);const E=document.createElement("div");E.className="avaliacao-estrelas-input";let f=0;const b=document.createElement("span");b.className="avaliacao-nota-texto",b.textContent="Selecione de 1 a 5 estrelas";for(let e=1;e<=5;e++){const t=criarBotaoEstrela(e,!1);t.addEventListener("click",()=>{f=e,E.querySelectorAll(".estrela-input").forEach(t=>{const a=Number(t.dataset.nota);t.classList.toggle("selecionada",a<=e)}),b.textContent=e+(1===e?" estrela selecionada":" estrelas selecionadas")}),E.appendChild(t)}g.appendChild(E),g.appendChild(b);const y=document.createElement("textarea");y.className="avaliacao-comentario",y.placeholder="Conte o que achou do produto. Opcional se você enviar uma foto.",y.rows=5,g.appendChild(y);const A=document.createElement("label");A.className="avaliacao-foto-label",A.textContent="Adicionar foto do produto (opcional)";const N=document.createElement("input");N.type="file",N.className="avaliacao-foto",N.accept="image/*",A.appendChild(N),g.appendChild(A);const x=document.createElement("div");x.className="avaliacao-foto-preview",g.appendChild(x),N.addEventListener("change",()=>{x.innerHTML="";const e=N.files?.[0];if(!e)return;if(!e.type.startsWith("image/"))return void(N.value="");const t=document.createElement("img");t.alt="Pré-visualização da foto";const a=new FileReader;a.onload=e=>{t.src=e.target.result,x.appendChild(t)},a.readAsDataURL(e)});const L=document.createElement("button");L.type="button",L.className="btn-avaliar",L.textContent="Enviar avaliação",g.appendChild(L),a.appendChild(g),v.addEventListener("click",()=>{g.style.display="none"===g.style.display?"block":"none"}),L.addEventListener("click",()=>enviarAvaliacao(C,f,y,N,L));const I=document.createElement("h2");I.textContent="Avaliações",a.appendChild(I);const P=document.createElement("div");P.id="lista-avaliacoes",P.className="lista-avaliacoes",renderAvaliacoes(e.avaliacoes||[],P),a.appendChild(P),t.appendChild(a),atualizarModoAdministrador()}function renderPerguntas(e,t){if(!t)return;t.innerHTML="";if(!Array.isArray(e)||0===e.length){const a=document.createElement("div");a.className="sem-conteudo",a.textContent="Ainda não há perguntas sobre este produto.",t.appendChild(a);return}e.forEach(e=>{const a=document.createElement("div");a.className="pergunta-card";const o=document.createElement("div");o.className="pergunta-texto";const n=document.createElement("strong");n.textContent="Pergunta";const r=document.createElement("p");r.textContent=e.pergunta||"";const c=document.createElement("span");c.className="pergunta-autor",c.textContent=(e.nome_cliente||"Cliente")+(e.criado_em?" • "+formatarDataRelativa(e.criado_em):""),o.appendChild(n),o.appendChild(r),o.appendChild(c),a.appendChild(o);if(e.resposta){const t=document.createElement("div");t.className="pergunta-resposta";const o=document.createElement("strong");o.textContent="Resposta da Cortez Móveis";const n=document.createElement("p");n.textContent=e.resposta;const r=document.createElement("span");r.className="pergunta-resposta-data",r.textContent=e.respondida_em?formatarDataRelativa(e.respondida_em):"",t.appendChild(o),t.appendChild(n),t.appendChild(r),a.appendChild(t)}else if(administradorLogado){const t=document.createElement("div");t.className="pergunta-admin-acoes";const o=document.createElement("button");o.type="button",o.className="btn-responder",o.textContent="Responder";o.addEventListener("click",()=>abrirCampoResposta(e,a)),t.appendChild(o),a.appendChild(t)}t.appendChild(a)})}
-function abrirCampoResposta(e,t){if(!administradorLogado)return;if(t.querySelector(".campo-resposta"))return;const a=document.createElement("div");a.className="campo-resposta";const o=document.createElement("textarea");o.className="resposta-input",o.placeholder="Digite sua resposta...",o.rows=4;const n=document.createElement("button");n.type="button",n.className="btn-enviar-resposta",n.textContent="Enviar resposta";a.appendChild(o),a.appendChild(n),t.appendChild(a);n.addEventListener("click",async()=>{const a=o.value.trim();if(!a)return o.focus();const r=n.textContent;n.disabled=!0,n.textContent="Enviando...";try{const o=await api("/api/produtos/"+produtoAtual.id+"/perguntas/"+e.id+"/responder",{method:"PUT",body:JSON.stringify({resposta:a})});if(o&&o.pergunta){Array.isArray(produtoAtual.perguntas)||(produtoAtual.perguntas=[]);const a=produtoAtual.perguntas.findIndex(t=>Number(t.id)===Number(e.id));-1!==a?produtoAtual.perguntas[a]=o.pergunta:produtoAtual.perguntas.unshift(o.pergunta)}renderPerguntas(produtoAtual.perguntas||[],document.getElementById("lista-perguntas"))}catch(e){console.error("Erro ao responder pergunta:",e),alert(e.message||"Não foi possível enviar a resposta.")}finally{n.disabled=!1,n.textContent=r}})}
+let produtos=[],produtoAtual=null,corAtual=0,imgAtual=0,categorias=[],categoriaFiltro=null,administradorLogado=!1,dadosAdministrador=null,modoAdminSite=new URLSearchParams(window.location.search).get("modo")==="admin";async function api(e,t={}){const a={...t,credentials:"same-origin",headers:{...t.body instanceof FormData?{}:{"Content-Type":"application/json"},...t.headers||{}}},o=new AbortController(),n=a.signal;o.signal&&(a.signal=o.signal);const r=setTimeout(()=>o.abort(),15000);try{const t=await fetch(e,a),i=await t.json().catch(()=>({}));if(!t.ok)throw new Error(i.erro||"Erro na requisição.");return i}catch(e){if("AbortError"===e.name)throw new Error("A solicitação demorou demais. Verifique sua conexão e tente novamente.");throw e}finally{clearTimeout(r)}}function verificarAdministrador(){administradorLogado=!1,dadosAdministrador=null;try{const e=await api("/api/auth/me");e&&e.admin&&modoAdminSite&&(administradorLogado=!0,dadosAdministrador=e.admin)}catch(e){administradorLogado=!1,dadosAdministrador=null}}function atualizarModoAdministrador(){document.querySelectorAll("[data-apenas-admin]").forEach(e=>{e.style.display=administradorLogado?"":"none"})}function escaparHtml(e){return String(e??"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#039;")}function urlImagem(e){if(!e)return e;if(e.startsWith("https://res.cloudinary.com/")){const t=e.indexOf("/image/upload/");if(t>=0){let a=e.substring(t+"/image/upload/".length);const o=a.split("/");o.length>0&&/^(q_|c_|w_|h_|f_|dpr_|v\d)/.test(o[0])&&o.shift();let r=o.join("/");const n=r.lastIndexOf(".");n>0&&(r=r.substring(0,n));return"/api/imagens/cloudinary/"+r}}return e}function formatarPreco(e){if(null==e||""===e)return"";const t=Number(e);return Number.isFinite(t)?t.toLocaleString("pt-BR",{style:"currency",currency:"BRL"}):""}function gerarEstrelas(e,t="normal"){const a=Number(e),o=Number.isFinite(a)?Math.max(0,Math.min(5,a)):0;let n='<span class="estrelas '+t+'" aria-label="'+escaparHtml(o.toFixed(1)+" de 5 estrelas")+'">';for(let e=1;e<=5;e++)n+=e<=Math.round(o)?'<span class="estrela ativa">★</span>':'<span class="estrela">☆</span>';return n+="</span>",n}function gerarEstrelasInteiras(e){const t=Number(e);let a="";for(let e=1;e<=5;e++)a+=e<=t?"★":"☆";return a}function formatarDataRelativa(e){if(!e)return"";const t=new Date(e);if(Number.isNaN(t.getTime()))return"";const a=(new Date).getTime()-t.getTime(),o=Math.floor(a/864e5);if(o<=0)return"Hoje";if(1===o)return"Há 1 dia";if(o<30)return"Há "+o+" dias";const n=Math.floor(o/30);if(1===n)return"Há 1 mês";if(n<12)return"Há "+n+" meses";const r=Math.floor(n/12);return 1===r?"Há 1 ano":"Há "+r+" anos"}function criarBotaoEstrela(e,t){const a=document.createElement("button");return a.type="button",a.className="estrela-input"+(t?" selecionada":""),a.dataset.nota=e,a.setAttribute("aria-label",e+(1===e?" estrela":" estrelas")),a.textContent="★",a}function getFavoritos(){try{return JSON.parse(localStorage.getItem("cortez_favoritos")||"[]")}catch(e){return[]}}function toggleFavorito(e){let t=getFavoritos();e=Number(e),t.includes(e)?t=t.filter(t=>t!==e):t.push(e),localStorage.setItem("cortez_favoritos",JSON.stringify(t)),atualizarBotoesFavorito()}function isFavorito(e){return getFavoritos().includes(Number(e))}function atualizarBotoesFavorito(){document.querySelectorAll(".fav-btn, .rel-fav, .pp-fav").forEach(e=>{const t=Number(e.dataset.produtoId||e.closest("[data-id]")?.dataset.id||produtoAtual?.id);if(!t)return;const a=isFavorito(t);e.classList.toggle("favoritado",a),e.textContent=a?"♥":"♡",e.setAttribute("aria-pressed",a?"true":"false")})}function normalizarProduto(e){if(!e)return e;const t=Array.isArray(e.imagens)?e.imagens:[],r=t.filter(e=>!e.cor_id).sort((e,t)=>Number(e.ordem||0)-Number(t.ordem||0)),a=(Array.isArray(e.cores)?e.cores:[]).map((e,a)=>{const n=t.filter(t=>Number(t.cor_id)===Number(e.id)).sort((e,t)=>Number(e.ordem||0)-Number(t.ordem||0));const o=0===a&&0===n.length?r:n;return{...e,imagens:o}});return{...e,cores:a}}async function carregarProdutos(){const e=document.getElementById("grid-produtos");try{produtos=await api("/api/produtos"),produtos=Array.isArray(produtos)?produtos.map(normalizarProduto):[],renderGrade()}catch(t){if(console.error("Erro ao carregar produtos:",t),e){e.innerHTML="";const t=document.createElement("p");t.className="produtos-estado",t.textContent="Não foi possível carregar os produtos.",e.appendChild(t)}}}async function carregarCategorias(){const e=document.getElementById("filtro-categorias");if(e)try{categorias=await api("/api/categorias"),Array.isArray(categorias)||(categorias=[]),e.innerHTML="";const t=document.createElement("button");t.type="button",t.className="filtro-btn ativo",t.textContent="Todos",t.dataset.categoria="",t.addEventListener("click",()=>{filtrarCategoria(null,t)}),e.appendChild(t),categorias.forEach(t=>{const a=document.createElement("button");a.type="button",a.className="filtro-btn",a.textContent=t.nome||"",a.dataset.categoria=t.id,a.addEventListener("click",()=>{filtrarCategoria(t.id,a)}),e.appendChild(a)}),renderGrade()}catch(e){console.error("Erro ao carregar categorias:",e)}}function filtrarCategoria(e,t){categoriaFiltro=null===e?null:Number(e),document.querySelectorAll(".filtro-btn").forEach(e=>e.classList.remove("ativo")),t&&t.classList.add("ativo"),renderGrade()}function renderGrade(){const e=document.getElementById("grid-produtos");if(!e)return;e.innerHTML="";let t=Array.isArray(produtos)?produtos:[];if(null!=categoriaFiltro&&(t=t.filter(e=>Number(e.categoria_id)===Number(categoriaFiltro))),0===t.length){const t=document.createElement("p");return t.className="produtos-estado",t.textContent="Nenhum produto encontrado.",void e.appendChild(t)}t.forEach(t=>criarCardProduto(t,e)),atualizarBotoesFavorito()}function criarCardProduto(e,t){const a=document.createElement("article");a.className="produto-card",a.dataset.id=e.id;const o=document.createElement("div");o.className="produto-imagem-area";const n=document.createElement("button");if(n.type="button",n.className="fav-btn"+(isFavorito(e.id)?" favoritado":""),n.dataset.produtoId=e.id,n.setAttribute("aria-label","Adicionar aos favoritos"),n.setAttribute("aria-pressed",isFavorito(e.id)?"true":"false"),n.textContent=isFavorito(e.id)?"♥":"♡",n.addEventListener("click",t=>{t.stopPropagation(),toggleFavorito(e.id)}),o.appendChild(n),e.imagem_principal){const t=document.createElement("img");t.src=urlImagem(e.imagem_principal),t.alt=e.titulo||"Produto",t.loading="lazy",t.addEventListener("error",()=>{t.remove();const e=document.createElement("div");e.className="produto-imagem-placeholder",e.textContent="🪑",o.appendChild(e)}),o.appendChild(t)}else{const e=document.createElement("div");e.className="produto-imagem-placeholder",e.textContent="🪑",o.appendChild(e)}a.appendChild(o);const r=document.createElement("div");r.className="produto-info";const c=document.createElement("div");c.className="produto-categoria",c.textContent=e.linha||"",r.appendChild(c);const d=document.createElement("div");if(d.className="produto-nome",d.textContent=e.titulo||"",r.appendChild(d),null!==e.preco&&void 0!==e.preco&&""!==e.preco){const t=document.createElement("div");if(t.className="produto-preco",t.textContent=formatarPreco(e.preco),r.appendChild(t),e.parcelamento){const t=document.createElement("div");t.className="produto-parcelas",t.textContent=e.parcelamento,r.appendChild(t)}}const i=document.createElement("button");i.type="button",i.className="btn-produto",i.textContent="Ver detalhes",i.addEventListener("click",t=>{t.stopPropagation(),abrirProduto(e.id)}),r.appendChild(i),a.appendChild(r),a.addEventListener("click",()=>abrirProduto(e.id)),t.appendChild(a)}async function abrirProduto(e,t=!0){try{const a=await api("/api/produtos/"+e);produtoAtual=normalizarProduto(a),corAtual=0,imgAtual=0;const o=document.getElementById("view-home"),n=document.getElementById("view-produto");o&&(o.style.display="none"),n&&(n.style.display="block"),atualizarModoAdministrador();const r=new URLSearchParams(window.location.search).get("pagina");if("perguntas"===r?renderPaginaPerguntas():"avaliacoes"===r?renderPaginaAvaliacoes():renderProduto(),atualizarModoAdministrador(),t){let e="?produto="+encodeURIComponent(produtoAtual.id);modoAdminSite&&(e+="&modo=admin"),r?history.pushState({},"",e+"&pagina="+encodeURIComponent(r)):history.pushState({},"",e)}window.scrollTo({top:0,behavior:"auto"})}catch(e){console.error("Erro ao abrir produto:",e),alert(e.message||"Não foi possível carregar o produto.")}}function abrirAbaPerguntas(){if(!produtoAtual)return;const e=new URLSearchParams;modoAdminSite&&e.set("modo","admin"),e.set("produto",produtoAtual.id),e.set("pagina","perguntas"),history.pushState({},"","?"+e.toString()),renderPaginaPerguntas(),window.scrollTo({top:0,behavior:"smooth"})}function abrirAbaAvaliacoes(){if(!produtoAtual)return;const e=new URLSearchParams;modoAdminSite&&e.set("modo","admin"),e.set("produto",produtoAtual.id),e.set("pagina","avaliacoes"),history.pushState({},"","?"+e.toString()),renderPaginaAvaliacoes(),window.scrollTo({top:0,behavior:"smooth"})}function abrirModalInteracoes(e){"perguntas"===e?abrirAbaPerguntas():abrirAbaAvaliacoes()}
+function renderProduto(){
+    const produto=produtoAtual;
+    const layout=document.getElementById("produto-layout");
+    if(!layout||!produto)return;
 
-function renderAvaliacoes(e,t){if(!t)return;t.innerHTML="";if(!Array.isArray(e)||0===e.length){const a=document.createElement("div");a.className="sem-conteudo",a.textContent="Sem avaliações ainda.",t.appendChild(a);return}e.forEach(e=>{const a=document.createElement("article");a.className="avaliacao-card";const o=document.createElement("div");o.className="avaliacao-card-cabecalho";const n=document.createElement("strong");n.className="avaliacao-cliente",n.textContent=e.cliente||"Cliente";const r=document.createElement("span");r.className="avaliacao-data",r.textContent=e.criado_em?formatarDataRelativa(e.criado_em):"",o.appendChild(n),o.appendChild(r),a.appendChild(o);const c=document.createElement("div");c.className="avaliacao-card-estrelas",c.innerHTML=gerarEstrelas(Number(e.nota),"normal"),a.appendChild(c);if(e.comentario){const t=document.createElement("p");t.className="avaliacao-comentario-exibido",t.textContent=e.comentario,a.appendChild(t)}if(Array.isArray(e.imagens)&&e.imagens.length>0){const t=document.createElement("div");t.className="avaliacao-galeria";e.imagens.forEach(e=>{if(!e||!e.caminho)return;const a=document.createElement("img");a.src=urlImagem(e.caminho),a.alt="Foto enviada na avaliação",a.loading="lazy",t.appendChild(a)}),a.appendChild(t)}if(e.resposta_vendedor){const t=document.createElement("div");t.className="avaliacao-resposta";const o=document.createElement("strong");o.textContent="Resposta da Cortez Móveis";const n=document.createElement("p");n.textContent=e.resposta_vendedor,t.appendChild(o),t.appendChild(n),a.appendChild(t)}else if(administradorLogado){const t=document.createElement("div");t.className="avaliacao-admin-acoes";const o=document.createElement("button");o.type="button",o.className="btn-responder",o.textContent="Responder avaliação";o.addEventListener("click",()=>abrirCampoRespostaAvaliacao(e,a)),t.appendChild(o),a.appendChild(t)}t.appendChild(a)})}
+    layout.innerHTML="";
 
-function abrirCampoRespostaAvaliacao(e,t){if(!administradorLogado)return;if(t.querySelector(".campo-resposta"))return;const a=document.createElement("div");a.className="campo-resposta";const o=document.createElement("textarea");o.className="resposta-input",o.placeholder="Digite a resposta para o cliente...",o.rows=4;const n=document.createElement("button");n.type="button",n.className="btn-enviar-resposta",n.textContent="Enviar resposta";a.appendChild(o),a.appendChild(n),t.appendChild(a);n.addEventListener("click",async()=>{const a=o.value.trim();if(!a)return o.focus();const r=n.textContent;n.disabled=!0,n.textContent="Enviando...";try{const o=await api("/api/produtos/"+produtoAtual.id+"/avaliacoes/"+e.id+"/responder",{method:"PUT",body:JSON.stringify({resposta:a})});if(o&&o.avaliacao){Array.isArray(produtoAtual.avaliacoes)||(produtoAtual.avaliacoes=[]);const a=produtoAtual.avaliacoes.findIndex(t=>Number(t.id)===Number(e.id));-1!==a?produtoAtual.avaliacoes[a]=o.avaliacao:produtoAtual.avaliacoes.unshift(o.avaliacao)}renderAvaliacoes(produtoAtual.avaliacoes||[],document.getElementById("lista-avaliacoes"))}catch(e){console.error("Erro ao responder avaliação:",e),alert(e.message||"Não foi possível enviar a resposta.")}finally{n.disabled=!1,n.textContent=r}})}
+    const imagens=obterImagensDaCor(produto,corAtual);
+    const listaImagens=imagens.length?imagens:(Array.isArray(produto.imagens)?produto.imagens:[]);
+    const principal=(listaImagens.find(i=>i.principal)||listaImagens[0]||null);
 
-async function enviarPergunta(e,t,a){if(!produtoAtual)return;const o=e.value.trim();if(!o)return alert("Digite sua pergunta."),void e.focus();const n=t.textContent;t.disabled=!0,t.textContent="Enviando...";try{const r=await api("/api/produtos/"+produtoAtual.id+"/perguntas",{method:"POST",body:JSON.stringify({nome_cliente:"Cliente",pergunta:o})});Array.isArray(produtoAtual.perguntas)||(produtoAtual.perguntas=[]),r&&r.pergunta&&produtoAtual.perguntas.unshift(r.pergunta),e.value="","function"==typeof a&&a()}catch(e){console.error("Erro ao enviar pergunta:",e),alert(e.message||"Não foi possível enviar sua pergunta.")}finally{t.disabled=!1,t.textContent=n}}
+    const grid=document.createElement("div");
+    grid.className="pp-detalhe-grid";
 
-async function enviarAvaliacao(e,t,a,o,n){if(!produtoAtual)return;const r=e.value.trim(),c=a.value.trim(),d=o.files?.[0]||null;if(!t)return void alert("A quantidade de estrelas é obrigatória.");if(!c&&!d)return void alert("Escreva o que achou do produto ou envie uma foto.");if(d&&!c)return void alert("O envio de avaliação somente com foto será ativado junto ao upload de imagens. Por enquanto, escreva também um comentário.");const i=n.textContent;n.disabled=!0,n.textContent="Enviando...";try{const n=await api("/api/produtos/"+produtoAtual.id+"/avaliacoes",{method:"POST",body:JSON.stringify({cliente:r||"Cliente",nota:Number(t),comentario:c||null,imagens:[]})});produtoAtual.avaliacao_resumo=n.resumo||produtoAtual.avaliacao_resumo,Array.isArray(produtoAtual.avaliacoes)||(produtoAtual.avaliacoes=[]),n.avaliacao&&produtoAtual.avaliacoes.unshift(n.avaliacao);renderAvaliacoes(produtoAtual.avaliacoes,document.getElementById("lista-avaliacoes")),atualizarResumoAvaliacoesNaTela(),e.value="",a.value="",o.value="";const i=document.querySelector(".avaliacao-foto-preview");i&&(i.innerHTML="")}catch(e){console.error("Erro ao enviar avaliação:",e),alert(e.message||"Não foi possível enviar sua avaliação.")}finally{n.disabled=!1,n.textContent=i}}
-function atualizarResumoAvaliacoesNaTela(){if(!produtoAtual)return;const e=produtoAtual.avaliacao_resumo||{media:0,total:0},t=document.querySelector(".pp-estrelas-topo");t&&(t.innerHTML=gerarEstrelas(Number(e.media||0),"normal"));const a=document.querySelector(".pp-media-topo");if(a){const t=Number(e.total||0);a.textContent=t>0?Number(e.media||0).toFixed(1):"Sem avaliações"}const o=document.querySelector(".pp-quantidade-topo");if(o){const t=Number(e.total||0);o.textContent=0===t?"":1===t?"(1 avaliação)":"("+t+" avaliações)"}}function adicionarLinhaTabela(e,t,a){const o=document.createElement("tr"),n=document.createElement("td");n.textContent=t;const r=document.createElement("td");r.textContent=a,o.appendChild(n),o.appendChild(r),e.appendChild(o)}function obterImagensDaCor(e,t){if(!e||!Array.isArray(e.cores)||!e.cores[t])return[];const a=e.cores[t];return Array.isArray(a.imagens)?a.imagens:[]}function obterDescricaoCorAtual(){if(produtoAtual&&Array.isArray(produtoAtual.cores)&&produtoAtual.cores[corAtual]){const e=produtoAtual.cores[corAtual];if(null!==e.descricao&&void 0!==e.descricao&&""!==String(e.descricao).trim())return String(e.descricao).trim()}return"Descrição desta cor ainda não cadastrada."}function atualizarDescricaoCorNaTela(){const e=document.getElementById("descricao-cor-atual");e&&(e.textContent=obterDescricaoCorAtual())}function obterNomeCorAtual(){return produtoAtual&&Array.isArray(produtoAtual.cores)&&produtoAtual.cores[corAtual]&&produtoAtual.cores[corAtual].nome||"—"}function obterAlturaAtual(){return produtoAtual&&Array.isArray(produtoAtual.cores)&&produtoAtual.cores[corAtual]?produtoAtual.cores[corAtual].altura||produtoAtual.caracteristicas?.altura||"—":produtoAtual?.caracteristicas?.altura||"—"}function mudarCor(e){if(!produtoAtual||!Array.isArray(produtoAtual.cores)||!produtoAtual.cores[e])return;corAtual=Number(e),imgAtual=0;const t=obterImagensDaCor(produtoAtual,corAtual),a=document.getElementById("pp-img");if(a){const q=Array.isArray(produtoAtual.imagens)?produtoAtual.imagens:[],r=t.length>0?t:q;if(r.length>0){const o=r.find(m=>!0===m.principal);a.src=urlImagem((o||r[0]).caminho)}}const o=document.getElementById("pp-contador");o&&(o.textContent=(t.length>0?t.length:(Array.isArray(produtoAtual.imagens)?produtoAtual.imagens.length:0))>0?`1 / ${(t.length>0?t.length:(Array.isArray(produtoAtual.imagens)?produtoAtual.imagens.length:0))}`:"1 / 1");const n=document.getElementById("pp-cor");n&&(n.textContent="Cor: "+obterNomeCorAtual()),atualizarDescricaoCorNaTela();const r=document.getElementById("carac-cor");r&&(r.textContent=obterNomeCorAtual());const c=document.getElementById("carac-altura");c&&(c.textContent=obterAlturaAtual()),document.querySelectorAll(".pp-cor-item").forEach((e,t)=>{e.classList.toggle("selecionada",t===corAtual)}),atualizarBotoesFavorito()}function mudarImagem(e){if(!produtoAtual)return;const s=obterImagensDaCor(produtoAtual,corAtual),t=s.length>0?s:(Array.isArray(produtoAtual.imagens)?produtoAtual.imagens:[]),a=t.length;if(a<=1)return;imgAtual=(imgAtual+e+a)%a;const o=document.getElementById("pp-img");o&&(o.src=urlImagem(t[imgAtual].caminho));const c=document.getElementById("pp-contador");c&&(c.textContent=`${imgAtual+1} / ${a}`)}async function compartilharProduto(){if(!produtoAtual)return;const e=window.location.origin+window.location.pathname+"?produto="+encodeURIComponent(produtoAtual.id),t=produtoAtual.titulo||"Cortez Móveis";if(navigator.share)try{await navigator.share({title:t,text:t,url:e})}catch(e){}else try{await navigator.clipboard.writeText(e),alert("Link do produto copiado.")}catch(t){prompt("Copie o link do produto:",e)}}function abrirModalOrcamento(){const e=document.getElementById("modal-orcamento");if(!e)return;const t=document.getElementById("modal-produto-info"),a=document.getElementById("modal-link-whatsapp"),o=document.getElementById("modal-link-email"),n=produtoAtual?produtoAtual.titulo:"",r=produtoAtual&&Array.isArray(produtoAtual.cores)&&produtoAtual.cores[corAtual]?produtoAtual.cores[corAtual].nome:"";produtoAtual?t&&(t.textContent=n+(r?" - Cor: "+r:"")):t&&(t.textContent="Conte-nos o que você precisa.");const c=produtoAtual?"Olá! Gostaria de solicitar um orçamento para o produto "+n+(r?", na cor "+r:"")+".":"Olá! Gostaria de solicitar um orçamento com a Cortez Móveis.";a&&(a.href="https://wa.me/551532769999?text="+encodeURIComponent(c));const d=produtoAtual?"Solicitação de orçamento - "+n:"Solicitação de orçamento - Cortez Móveis";o&&(o.href="mailto:cortez@cortezmoveis.com.br?subject="+encodeURIComponent(d)+"&body="+encodeURIComponent(c)),e.classList.add("aberto")}function fecharModalOrcamento(){const e=document.getElementById("modal-orcamento");e&&e.classList.remove("aberto")}function fecharMenuMobile(){const e=document.getElementById("menu");if(!e)return;e.classList.remove("aberto");const t=document.getElementById("btn-menu-toggle");t&&t.setAttribute("aria-expanded","false")}function irParaInicio(){fecharMenuMobile(),window.location.search?voltarCatalogo():window.scrollTo({top:0,behavior:"smooth"})}function navegar(e){fecharMenuMobile();const t=()=>{const t=document.getElementById(e);t&&t.scrollIntoView({behavior:"smooth",block:"start"})},a=document.getElementById("view-produto");a&&"none"!==a.style.display?(voltarCatalogo(),setTimeout(t,100)):t()}function toggleMenu(){const e=document.getElementById("menu");if(!e)return;const t=e.classList.toggle("aberto"),a=document.getElementById("btn-menu-toggle");a&&a.setAttribute("aria-expanded",t?"true":"false")}function abrirZoom(e){if(!e)return;const t=document.getElementById("zoom-overlay"),a=document.getElementById("zoom-imagem");t&&a&&(a.src=e.currentSrc||e.src,a.alt=e.alt||"Visualização ampliada",t.classList.add("aberto"))}function fecharZoom(){const e=document.getElementById("zoom-overlay");e&&e.classList.remove("aberto")}async function inicializarSite(){const e=document.getElementById("view-produto"),t=document.getElementById("view-home");e&&(e.style.display="none"),t&&(t.style.display="block"),await verificarAdministrador(),carregarProdutos(),carregarCategorias();const a=new URLSearchParams(window.location.search).get("produto");a&&await abrirProduto(a),atualizarModoAdministrador()}document.getElementById("btn-menu-toggle")?.addEventListener("click",toggleMenu),document.getElementById("nav-inicio")?.addEventListener("click",e=>{e.preventDefault(),irParaInicio()}),document.getElementById("nav-produtos")?.addEventListener("click",e=>{e.preventDefault(),navegar("produtos")}),document.getElementById("nav-sobre")?.addEventListener("click",e=>{e.preventDefault(),navegar("sobre")}),document.getElementById("nav-contato")?.addEventListener("click",e=>{e.preventDefault(),navegar("contato")}),document.getElementById("nav-guia")?.addEventListener("click",e=>{e.preventDefault(),navegar("guia")}),document.getElementById("btn-header-orcamento")?.addEventListener("click",abrirModalOrcamento),document.getElementById("btn-conheca-produtos")?.addEventListener("click",()=>navegar("produtos")),document.getElementById("btn-orcamento-principal")?.addEventListener("click",abrirModalOrcamento),document.getElementById("btn-voltar-catalogo")?.addEventListener("click",voltarCatalogo),document.getElementById("btn-fechar-orcamento")?.addEventListener("click",fecharModalOrcamento),document.getElementById("btn-fechar-zoom")?.addEventListener("click",fecharZoom),document.getElementById("modal-orcamento")?.addEventListener("click",e=>{"modal-orcamento"===e.target.id&&fecharModalOrcamento()}),document.getElementById("zoom-overlay")?.addEventListener("click",e=>{"zoom-overlay"===e.target.id&&fecharZoom()}),document.querySelectorAll("[data-zoom]").forEach(e=>{e.addEventListener("click",()=>abrirZoom(e))}),document.addEventListener("keydown",e=>{"Escape"===e.key&&(fecharZoom(),fecharModalOrcamento(),fecharMenuMobile())}),window.addEventListener("popstate",()=>{modoAdminSite=new URLSearchParams(window.location.search).get("modo")==="admin";const e=new URLSearchParams(window.location.search).get("produto");if(e)abrirProduto(e,!1);else{const e=document.getElementById("view-produto"),t=document.getElementById("view-home");e&&(e.style.display="none"),t&&(t.style.display="block"),produtoAtual=null;}}),"loading"===document.readyState?document.addEventListener("DOMContentLoaded",inicializarSite):inicializarSite();
+    // ---------- Galeria ----------
+    const galeria=document.createElement("div");
+    galeria.className="pp-galeria";
+
+    const thumbs=document.createElement("div");
+    thumbs.className="pp-miniaturas";
+    thumbs.id="pp-miniaturas";
+
+    if(listaImagens.length){
+        listaImagens.forEach((imagem,index)=>{
+            const botao=document.createElement("button");
+            botao.type="button";
+            botao.className="pp-miniatura"+(index===imgAtual?" selecionada":"");
+            botao.dataset.index=index;
+            const img=document.createElement("img");
+            img.src=urlImagem(imagem.caminho);
+            img.alt=(produto.titulo||"Produto")+" - imagem "+(index+1);
+            img.loading=index===0?"eager":"lazy";
+            botao.appendChild(img);
+            botao.addEventListener("click",()=>{
+                imgAtual=index;
+                mudarImagem(0);
+            });
+            thumbs.appendChild(botao);
+        });
+    }
+
+    const palco=document.createElement("div");
+    palco.className="pp-imagem-area";
+
+    const contador=document.createElement("span");
+    contador.className="pp-contador";
+    contador.id="pp-contador";
+    contador.textContent=listaImagens.length?(`${Math.min(imgAtual+1,listaImagens.length)} / ${listaImagens.length}`):"1 / 1";
+    palco.appendChild(contador);
+
+    const imagem=document.createElement("img");
+    imagem.id="pp-img";
+    imagem.className="pp-imagem-principal";
+    imagem.alt=produto.titulo||"Produto";
+    if(principal)imagem.src=urlImagem(principal.caminho);
+    imagem.addEventListener("error",()=>{
+        imagem.style.display="none";
+        const ph=document.createElement("div");
+        ph.className="produto-imagem-placeholder";
+        ph.textContent="🪑";
+        ph.style.fontSize="80px";
+        palco.appendChild(ph);
+    });
+    palco.appendChild(imagem);
+
+    const favorito=document.createElement("button");
+    favorito.type="button";
+    favorito.className="pp-fav"+(isFavorito(produto.id)?" favoritado":"");
+    favorito.dataset.produtoId=produto.id;
+    favorito.textContent=isFavorito(produto.id)?"♥":"♡";
+    favorito.setAttribute("aria-label","Adicionar aos favoritos");
+    favorito.addEventListener("click",event=>{event.stopPropagation();toggleFavorito(produto.id)});
+    palco.appendChild(favorito);
+
+    const compartilhar=document.createElement("button");
+    compartilhar.type="button";
+    compartilhar.className="pp-compartilhar";
+    compartilhar.textContent="↗";
+    compartilhar.setAttribute("aria-label","Compartilhar produto");
+    compartilhar.addEventListener("click",event=>{event.stopPropagation();compartilharProduto()});
+    palco.appendChild(compartilhar);
+
+    if(listaImagens.length>1){
+        const anterior=document.createElement("button");
+        anterior.type="button";
+        anterior.className="pp-seta esq";
+        anterior.textContent="‹";
+        anterior.addEventListener("click",event=>{event.stopPropagation();mudarImagem(-1)});
+        const proxima=document.createElement("button");
+        proxima.type="button";
+        proxima.className="pp-seta dir";
+        proxima.textContent="›";
+        proxima.addEventListener("click",event=>{event.stopPropagation();mudarImagem(1)});
+        palco.appendChild(anterior);
+        palco.appendChild(proxima);
+    }
+
+    galeria.appendChild(thumbs);
+    galeria.appendChild(palco);
+    grid.appendChild(galeria);
+
+    // ---------- Informações ----------
+    const info=document.createElement("div");
+    info.className="pp-info-coluna";
+
+    const categoria=document.createElement("div");
+    categoria.className="pp-categoria";
+    categoria.textContent=produto.linha||produto.categoria_nome||"";
+    info.appendChild(categoria);
+
+    const titulo=document.createElement("h1");
+    titulo.className="pp-titulo";
+    titulo.textContent=produto.titulo||"";
+    info.appendChild(titulo);
+
+    const avaliacaoResumo=produto.avaliacao_resumo||{media:0,total:0};
+    const media=Number(avaliacaoResumo.media||0);
+    const total=Number(avaliacaoResumo.total||0);
+    const avaliacaoTopo=document.createElement("button");
+    avaliacaoTopo.type="button";
+    avaliacaoTopo.className="pp-avaliacao-link";
+    avaliacaoTopo.innerHTML=gerarEstrelas(media,"normal");
+    const nota=document.createElement("span");
+    nota.textContent=total>0?media.toFixed(1):"Sem avaliações";
+    const qtd=document.createElement("span");
+    qtd.className="pp-avaliacao-qtd";
+    qtd.textContent=total===0?"":`(${total} ${total===1?"avaliação":"avaliações"})`;
+    avaliacaoTopo.appendChild(nota);
+    avaliacaoTopo.appendChild(qtd);
+    avaliacaoTopo.addEventListener("click",abrirAbaAvaliacoes);
+    info.appendChild(avaliacaoTopo);
+
+    if(Array.isArray(produto.cores)&&produto.cores.length){
+        const corTitulo=document.createElement("div");
+        corTitulo.className="pp-cor-linha";
+        corTitulo.id="pp-cor";
+        corTitulo.textContent="Cor e acabamento: "+obterNomeCorAtual();
+        info.appendChild(corTitulo);
+
+        const cores=document.createElement("div");
+        cores.className="pp-cores";
+        produto.cores.forEach((cor,index)=>{
+            const item=document.createElement("button");
+            item.type="button";
+            item.className="pp-cor-item"+(index===corAtual?" selecionada":"");
+            const thumb=document.createElement("span");
+            thumb.className="pp-cor-thumb";
+            const corImagens=obterImagensDaCor(produto,index);
+            if(corImagens.length){
+                const img=document.createElement("img");
+                const principalCor=corImagens.find(i=>i.principal)||corImagens[0];
+                img.src=urlImagem(principalCor.caminho);
+                img.alt=cor.nome||"Cor";
+                img.loading="lazy";
+                thumb.appendChild(img);
+            }
+            const nome=document.createElement("span");
+            nome.className="pp-cor-nome";
+            nome.textContent=cor.nome||"";
+            item.appendChild(thumb);
+            item.appendChild(nome);
+            item.addEventListener("click",()=>mudarCor(index));
+            cores.appendChild(item);
+        });
+        info.appendChild(cores);
+    }
+
+    const resumoDescricao=document.createElement("div");
+    resumoDescricao.className="pp-resumo-descricao";
+    const resumoTitulo=document.createElement("h2");
+    resumoTitulo.textContent="O que você precisa saber";
+    resumoDescricao.appendChild(resumoTitulo);
+    const textoDescricao=(produto.descricao||obterDescricaoCorAtual()||"").trim();
+    if(textoDescricao){
+        textoDescricao.split(/\n+|[•]+/).map(v=>v.trim()).filter(Boolean).slice(0,6).forEach(texto=>{
+            const p=document.createElement("p");
+            p.className="pp-resumo-item";
+            p.innerHTML="<span>•</span>"+escaparHtml(texto);
+            resumoDescricao.appendChild(p);
+        });
+    }else{
+        const p=document.createElement("p");
+        p.textContent="Detalhes do produto disponíveis na seção de características.";
+        resumoDescricao.appendChild(p);
+    }
+    info.appendChild(resumoDescricao);
+
+    grid.appendChild(info);
+
+    // ---------- Compra / orçamento ----------
+    const compra=document.createElement("aside");
+    compra.className="pp-compra-card";
+
+    const compraTopo=document.createElement("div");
+    compraTopo.className="pp-compra-topo";
+    const compraRotulo=document.createElement("span");
+    compraRotulo.textContent="ORÇAMENTO E PEDIDO";
+    compraTopo.appendChild(compraRotulo);
+    compra.appendChild(compraTopo);
+
+    if(produto.preco!==null&&produto.preco!==undefined&&produto.preco!==""){
+        const preco=document.createElement("div");
+        preco.className="pp-preco";
+        preco.textContent=formatarPreco(produto.preco);
+        compra.appendChild(preco);
+    }
+    if(produto.parcelamento){
+        const parc=document.createElement("div");
+        parc.className="pp-parcelamento";
+        parc.textContent=produto.parcelamento;
+        compra.appendChild(parc);
+    }
+
+    const carrinho=document.createElement("button");
+    carrinho.type="button";
+    carrinho.className="btn-carrinho-produto";
+    carrinho.textContent="Adicionar ao carrinho";
+    carrinho.addEventListener("click",()=>adicionarAoCarrinho());
+    compra.appendChild(carrinho);
+
+    const orcamento=document.createElement("button");
+    orcamento.type="button";
+    orcamento.className="btn-solicitar pp-btn-orcamento";
+    orcamento.textContent="SOLICITAR ORÇAMENTO";
+    orcamento.addEventListener("click",abrirModalOrcamento);
+    compra.appendChild(orcamento);
+
+    const compraNota=document.createElement("p");
+    compraNota.className="pp-compra-nota";
+    compraNota.textContent="Monte seu pedido e, se preferir, solicite um orçamento personalizado.";
+    compra.appendChild(compraNota);
+
+    grid.appendChild(compra);
+    layout.appendChild(grid);
+
+    // ---------- Cor e características ----------
+    const caracteristicas=document.createElement("section");
+    caracteristicas.className="pp-bloco pp-caracteristicas";
+    const hcar=document.createElement("h2");
+    hcar.textContent="Características do produto";
+    caracteristicas.appendChild(hcar);
+
+    const principalCar=document.createElement("div");
+    principalCar.className="carac-sub";
+    principalCar.textContent="Características Principais";
+    caracteristicas.appendChild(principalCar);
+
+    const dados=produto.caracteristicas||{};
+    const tab=document.createElement("table");
+    tab.className="carac-tabela";
+    adicionarLinhaTabela(tab,"Modelo",dados.modelo||"—");
+    adicionarLinhaTabela(tab,"Cor",obterNomeCorAtual());
+    caracteristicas.appendChild(tab);
+
+    const dim=document.createElement("div");
+    dim.className="carac-sub";
+    dim.textContent="Dimensões";
+    caracteristicas.appendChild(dim);
+
+    const tabDim=document.createElement("table");
+    tabDim.className="carac-tabela";
+    adicionarLinhaTabela(tabDim,"Largura x Comprimento",dados.largura&&dados.comprimento?dados.largura+" x "+dados.comprimento:"—");
+    adicionarLinhaTabela(tabDim,"Altura",obterAlturaAtual());
+    caracteristicas.appendChild(tabDim);
+
+    const outras=document.createElement("div");
+    outras.className="carac-sub";
+    outras.textContent="Outras características";
+    caracteristicas.appendChild(outras);
+
+    const tabOut=document.createElement("table");
+    tabOut.className="carac-tabela";
+    adicionarLinhaTabela(tabOut,"Outros",dados.outros||"—");
+    adicionarLinhaTabela(tabOut,"Quantidade de assentos",dados.quantidade_assentos||"—");
+    adicionarLinhaTabela(tabOut,"Compartimento para livros",dados.compartimento_livros||"—");
+    caracteristicas.appendChild(tabOut);
+
+    const descTitle=document.createElement("div");
+    descTitle.className="carac-sub";
+    descTitle.textContent="Descrição";
+    caracteristicas.appendChild(descTitle);
+
+    const desc=document.createElement("p");
+    desc.id="descricao-cor-atual";
+    desc.className="descricao-produto-texto";
+    desc.textContent=obterDescricaoCorAtual();
+    caracteristicas.appendChild(desc);
+
+    layout.appendChild(caracteristicas);
+
+    // ---------- Q&A preview ----------
+    const perguntasBox=document.createElement("section");
+    perguntasBox.className="pp-bloco pp-interacao-resumo";
+    const perguntasTitle=document.createElement("div");
+    perguntasTitle.className="pp-interacao-head";
+    const perguntasH=document.createElement("h2");
+    perguntasH.textContent="Perguntas e Respostas";
+    perguntasTitle.appendChild(perguntasH);
+    const perguntasBtn=document.createElement("button");
+    perguntasBtn.type="button";
+    perguntasBtn.className="btn-ver-perguntas";
+    perguntasBtn.textContent="Ver todas";
+    perguntasBtn.addEventListener("click",abrirAbaPerguntas);
+    perguntasTitle.appendChild(perguntasBtn);
+    perguntasBox.appendChild(perguntasTitle);
+
+    const perguntaForm=document.createElement("div");
+    perguntaForm.className="formulario-pergunta";
+    const perguntaInput=document.createElement("input");
+    perguntaInput.type="text";
+    perguntaInput.className="pergunta-input";
+    perguntaInput.placeholder="Digite sua pergunta";
+    const perguntaSend=document.createElement("button");
+    perguntaSend.type="button";
+    perguntaSend.className="btn-perguntar";
+    perguntaSend.textContent="Enviar";
+    perguntaForm.appendChild(perguntaInput);
+    perguntaForm.appendChild(perguntaSend);
+    perguntasBox.appendChild(perguntaForm);
+    perguntaSend.addEventListener("click",()=>enviarPergunta(perguntaInput,perguntaSend));
+    perguntaInput.addEventListener("keydown",event=>{
+        if(event.key==="Enter"){
+            event.preventDefault();
+            enviarPergunta(perguntaInput,perguntaSend);
+        }
+    });
+
+    const perguntaLista=document.createElement("div");
+    perguntaLista.className="lista-perguntas";
+    perguntasBox.appendChild(perguntaLista);
+    renderPerguntas((produto.perguntas||[]).slice(0,3),perguntaLista);
+
+    layout.appendChild(perguntasBox);
+
+    // ---------- Avaliações preview ----------
+    const avalBox=document.createElement("section");
+    avalBox.className="pp-bloco pp-interacao-resumo";
+    const avalHead=document.createElement("div");
+    avalHead.className="pp-interacao-head";
+    const avalH=document.createElement("h2");
+    avalH.textContent="Avaliações";
+    avalHead.appendChild(avalH);
+    const avalBtn=document.createElement("button");
+    avalBtn.type="button";
+    avalBtn.className="btn-avaliar";
+    avalBtn.textContent="Ver avaliações";
+    avalBtn.addEventListener("click",abrirAbaAvaliacoes);
+    avalHead.appendChild(avalBtn);
+    avalBox.appendChild(avalHead);
+
+    const avalResumo=document.createElement("div");
+    avalResumo.className="avaliacao-resumo-produto";
+    if(total>0){
+        const estrela=document.createElement("span");
+        estrela.className="avaliacao-resumo-estrelas";
+        estrela.innerHTML=gerarEstrelas(media,"normal");
+        avalResumo.appendChild(estrela);
+        const mediaTxt=document.createElement("strong");
+        mediaTxt.textContent=media.toFixed(1);
+        avalResumo.appendChild(mediaTxt);
+        const totalTxt=document.createElement("span");
+        totalTxt.textContent=total===1?"1 avaliação":total+" avaliações";
+        avalResumo.appendChild(totalTxt);
+    }else{
+        avalResumo.textContent="Ainda não há avaliações.";
+    }
+    avalBox.appendChild(avalResumo);
+    layout.appendChild(avalBox);
+
+    atualizarBotoesFavorito();
+    atualizarDescricaoCorNaTela();
+    atualizarModoAdministrador();
+}function renderPaginaPerguntas(){
+    const produto=produtoAtual;
+    const layout=document.getElementById("produto-layout");
+    if(!layout||!produto)return;
+    layout.innerHTML="";
+
+    const page=document.createElement("section");
+    page.className="pagina-interacoes premium-qa-page";
+
+    const top=document.createElement("div");
+    top.className="interacoes-page-top";
+    const back=document.createElement("button");
+    back.type="button";
+    back.className="interacoes-voltar";
+    back.textContent="← Voltar ao produto";
+    back.addEventListener("click",()=>abrirProduto(produto.id,true));
+    top.appendChild(back);
+    const kicker=document.createElement("span");
+    kicker.className="interacoes-kicker";
+    kicker.textContent="ATENDIMENTO AO CLIENTE";
+    top.appendChild(kicker);
+    page.appendChild(top);
+
+    const title=document.createElement("h1");
+    title.className="interacoes-page-title";
+    title.textContent="Perguntas e Respostas";
+    page.appendChild(title);
+
+    const sub=document.createElement("p");
+    sub.className="interacoes-page-subtitle";
+    sub.textContent=produto.titulo||"Produto";
+    page.appendChild(sub);
+
+    const perguntar=document.createElement("div");
+    perguntar.className="qa-composer";
+    const perguntaInput=document.createElement("input");
+    perguntaInput.type="text";
+    perguntaInput.className="pergunta-input";
+    perguntaInput.placeholder="Digite sua pergunta sobre este produto...";
+    const perguntaSend=document.createElement("button");
+    perguntaSend.type="button";
+    perguntaSend.className="btn-perguntar";
+    perguntaSend.textContent="Perguntar";
+    perguntar.appendChild(perguntaInput);
+    perguntar.appendChild(perguntaSend);
+    perguntaSend.addEventListener("click",()=>enviarPergunta(perguntaInput,perguntaSend));
+    perguntaInput.addEventListener("keydown",event=>{
+        if(event.key==="Enter"){
+            event.preventDefault();
+            enviarPergunta(perguntaInput,perguntaSend);
+        }
+    });
+    page.appendChild(perguntar);
+
+    const hint=document.createElement("p");
+    hint.className="qa-hint";
+    hint.textContent="Nossa equipe responde as perguntas diretamente por aqui.";
+    page.appendChild(hint);
+
+    const lista=document.createElement("div");
+    lista.id="lista-perguntas";
+    lista.className="lista-perguntas qa-lista";
+    page.appendChild(lista);
+    renderPerguntas(produto.perguntas||[],lista);
+
+    layout.appendChild(page);
+    atualizarModoAdministrador();
+}function renderPaginaAvaliacoes(){
+    const produto=produtoAtual;
+    const layout=document.getElementById("produto-layout");
+    if(!layout||!produto)return;
+    layout.innerHTML="";
+
+    const page=document.createElement("section");
+    page.className="pagina-interacoes premium-reviews-page";
+
+    const top=document.createElement("div");
+    top.className="interacoes-page-top";
+    const back=document.createElement("button");
+    back.type="button";
+    back.className="interacoes-voltar";
+    back.textContent="← Voltar ao produto";
+    back.addEventListener("click",()=>abrirProduto(produto.id,true));
+    top.appendChild(back);
+    const kicker=document.createElement("span");
+    kicker.className="interacoes-kicker";
+    kicker.textContent="EXPERIÊNCIA DOS CLIENTES";
+    top.appendChild(kicker);
+    page.appendChild(top);
+
+    const title=document.createElement("h1");
+    title.className="interacoes-page-title";
+    title.textContent="Avaliações do produto";
+    page.appendChild(title);
+
+    const sub=document.createElement("p");
+    sub.className="interacoes-page-subtitle";
+    sub.textContent=produto.titulo||"Produto";
+    page.appendChild(sub);
+
+    const resumo=produto.avaliacao_resumo||{media:0,total:0,distribuicao:{1:0,2:0,3:0,4:0,5:0}};
+    const total=Number(resumo.total||0);
+    const media=Number(resumo.media||0);
+
+    const resumoBox=document.createElement("div");
+    resumoBox.className="reviews-summary-premium";
+
+    const notaBox=document.createElement("div");
+    notaBox.className="reviews-summary-score";
+    const nota=document.createElement("strong");
+    nota.textContent=total?media.toFixed(1):"0,0";
+    const stars=document.createElement("div");
+    stars.className="avaliacoes-estrelas-media";
+    stars.innerHTML=gerarEstrelas(media,"grande");
+    const totalEl=document.createElement("span");
+    totalEl.textContent=total?(total===1?"1 avaliação":" "+total+" avaliações"):"Sem avaliações ainda";
+    notaBox.appendChild(nota);
+    notaBox.appendChild(stars);
+    notaBox.appendChild(totalEl);
+
+    const dist=document.createElement("div");
+    dist.className="reviews-summary-distribution";
+    for(let notaNumero=5;notaNumero>=1;notaNumero--){
+        const qtd=Number(resumo.distribuicao?.[notaNumero]||0);
+        const linha=document.createElement("div");
+        linha.className="review-dist-row";
+        const label=document.createElement("span");
+        label.textContent=notaNumero+" ★";
+        const barra=document.createElement("span");
+        barra.className="review-dist-bar";
+        const fill=document.createElement("span");
+        fill.style.width=(total?(qtd/total*100):0)+"%";
+        barra.appendChild(fill);
+        const count=document.createElement("b");
+        count.textContent=qtd;
+        linha.appendChild(label);
+        linha.appendChild(barra);
+        linha.appendChild(count);
+        dist.appendChild(linha);
+    }
+
+    resumoBox.appendChild(notaBox);
+    resumoBox.appendChild(dist);
+    page.appendChild(resumoBox);
+
+    const form=document.createElement("div");
+    form.className="review-composer";
+    const formTitulo=document.createElement("h2");
+    formTitulo.textContent="Avalie este produto";
+    form.appendChild(formTitulo);
+    const nome=document.createElement("input");
+    nome.type="text";
+    nome.className="avaliacao-nome";
+    nome.placeholder="Seu nome";
+    form.appendChild(nome);
+    const estrelaLabel=document.createElement("div");
+    estrelaLabel.className="avaliacao-estrelas-label";
+    estrelaLabel.textContent="Sua nota";
+    form.appendChild(estrelaLabel);
+    const estrelasInput=document.createElement("div");
+    estrelasInput.className="avaliacao-estrelas-input";
+    let notaEscolhida=0;
+    const notaTexto=document.createElement("span");
+    notaTexto.className="avaliacao-nota-texto";
+    notaTexto.textContent="Selecione de 1 a 5 estrelas";
+    for(let n=1;n<=5;n++){
+        const b=criarBotaoEstrela(n,false);
+        b.addEventListener("click",()=>{
+            notaEscolhida=n;
+            estrelasInput.querySelectorAll(".estrela-input").forEach(item=>{
+                item.classList.toggle("selecionada",Number(item.dataset.nota)<=n);
+            });
+            notaTexto.textContent=n+(n===1?" estrela selecionada":" estrelas selecionadas");
+        });
+        estrelasInput.appendChild(b);
+    }
+    form.appendChild(estrelasInput);
+    form.appendChild(notaTexto);
+
+    const comentario=document.createElement("textarea");
+    comentario.className="avaliacao-comentario";
+    comentario.rows=5;
+    comentario.placeholder="Conte o que achou do produto.";
+    form.appendChild(comentario);
+
+    const fotoLabel=document.createElement("label");
+    fotoLabel.className="avaliacao-foto-label";
+    fotoLabel.textContent="Adicionar foto do produto (opcional)";
+    const foto=document.createElement("input");
+    foto.type="file";
+    foto.className="avaliacao-foto";
+    foto.accept="image/*";
+    fotoLabel.appendChild(foto);
+    form.appendChild(fotoLabel);
+
+    const fotoPreview=document.createElement("div");
+    fotoPreview.className="avaliacao-foto-preview";
+    form.appendChild(fotoPreview);
+
+    foto.addEventListener("change",()=>{
+        fotoPreview.innerHTML="";
+        const arquivo=foto.files?.[0];
+        if(!arquivo)return;
+        if(!arquivo.type.startsWith("image/")){foto.value="";return;}
+        const img=document.createElement("img");
+        img.alt="Pré-visualização da foto";
+        const reader=new FileReader();
+        reader.onload=e=>{img.src=e.target.result;fotoPreview.appendChild(img)};
+        reader.readAsDataURL(arquivo);
+    });
+
+    const enviar=document.createElement("button");
+    enviar.type="button";
+    enviar.className="btn-avaliar";
+    enviar.textContent="Enviar avaliação";
+    form.appendChild(enviar);
+    enviar.addEventListener("click",()=>enviarAvaliacao(nome,notaEscolhida,comentario,foto,enviar));
+    page.appendChild(form);
+
+    const listaTitulo=document.createElement("h2");
+    listaTitulo.className="reviews-list-title";
+    listaTitulo.textContent="Avaliações dos clientes";
+    page.appendChild(listaTitulo);
+
+    const lista=document.createElement("div");
+    lista.id="lista-avaliacoes";
+    lista.className="lista-avaliacoes reviews-lista";
+    page.appendChild(lista);
+    renderAvaliacoes(produto.avaliacoes||[],lista);
+
+    layout.appendChild(page);
+    atualizarModoAdministrador();
+}function renderPerguntas(e,t){if(!t)return;t.innerHTML="";if(!Array.isArray(e)||!e.length){const a=document.createElement("div");a.className="sem-conteudo qa-empty",a.textContent="Ainda não há perguntas sobre este produto.";t.appendChild(a);return}e.forEach(e=>{const a=document.createElement("article");a.className="pergunta-card premium-qa-item";const o=document.createElement("div");o.className="pergunta-texto";const n=document.createElement("span");n.className="qa-label";n.textContent="PERGUNTA";const r=document.createElement("p");r.className="qa-question-text";r.textContent=e.pergunta||"";const c=document.createElement("span");c.className="pergunta-autor";c.textContent=(e.nome_cliente||"Cliente")+(e.criado_em?" • "+formatarDataRelativa(e.criado_em):"");o.appendChild(n);o.appendChild(r);o.appendChild(c);a.appendChild(o);if(e.resposta){const t=document.createElement("div");t.className="pergunta-resposta";const o=document.createElement("span");o.className="qa-answer-label";o.textContent="RESPOSTA DA CORTEZ MÓVEIS";const n=document.createElement("p");n.textContent=e.resposta;t.appendChild(o);t.appendChild(n);if(e.respondida_em){const r=document.createElement("span");r.className="pergunta-resposta-data";r.textContent=formatarDataRelativa(e.respondida_em);t.appendChild(r)}a.appendChild(t)}else if(administradorLogado){const t=document.createElement("div");t.className="pergunta-admin-acoes";const o=document.createElement("button");o.type="button";o.className="btn-responder";o.textContent="Responder";o.addEventListener("click",()=>abrirCampoResposta(e,a));t.appendChild(o);a.appendChild(t)}t.appendChild(a)})}
+function abrirCampoResposta(e,t){if(!administradorLogado)return;if(t.querySelector(".campo-resposta"))return;const a=document.createElement("div");a.className="campo-resposta";const o=document.createElement("textarea");o.className="resposta-input";o.placeholder="Digite sua resposta...";o.rows=4;const n=document.createElement("button");n.type="button";n.className="btn-enviar-resposta";n.textContent="Enviar resposta";a.appendChild(o);a.appendChild(n);t.appendChild(a);n.addEventListener("click",async()=>{const a=o.value.trim();if(!a){o.focus();return}const r=n.textContent;n.disabled=!0;n.textContent="Enviando...";try{const t=await api("/api/produtos/"+produtoAtual.id+"/perguntas/"+e.id+"/responder",{method:"PUT",body:JSON.stringify({resposta:a})});if(t&&t.pergunta){Array.isArray(produtoAtual.perguntas)||(produtoAtual.perguntas=[]);const o=produtoAtual.perguntas.findIndex(t=>Number(t.id)===Number(e.id));-1===o?produtoAtual.perguntas.unshift(t.pergunta):produtoAtual.perguntas[o]=t.pergunta}const a=document.getElementById("lista-perguntas");a&&renderPerguntas(produtoAtual.perguntas||[],a)}catch(e){console.error("Erro ao responder pergunta:",e);alert(e.message||"Não foi possível enviar a resposta.")}finally{n.disabled=!1;n.textContent=r}})}
+function renderAvaliacoes(e,t){if(!t)return;t.innerHTML="";if(!Array.isArray(e)||!e.length){const a=document.createElement("div");a.className="sem-conteudo reviews-empty";a.textContent="Ainda não há avaliações.";t.appendChild(a);return}e.forEach(e=>{const a=document.createElement("article");a.className="avaliacao-card premium-review-item";const o=document.createElement("div");o.className="avaliacao-card-cabecalho";const n=document.createElement("strong");n.className="avaliacao-cliente";n.textContent=e.cliente||"Cliente";const r=document.createElement("span");r.className="avaliacao-data";r.textContent=e.criado_em?formatarDataRelativa(e.criado_em):"";o.appendChild(n);o.appendChild(r);a.appendChild(o);const c=document.createElement("div");c.className="avaliacao-card-estrelas";c.innerHTML=gerarEstrelas(Number(e.nota),"normal");a.appendChild(c);if(e.comentario){const t=document.createElement("p");t.className="avaliacao-comentario-exibido";t.textContent=e.comentario;a.appendChild(t)}if(Array.isArray(e.imagens)&&e.imagens.length){const t=document.createElement("div");t.className="avaliacao-galeria";e.imagens.forEach(e=>{if(!e||!e.caminho)return;const a=document.createElement("img");a.src=urlImagem(e.caminho);a.alt="Foto enviada na avaliação";a.loading="lazy";t.appendChild(a)});a.appendChild(t)}if(e.resposta_vendedor){const t=document.createElement("div");t.className="avaliacao-resposta";const o=document.createElement("span");o.className="qa-answer-label";o.textContent="RESPOSTA DA CORTEZ MÓVEIS";const n=document.createElement("p");n.textContent=e.resposta_vendedor;t.appendChild(o);t.appendChild(n);a.appendChild(t)}else if(administradorLogado){const t=document.createElement("div");t.className="avaliacao-admin-acoes";const o=document.createElement("button");o.type="button";o.className="btn-responder";o.textContent="Responder avaliação";o.addEventListener("click",()=>abrirCampoRespostaAvaliacao(e,a));t.appendChild(o);a.appendChild(t)}t.appendChild(a)})}
+function abrirCampoRespostaAvaliacao(e,t){if(!administradorLogado)return;if(t.querySelector(".campo-resposta"))return;const a=document.createElement("div");a.className="campo-resposta";const o=document.createElement("textarea");o.className="resposta-input";o.placeholder="Digite a resposta para o cliente...";o.rows=4;const n=document.createElement("button");n.type="button";n.className="btn-enviar-resposta";n.textContent="Enviar resposta";a.appendChild(o);a.appendChild(n);t.appendChild(a);n.addEventListener("click",async()=>{const a=o.value.trim();if(!a){o.focus();return}const r=n.textContent;n.disabled=!0;n.textContent="Enviando...";try{const t=await api("/api/produtos/"+produtoAtual.id+"/avaliacoes/"+e.id+"/responder",{method:"PUT",body:JSON.stringify({resposta:a})});if(t&&t.avaliacao){Array.isArray(produtoAtual.avaliacoes)||(produtoAtual.avaliacoes=[]);const o=produtoAtual.avaliacoes.findIndex(t=>Number(t.id)===Number(e.id));-1===o?produtoAtual.avaliacoes.unshift(t.avaliacao):produtoAtual.avaliacoes[o]=t.avaliacao}const a=document.getElementById("lista-avaliacoes");a&&renderAvaliacoes(produtoAtual.avaliacoes||[],a)}catch(e){console.error("Erro ao responder avaliação:",e);alert(e.message||"Não foi possível enviar a resposta.")}finally{n.disabled=!1;n.textContent=r}})}
+function atualizarResumoAvaliacoesNaTela(){if(!produtoAtual)return;const e=produtoAtual.avaliacao_resumo||{media:0,total:0},t=document.querySelector(".pp-estrelas-topo");t&&(t.innerHTML=gerarEstrelas(Number(e.media||0),"normal"));const a=document.querySelector(".pp-media-topo");if(a){const t=Number(e.total||0);a.textContent=t>0?Number(e.media||0).toFixed(1):"Sem avaliações"}const o=document.querySelector(".pp-quantidade-topo");if(o){const t=Number(e.total||0);o.textContent=0===t?"":1===t?"(1 avaliação)":"("+t+" avaliações)"}}function adicionarLinhaTabela(e,t,a){const o=document.createElement("tr"),n=document.createElement("td");n.textContent=t;const r=document.createElement("td");r.textContent=a,o.appendChild(n),o.appendChild(r),e.appendChild(o)}function obterImagensDaCor(e,t){if(!e||!Array.isArray(e.cores)||!e.cores[t])return[];const a=e.cores[t];return Array.isArray(a.imagens)?a.imagens:[]}function obterDescricaoCorAtual(){if(produtoAtual&&Array.isArray(produtoAtual.cores)&&produtoAtual.cores[corAtual]){const e=produtoAtual.cores[corAtual];if(null!==e.descricao&&void 0!==e.descricao&&""!==String(e.descricao).trim())return String(e.descricao).trim()}return"Descrição desta cor ainda não cadastrada."}function atualizarDescricaoCorNaTela(){const e=document.getElementById("descricao-cor-atual");e&&(e.textContent=obterDescricaoCorAtual())}function obterNomeCorAtual(){return produtoAtual&&Array.isArray(produtoAtual.cores)&&produtoAtual.cores[corAtual]&&produtoAtual.cores[corAtual].nome||"—"}function obterAlturaAtual(){return produtoAtual&&Array.isArray(produtoAtual.cores)&&produtoAtual.cores[corAtual]?produtoAtual.cores[corAtual].altura||produtoAtual.caracteristicas?.altura||"—":produtoAtual?.caracteristicas?.altura||"—"}function mudarCor(e){if(!produtoAtual||!Array.isArray(produtoAtual.cores)||!produtoAtual.cores[e])return;corAtual=Number(e),imgAtual=0;const t=obterImagensDaCor(produtoAtual,corAtual),a=document.getElementById("pp-img");if(a){const q=Array.isArray(produtoAtual.imagens)?produtoAtual.imagens:[],r=t.length>0?t:q;if(r.length>0){const o=r.find(m=>!0===m.principal);a.src=urlImagem((o||r[0]).caminho)}}const o=document.getElementById("pp-contador");o&&(o.textContent=(t.length>0?t.length:(Array.isArray(produtoAtual.imagens)?produtoAtual.imagens.length:0))>0?`1 / ${(t.length>0?t.length:(Array.isArray(produtoAtual.imagens)?produtoAtual.imagens.length:0))}`:"1 / 1");const n=document.getElementById("pp-cor");n&&(n.textContent="Cor: "+obterNomeCorAtual()),atualizarDescricaoCorNaTela();const r=document.getElementById("carac-cor");r&&(r.textContent=obterNomeCorAtual());const c=document.getElementById("carac-altura");c&&(c.textContent=obterAlturaAtual()),document.querySelectorAll(".pp-cor-item").forEach((e,t)=>{e.classList.toggle("selecionada",t===corAtual)}),atualizarBotoesFavorito()}function mudarImagem(e){if(!produtoAtual)return;const s=obterImagensDaCor(produtoAtual,corAtual),t=s.length>0?s:(Array.isArray(produtoAtual.imagens)?produtoAtual.imagens:[]),a=t.length;if(a<=1)return;imgAtual=(imgAtual+e+a)%a;const o=document.getElementById("pp-img");o&&(o.src=urlImagem(t[imgAtual].caminho));const c=document.getElementById("pp-contador");c&&(c.textContent=`${imgAtual+1} / ${a}`)}async function compartilharProduto(){if(!produtoAtual)return;const e=window.location.origin+window.location.pathname+"?produto="+encodeURIComponent(produtoAtual.id),t=produtoAtual.titulo||"Cortez Móveis";if(navigator.share)try{await navigator.share({title:t,text:t,url:e})}catch(e){}else try{await navigator.clipboard.writeText(e),alert("Link do produto copiado.")}catch(t){prompt("Copie o link do produto:",e)}}function abrirModalOrcamento(){const e=document.getElementById("modal-orcamento");if(!e)return;const t=document.getElementById("modal-produto-info"),a=document.getElementById("modal-link-whatsapp"),o=document.getElementById("modal-link-email"),n=produtoAtual?produtoAtual.titulo:"",r=produtoAtual&&Array.isArray(produtoAtual.cores)&&produtoAtual.cores[corAtual]?produtoAtual.cores[corAtual].nome:"";produtoAtual?t&&(t.textContent=n+(r?" - Cor: "+r:"")):t&&(t.textContent="Conte-nos o que você precisa.");const c=produtoAtual?"Olá! Gostaria de solicitar um orçamento para o produto "+n+(r?", na cor "+r:"")+".":"Olá! Gostaria de solicitar um orçamento com a Cortez Móveis.";a&&(a.href="https://wa.me/551532769999?text="+encodeURIComponent(c));const d=produtoAtual?"Solicitação de orçamento - "+n:"Solicitação de orçamento - Cortez Móveis";o&&(o.href="mailto:cortez@cortezmoveis.com.br?subject="+encodeURIComponent(d)+"&body="+encodeURIComponent(c)),e.classList.add("aberto")}function fecharModalOrcamento(){const e=document.getElementById("modal-orcamento");e&&e.classList.remove("aberto")}function fecharMenuMobile(){const e=document.getElementById("menu");if(!e)return;e.classList.remove("aberto");const t=document.getElementById("btn-menu-toggle");t&&t.setAttribute("aria-expanded","false")}function irParaInicio(){fecharMenuMobile(),window.location.search?voltarCatalogo():window.scrollTo({top:0,behavior:"smooth"})}function navegar(e){fecharMenuMobile();const t=()=>{const t=document.getElementById(e);t&&t.scrollIntoView({behavior:"smooth",block:"start"})},a=document.getElementById("view-produto");a&&"none"!==a.style.display?(voltarCatalogo(),setTimeout(t,100)):t()}function toggleMenu(){const e=document.getElementById("menu");if(!e)return;const t=e.classList.toggle("aberto"),a=document.getElementById("btn-menu-toggle");a&&a.setAttribute("aria-expanded",t?"true":"false")}function abrirZoom(e){if(!e)return;const t=document.getElementById("zoom-overlay"),a=document.getElementById("zoom-imagem");t&&a&&(a.src=e.currentSrc||e.src,a.alt=e.alt||"Visualização ampliada",t.classList.add("aberto"))}function fecharZoom(){const e=document.getElementById("zoom-overlay");e&&e.classList.remove("aberto")}function obterCarrinho(){try{const e=JSON.parse(localStorage.getItem("cortez_carrinho")||"[]");return Array.isArray(e)?e:[]}catch(e){return[]}}
+function salvarCarrinho(e){localStorage.setItem("cortez_carrinho",JSON.stringify(e))}
+function adicionarAoCarrinho(){if(!produtoAtual)return;const e=obterCarrinho(),t=obterNomeCorAtual(),a=obterImagensDaCor(produtoAtual,corAtual),o=a.length?a[0]:produtoAtual.imagens?.[0],n=e.find(e=>Number(e.produtoId)===Number(produtoAtual.id)&&String(e.cor||"")===String(t||""));if(n)n.quantidade=Number(n.quantidade||1)+1;else e.push({produtoId:produtoAtual.id,titulo:produtoAtual.titulo||"Produto",linha:produtoAtual.linha||"",preco:produtoAtual.preco??null,cor:t||"",imagem:o?.caminho||"",quantidade:1});salvarCarrinho(e);mostrarToastPremium((n?"Quantidade atualizada no carrinho.":"Produto adicionado ao carrinho."))}
+function mostrarToastPremium(e){const t=document.getElementById("premium-toast");if(t)t.remove();const a=document.createElement("div");a.id="premium-toast";a.className="premium-toast";a.textContent=e;document.body.appendChild(a);requestAnimationFrame(()=>a.classList.add("visivel"));setTimeout(()=>{a.classList.remove("visivel");setTimeout(()=>a.remove(),250)},2200)}
+async function inicializarSite(){const e=document.getElementById("view-produto"),t=document.getElementById("view-home");e&&(e.style.display="none"),t&&(t.style.display="block"),await verificarAdministrador(),carregarProdutos(),carregarCategorias();const a=new URLSearchParams(window.location.search).get("produto");a&&await abrirProduto(a),atualizarModoAdministrador()}document.getElementById("btn-menu-toggle")?.addEventListener("click",toggleMenu),document.getElementById("nav-inicio")?.addEventListener("click",e=>{e.preventDefault(),irParaInicio()}),document.getElementById("nav-produtos")?.addEventListener("click",e=>{e.preventDefault(),navegar("produtos")}),document.getElementById("nav-sobre")?.addEventListener("click",e=>{e.preventDefault(),navegar("sobre")}),document.getElementById("nav-contato")?.addEventListener("click",e=>{e.preventDefault(),navegar("contato")}),document.getElementById("nav-guia")?.addEventListener("click",e=>{e.preventDefault(),navegar("guia")}),document.getElementById("btn-header-orcamento")?.addEventListener("click",abrirModalOrcamento),document.getElementById("btn-conheca-produtos")?.addEventListener("click",()=>navegar("produtos")),document.getElementById("btn-orcamento-principal")?.addEventListener("click",abrirModalOrcamento),document.getElementById("btn-voltar-catalogo")?.addEventListener("click",voltarCatalogo),document.getElementById("btn-fechar-orcamento")?.addEventListener("click",fecharModalOrcamento),document.getElementById("btn-fechar-zoom")?.addEventListener("click",fecharZoom),document.getElementById("modal-orcamento")?.addEventListener("click",e=>{"modal-orcamento"===e.target.id&&fecharModalOrcamento()}),document.getElementById("zoom-overlay")?.addEventListener("click",e=>{"zoom-overlay"===e.target.id&&fecharZoom()}),document.querySelectorAll("[data-zoom]").forEach(e=>{e.addEventListener("click",()=>abrirZoom(e))}),document.addEventListener("keydown",e=>{"Escape"===e.key&&(fecharZoom(),fecharModalOrcamento(),fecharMenuMobile())}),window.addEventListener("popstate",()=>{modoAdminSite=new URLSearchParams(window.location.search).get("modo")==="admin";const e=new URLSearchParams(window.location.search).get("produto");if(e)abrirProduto(e,!1);else{const e=document.getElementById("view-produto"),t=document.getElementById("view-home");e&&(e.style.display="none"),t&&(t.style.display="block"),produtoAtual=null;}}),"loading"===document.readyState?document.addEventListener("DOMContentLoaded",inicializarSite):inicializarSite();
 
 /* =====================================================================
    CAMADA PREMIUM — COMPORTAMENTO E MICROINTERAÇÕES
