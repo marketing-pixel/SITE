@@ -1222,9 +1222,13 @@
     }
 
     .cart-qty-input {
-        width: 50px;
+        width: 78px;
+        min-width: 78px;
         height: 30px;
+        padding: 0 7px;
         font-size: .76rem;
+        text-align: center;
+        font-variant-numeric: tabular-nums;
     }
 
     .cart-remove-btn {

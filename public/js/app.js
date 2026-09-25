@@ -817,6 +817,18 @@ function salvarCarrinho(e){
     localStorage.setItem("cortez_carrinho",JSON.stringify(e));
     atualizarCarrinhoHeader();
 }
+function formatarQuantidadeCarrinho(valor){
+    const numero=Number(valor);
+    return Number.isSafeInteger(numero)&&numero>=0
+        ? numero.toLocaleString("pt-BR")
+        : "0";
+}
+function interpretarQuantidadeCarrinho(valor){
+    const texto=String(valor??"").trim();
+    const digitos=texto.replace(/\D/g,"");
+    const quantidade=Number(digitos);
+    return digitos&&Number.isSafeInteger(quantidade)?quantidade:null;
+}
 function totalItensCarrinho(){
     return obterCarrinho().reduce((e,t)=>e+Number(t.quantidade||0),0);
 }
@@ -836,7 +848,7 @@ function atualizarCarrinhoHeader(){
         botao.classList.toggle("com-itens",total>0);
     }
     if(badge){
-        badge.textContent=String(total);
+        badge.textContent=formatarQuantidadeCarrinho(total);
         badge.classList.toggle("visivel",total>0);
     }
     atualizarBotaoCarrinhoProduto();
@@ -845,7 +857,7 @@ function atualizarBotaoCarrinhoProduto(){
     const e=document.querySelector(".btn-carrinho-produto");
     if(!e||!produtoAtual)return;
     const t=quantidadeNoCarrinho(produtoAtual.id,obterNomeCorAtual());
-    e.textContent=t>0?"No carrinho · "+t:"Adicionar ao carrinho";
+    e.textContent=t>0?"No carrinho · "+formatarQuantidadeCarrinho(t):"Adicionar ao carrinho";
 }
 function abrirCarrinho(){
     renderCarrinho();
@@ -880,10 +892,8 @@ function definirQuantidadeCarrinho(indice,valor){
     const carrinho=obterCarrinho();
     const item=carrinho[indice];
     if(!item)return;
-    const texto=String(valor??"").trim();
-    const digitos=texto.replace(/\D/g,"");
-    const quantidade=Number(digitos);
-    if(!digitos||!Number.isSafeInteger(quantidade)||quantidade<1){
+    const quantidade=interpretarQuantidadeCarrinho(valor);
+    if(!quantidade||quantidade<1){
         renderCarrinho();
         return;
     }
@@ -960,14 +970,18 @@ function renderCarrinho(){
         qtd.className="cart-qty-input";
         qtd.inputMode="numeric";
         qtd.autocomplete="off";
-        qtd.maxLength=15;
-        qtd.value=Math.max(1,Math.floor(Number(item.quantidade||1))).toLocaleString("pt-BR");
+        qtd.maxLength=21;
+        qtd.value=formatarQuantidadeCarrinho(Math.max(1,Math.floor(Number(item.quantidade||1))));
         qtd.setAttribute("aria-label","Quantidade de "+(item.titulo||"produto"));
 
         const confirmarQuantidade=()=>{
-            const texto=qtd.value.replace(/\\D/g,"");
-            qtd.value=texto?Number(texto).toLocaleString("pt-BR"):"";
-            definirQuantidadeCarrinho(index,qtd.value);
+            const quantidade=interpretarQuantidadeCarrinho(qtd.value);
+            if(!quantidade){
+                renderCarrinho();
+                return;
+            }
+            qtd.value=formatarQuantidadeCarrinho(quantidade);
+            definirQuantidadeCarrinho(index,quantidade);
         };
         qtd.addEventListener("change",confirmarQuantidade);
         qtd.addEventListener("blur",confirmarQuantidade);
@@ -998,7 +1012,7 @@ function renderCarrinho(){
         row.appendChild(info);
         lista.appendChild(row);
     });
-    if(totalEl)totalEl.textContent=String(totalItensCarrinho());
+    if(totalEl)totalEl.textContent=formatarQuantidadeCarrinho(totalItensCarrinho());
     atualizarCarrinhoHeader();
 }
 function adicionarAoCarrinho(){
@@ -1033,7 +1047,7 @@ function montarTextoCarrinho(){
     return carrinho.map((item,index)=>{
         const quantidade=Number(item.quantidade||1);
         const preco=item.preco!==null&&item.preco!==undefined&&item.preco!==""?formatarPreco(item.preco):"Sob consulta";
-        return (index+1)+". "+(item.titulo||"Produto")+(item.cor?" | Cor: "+item.cor:"")+" | Quantidade: "+quantidade+" | Valor: "+preco;
+        return (index+1)+". "+(item.titulo||"Produto")+(item.cor?" | Cor: "+item.cor:"")+" | Quantidade: "+formatarQuantidadeCarrinho(quantidade)+" | Valor: "+preco;
     }).join("\n");
 }
 function abrirModalOrcamentoCarrinho(){
@@ -1042,7 +1056,7 @@ function abrirModalOrcamentoCarrinho(){
         abrirCarrinho();
         return;
     }
-    const nomeLista=carrinho.map(item=>(Number(item.quantidade||1))+"x "+(item.titulo||"Produto")+(item.cor?" - "+item.cor:"")).join(", ");
+    const nomeLista=carrinho.map(item=>formatarQuantidadeCarrinho(Number(item.quantidade||1))+"x "+(item.titulo||"Produto")+(item.cor?" - "+item.cor:"")).join(", ");
     const texto="Olá! Gostaria de solicitar um orçamento para os seguintes produtos:\n\n"+montarTextoCarrinho()+"\n\nAguardo o retorno da Cortez Móveis.";
     const modal=document.getElementById("modal-orcamento");
     const info=document.getElementById("modal-produto-info");
