@@ -1,5 +1,5 @@
 let intervaloNotificacoes=null,totalNotificacoesAnterior=0;
-let categorias=[],produtoEditando=null;async function api(e,t={}){const o={...t,credentials:"same-origin",headers:{...t.body instanceof FormData?{}:{"Content-Type":"application/json"},...t.headers||{}}},a=await fetch(e,o),n=await a.json().catch(()=>({}));if(!a.ok)throw new Error(n.erro||"Erro na requisição.");return n}function mostrarMensagem(e,t="sucesso"){const o=document.getElementById("mensagem");o&&(o.textContent=e,o.className="mensagem "+t,setTimeout(()=>{o.className="mensagem"},4e3))}async function verificarSessao(){try{const e=await api("/api/auth/me"),t=e.admin.nome||e.admin.email||"Administrador",o=document.getElementById("admin-nome");o&&(o.textContent=t),mostrarDashboard(),await carregarCategorias(),await carregarProdutos(),iniciarNotificacoes()}catch(e){mostrarLogin()}}async function login(e,t){const o=document.getElementById("login-erro");o&&(o.textContent="");try{const o=await api("/api/auth/login",{method:"POST",body:JSON.stringify({email:e,senha:t})}),a=document.getElementById("admin-nome");a&&(a.textContent=o.nome||o.email),mostrarDashboard(),await carregarCategorias(),await carregarProdutos(),iniciarNotificacoes()}catch(e){o&&(o.textContent=e.message||"Erro ao realizar login.")}}async function logout(){try{await api("/api/auth/logout",{method:"POST"})}catch(e){console.error("Erro no logout:",e)}produtoEditando=null,pararNotificacoes(),mostrarLogin()}function mostrarLogin(){const e=document.getElementById("login-view"),t=document.getElementById("dashboard-view");e&&(e.style.display="block"),t&&(t.style.display="none")}function mostrarDashboard(){const e=document.getElementById("login-view"),t=document.getElementById("dashboard-view");e&&(e.style.display="none"),t&&(t.style.display="block")}async function carregarCategorias(){try{categorias=await api("/api/categorias");const e=document.getElementById("f-categoria");if(!e)return;e.innerHTML='<option value="">Selecione...</option>',categorias.forEach(t=>{const o=document.createElement("option");o.value=t.id,o.textContent=t.nome,e.appendChild(o)})}catch(e){console.error("Erro ao carregar categorias:",e),mostrarMensagem("Não foi possível carregar as categorias.","erro")}}async function carregarProdutos(){
+let categorias=[],produtoEditando=null;async function api(e,t={}){const o={...t,credentials:"same-origin",headers:{...t.body instanceof FormData?{}:{"Content-Type":"application/json"},...t.headers||{}}},a=await fetch(e,o),n=await a.json().catch(()=>({}));if(!a.ok)throw new Error(n.erro||"Erro na requisição.");return n}function mostrarMensagem(e,t="sucesso"){const o=document.getElementById("mensagem");o&&(o.textContent=e,o.className="mensagem "+t,setTimeout(()=>{o.className="mensagem"},4e3))}async function verificarSessao(){try{const e=await api("/api/auth/me"),t=e.admin.nome||e.admin.email||"Administrador",o=document.getElementById("admin-nome");o&&(o.textContent=t),mostrarDashboard(),await carregarCategorias(),await carregarProdutos(),iniciarNotificacoes()}catch(e){mostrarLogin()}}async function login(e,t){const o=document.getElementById("login-erro");o&&(o.textContent="");try{const o=await api("/api/auth/login",{method:"POST",body:JSON.stringify({email:e,senha:t})}),a=document.getElementById("admin-nome");a&&(a.textContent=o.nome||o.email),mostrarDashboard(),await carregarCategorias(),await carregarProdutos(),iniciarNotificacoes()}catch(e){o&&(o.textContent=e.message||"Erro ao realizar login.")}}async function logout(){try{await api("/api/auth/logout",{method:"POST"})}catch(e){console.error("Erro no logout:",e)}produtoEditando=null,pararNotificacoes(),mostrarLogin()}function mostrarLogin(){const e=document.getElementById("login-view"),t=document.getElementById("dashboard-view");e&&(e.style.display="block"),t&&(t.style.display="none")}function mostrarDashboard(){const e=document.getElementById("login-view"),t=document.getElementById("dashboard-view");e&&(e.style.display="none"),t&&(t.style.display="block")}async function carregarCategorias(){try{const eRecebidas=await api("/api/categorias"),tVistos=new Set;categorias=(Array.isArray(eRecebidas)?eRecebidas:[]).filter(e=>{const t=e?.id!=null?"id:"+String(e.id):"nome:"+String(e?.nome||"");return tVistos.has(t)?!1:(tVistos.add(t),!0)});const e=document.getElementById("f-categoria");if(!e)return;e.innerHTML='<option value="">Selecione...</option>',categorias.forEach(t=>{const o=document.createElement("option");o.value=t.id,o.textContent=t.nome,e.appendChild(o)})}catch(e){console.error("Erro ao carregar categorias:",e),mostrarMensagem("Não foi possível carregar as categorias.","erro")}}async function carregarProdutos(){
     try{
         renderTabela(await api("/api/produtos/admin/todos"));
     }catch(e){
@@ -243,8 +243,24 @@ function renderTabela(produtos){
     if(!tabela)return;
 
     tabela.innerHTML="";
-    const lista=Array.isArray(produtos)?produtos:[];
-    const categoriasAtuais=Array.isArray(categorias)?categorias:[];
+
+    const vistosProdutos=new Set();
+    const listaBruta=Array.isArray(produtos)?produtos:[];
+    const lista=listaBruta.filter(produto=>{
+        const chave=produto?.id!=null?"id:"+String(produto.id):"sem-id:"+String(produto?.titulo||"");
+        if(vistosProdutos.has(chave))return false;
+        vistosProdutos.add(chave);
+        return true;
+    });
+
+    const vistosCategorias=new Set();
+    const categoriasRecebidas=Array.isArray(categorias)?categorias:[];
+    const categoriasAtuais=categoriasRecebidas.filter(categoria=>{
+        const chave=categoria?.id!=null?"id:"+String(categoria.id):"nome:"+String(categoria?.nome||"");
+        if(vistosCategorias.has(chave))return false;
+        vistosCategorias.add(chave);
+        return true;
+    });
 
     if(!lista.length&&!categoriasAtuais.length){
         const tr=document.createElement("tr");
