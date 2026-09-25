@@ -263,3 +263,65 @@
         font-size: 1.7rem;
     }
 }
+
+/* ---------- CARRINHO NO HEADER ---------- */
+@media (max-width: 480px) {
+    .header-marca-area {
+        gap: 8px;
+    }
+
+    .header-carrinho {
+        width: 42px;
+        height: 42px;
+        flex-basis: 42px;
+        border-radius: 13px;
+    }
+
+    .header-carrinho-icone {
+        font-size: 1.1rem;
+    }
+
+    .header-carrinho-badge {
+        top: -5px;
+        right: -5px;
+        min-width: 19px;
+        height: 19px;
+        font-size: .60rem;
+    }
+
+    .cart-modal-overlay {
+        padding: 10px;
+    }
+
+    .cart-modal-box {
+        width: calc(100vw - 20px);
+        max-height: 90vh;
+        border-radius: 16px;
+    }
+
+    .cart-modal-head {
+        padding: 15px 14px 12px;
+    }
+
+    .cart-modal-head h2 {
+        font-size: 1.15rem;
+    }
+
+    .cart-modal-lista {
+        padding: 2px 12px;
+    }
+
+    .cart-item-acoes {
+        gap: 6px;
+        flex-wrap: wrap;
+    }
+
+    .cart-remove-btn {
+        margin-left: 2px;
+    }
+
+    .cart-quote-btn {
+        min-height: 48px;
+        font-size: .9rem;
+    }
+}
