@@ -5169,7 +5169,231 @@
             }
         }
 
-    </style>
+            /* =========================================================
+           PAINEL ADM — DESKTOP FLUIDO E RESPONSIVO AO TAMANHO DA TELA
+           ========================================================= */
+        @media (min-width: 801px) {
+            html,
+            body {
+                width: 100%;
+                min-width: 0;
+                overflow-x: hidden;
+            }
+
+            .dashboard-header {
+                width: 100%;
+                padding: clamp(14px, 1.35vw, 24px) clamp(18px, 2.4vw, 42px);
+                gap: clamp(12px, 1.8vw, 28px);
+            }
+
+            .dashboard-header h1 {
+                min-width: 0;
+                font-size: clamp(1.05rem, 1.15vw, 1.35rem);
+                overflow-wrap: anywhere;
+            }
+
+            .dashboard-header .acoes {
+                min-width: 0;
+                display: flex;
+                flex-wrap: wrap;
+                justify-content: flex-end;
+                gap: clamp(8px, 1vw, 14px);
+            }
+
+            .dashboard-header button {
+                white-space: nowrap;
+                padding: clamp(7px, .65vw, 10px) clamp(11px, 1vw, 17px);
+            }
+
+            .dashboard-content {
+                width: 100%;
+                max-width: 1680px;
+                margin: 0 auto;
+                padding: clamp(20px, 2.15vw, 38px) clamp(18px, 2.4vw, 42px);
+            }
+
+            .toolbar {
+                width: 100%;
+                display: grid;
+                grid-template-columns: minmax(0, 1fr) auto;
+                align-items: center;
+                gap: clamp(14px, 1.8vw, 26px);
+                margin-bottom: clamp(18px, 1.8vw, 28px);
+            }
+
+            .toolbar-titulo {
+                min-width: 0;
+            }
+
+            .toolbar-titulo h2 {
+                font-size: clamp(1.2rem, 1.55vw, 1.6rem);
+                overflow-wrap: anywhere;
+            }
+
+            .toolbar-titulo p {
+                max-width: 760px;
+            }
+
+            .toolbar-acoes {
+                min-width: 0;
+                display: flex;
+                flex-wrap: wrap;
+                justify-content: flex-end;
+                gap: clamp(8px, .8vw, 12px);
+            }
+
+            .btn-categoria-topo,
+            .toolbar-acoes .btn-novo {
+                flex: 0 1 auto;
+                max-width: 100%;
+                white-space: nowrap;
+            }
+
+            table {
+                width: 100%;
+                max-width: 100%;
+                table-layout: fixed;
+            }
+
+            th,
+            td {
+                padding: clamp(10px, .85vw, 14px) clamp(10px, 1vw, 16px);
+                min-width: 0;
+                overflow-wrap: anywhere;
+                word-break: break-word;
+            }
+
+            table th:nth-child(1),
+            table td:nth-child(1) { width: 7%; }
+
+            table th:nth-child(2),
+            table td:nth-child(2) { width: 28%; }
+
+            table th:nth-child(3),
+            table td:nth-child(3) { width: 18%; }
+
+            table th:nth-child(4),
+            table td:nth-child(4) { width: 13%; }
+
+            table th:nth-child(5),
+            table td:nth-child(5) { width: 10%; }
+
+            table th:nth-child(6),
+            table td:nth-child(6) { width: 24%; }
+
+            .categoria-separador td {
+                width: auto !important;
+            }
+
+            .categoria-linha {
+                width: 100%;
+                min-width: 0;
+                gap: clamp(10px, 1.2vw, 18px);
+            }
+
+            .categoria-nome-area {
+                min-width: 0;
+                flex: 1 1 auto;
+            }
+
+            .categoria-nome {
+                min-width: 0;
+                max-width: 100%;
+                overflow-wrap: anywhere;
+            }
+
+            .categoria-acoes {
+                min-width: 0;
+                flex: 0 0 auto;
+                display: inline-flex;
+                justify-content: flex-end;
+                flex-wrap: wrap;
+                gap: clamp(6px, .6vw, 9px);
+            }
+
+            .btn-categoria,
+            .categoria-lapis {
+                flex: 0 0 auto;
+            }
+
+            .btn-tabela {
+                max-width: 100%;
+                white-space: nowrap;
+            }
+
+            .modal-overlay.aberto {
+                padding: clamp(18px, 2.4vw, 36px);
+            }
+
+            .modal-produto-box {
+                width: min(1180px, calc(100vw - clamp(36px, 4.8vw, 72px)));
+                max-width: 1180px;
+                height: min(820px, calc(100vh - clamp(70px, 10vh, 110px)));
+                max-height: calc(100vh - clamp(70px, 10vh, 110px));
+            }
+
+            .editor-layout {
+                grid-template-columns: minmax(0, 1.56fr) minmax(300px, .78fr);
+            }
+        }
+
+        @media (min-width: 801px) and (max-width: 1180px) {
+            .dashboard-content {
+                padding-inline: 18px;
+            }
+
+            .toolbar {
+                grid-template-columns: minmax(0, 1fr);
+            }
+
+            .toolbar-acoes {
+                justify-content: flex-start;
+            }
+
+            .dashboard-header .acoes {
+                justify-content: flex-end;
+            }
+
+            table th,
+            table td {
+                padding-inline: 9px;
+                font-size: .88rem;
+            }
+
+            table th:nth-child(2),
+            table td:nth-child(2) { width: 25%; }
+
+            table th:nth-child(3),
+            table td:nth-child(3) { width: 17%; }
+
+            table th:nth-child(6),
+            table td:nth-child(6) { width: 27%; }
+
+            .categoria-linha {
+                padding-inline: 12px;
+            }
+
+            .btn-tabela {
+                padding: 6px 9px;
+                font-size: .78rem;
+                margin-right: 2px;
+            }
+        }
+
+        @media (min-width: 1440px) {
+            .dashboard-content {
+                padding-inline: clamp(34px, 3vw, 52px);
+            }
+
+            table th,
+            table td {
+                padding-top: 13px;
+                padding-bottom: 13px;
+            }
+        }
+
+
+</style>
 </head>
 
 <body>
