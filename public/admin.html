@@ -5393,7 +5393,126 @@
         }
 
 
-</style>
+
+        /* =========================================================
+           LAYOUT DESKTOP FLUIDO — PAINEL ADM
+           O painel ocupa a largura disponível da janela no PC,
+           mantendo o visual atual e evitando overflow horizontal.
+        ========================================================= */
+        @media (min-width: 801px) {
+            html,
+            body {
+                width: 100%;
+                min-width: 0;
+                max-width: 100%;
+                overflow-x: hidden;
+            }
+
+            .dashboard {
+                width: 100%;
+                min-width: 0;
+            }
+
+            .dashboard-header {
+                width: 100%;
+                min-width: 0;
+                flex-wrap: wrap;
+                padding-left: clamp(20px, 2.5vw, 42px);
+                padding-right: clamp(20px, 2.5vw, 42px);
+            }
+
+            .dashboard-header h1 {
+                min-width: 0;
+                max-width: 100%;
+                overflow-wrap: anywhere;
+            }
+
+            .dashboard-header .acoes {
+                min-width: 0;
+                max-width: 100%;
+                flex-wrap: wrap;
+                justify-content: flex-end;
+            }
+
+            .admin-header-ferramentas {
+                min-width: 0;
+                max-width: 100%;
+                flex-wrap: wrap;
+            }
+
+            .dashboard-content {
+                width: 100%;
+                max-width: none;
+                min-width: 0;
+                margin: 0;
+                padding:
+                    clamp(20px, 2.2vw, 34px)
+                    clamp(20px, 2.5vw, 42px);
+            }
+
+            .toolbar {
+                width: 100%;
+                min-width: 0;
+            }
+
+            .toolbar h2 {
+                min-width: 0;
+                overflow-wrap: anywhere;
+            }
+
+            .toolbar > * {
+                min-width: 0;
+            }
+
+            table {
+                width: 100%;
+                min-width: 0;
+                table-layout: auto;
+            }
+
+            th,
+            td {
+                max-width: 1px;
+                overflow-wrap: anywhere;
+                word-break: normal;
+            }
+        }
+
+        /* Telas grandes: usa o espaço disponível sem deixar
+           o conteúdo "preso" em 1200px. */
+        @media (min-width: 1400px) {
+            .dashboard-content {
+                padding-left: clamp(32px, 3vw, 64px);
+                padding-right: clamp(32px, 3vw, 64px);
+            }
+        }
+
+        /* Notebooks e janelas menores: reduz somente os espaçamentos,
+           sem transformar a interface desktop em interface mobile. */
+        @media (min-width: 801px) and (max-width: 1100px) {
+            .dashboard-header {
+                gap: 14px;
+            }
+
+            .dashboard-header .acoes {
+                gap: 8px;
+            }
+
+            .dashboard-header button,
+            .btn-entrar-site,
+            .btn-notificacoes {
+                padding-left: 11px !important;
+                padding-right: 11px !important;
+            }
+
+            th,
+            td {
+                padding-left: 11px;
+                padding-right: 11px;
+            }
+        }
+
+    </style>
 </head>
 
 <body>
