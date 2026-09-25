@@ -428,7 +428,7 @@ function renderProduto(){
 
     layout.appendChild(page);
     atualizarModoAdministrador();
-}function renderPaginaAvaliacoes(){const voltarCatalogo=document.getElementById("btn-voltar-catalogo");if(voltarCatalogo)voltarCatalogo.style.display="none";
+}function renderPaginaAvaliacoes(){const voltarCatalogo=document.getElementById("btn-voltar-catalogo");if(voltarCatalogo)voltarCatalogo.classList.add("oculto-qa");
     const produto=produtoAtual;
     const layout=document.getElementById("produto-layout");
     if(!layout||!produto)return;
