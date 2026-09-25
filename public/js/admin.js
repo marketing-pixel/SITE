@@ -477,7 +477,7 @@ function montarPaginaPrevia() {
     const compartilhar = document.createElement("button");
     compartilhar.type = "button";
     compartilhar.className = "pp-compartilhar";
-    compartilhar.innerHTML = '<svg class="pp-compartilhar-icone" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="18" cy="5" r="2.35"></circle><circle cx="6" cy="12" r="2.35"></circle><circle cx="18" cy="19" r="2.35"></circle><path d="M8.05 10.95 15.95 6.05"></path><path d="M8.05 13.05 15.95 17.95"></path></svg>';
+    compartilhar.innerHTML = '<svg class="pp-compartilhar-icone" viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="2.25"></circle><circle cx="6" cy="12" r="2.25"></circle><circle cx="18" cy="19" r="2.25"></circle><path d="M8.02 10.9 15.98 6.1"></path><path d="M8.02 13.1 15.98 17.9"></path></svg>';
     compartilhar.setAttribute("aria-hidden", "true");
     imagemArea.appendChild(compartilhar);
 
