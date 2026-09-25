@@ -911,3 +911,375 @@
         padding-bottom: 40px !important;
     }
 }
+
+
+/* ==================================================================
+   MOBILE — ESCALA COMPACTA PARA TELAS DE CELULAR
+   ================================================================== */
+@media (max-width: 600px) {
+    body {
+        font-size: 14px;
+    }
+
+    .container {
+        padding-left: 14px;
+        padding-right: 14px;
+    }
+
+    .header-inner {
+        min-height: 58px;
+        padding: 7px 12px;
+        gap: 8px;
+    }
+
+    .header-logo {
+        max-width: 94px;
+    }
+
+    .header-carrinho {
+        flex-basis: 38px;
+        width: 38px;
+        height: 38px;
+        border-radius: 11px;
+    }
+
+    .menu-toggle {
+        flex-basis: 40px;
+        width: 40px;
+        height: 40px;
+        border-radius: 12px;
+    }
+
+    .menu-toggle-linha {
+        width: 18px;
+        height: 2px;
+    }
+
+    .header-nav {
+        left: 10px !important;
+        right: 10px !important;
+        top: calc(100% + 8px) !important;
+        padding: 8px !important;
+        border-radius: 16px;
+    }
+
+    .header-nav a {
+        min-height: 38px;
+        padding: 8px 10px !important;
+        font-size: .86rem !important;
+    }
+
+    .header-cta {
+        min-height: 40px;
+        padding: 8px 12px !important;
+        font-size: .86rem !important;
+    }
+
+    .guia-section,
+    .catalogo-section,
+    .sobre-section,
+    .orcamento-section,
+    .contato-section {
+        padding-top: 42px !important;
+        padding-bottom: 42px !important;
+    }
+
+    .section-head {
+        margin-bottom: 18px;
+    }
+
+    .section-head h2 {
+        font-size: 1.34rem !important;
+        line-height: 1.22;
+    }
+
+    .section-head p {
+        font-size: .86rem !important;
+        line-height: 1.45;
+    }
+
+    .guia-grid {
+        gap: 11px !important;
+        width: calc(100vw - 20px);
+        padding: 1px 10px 8px !important;
+        margin-left: -10px;
+    }
+
+    .guia-item {
+        flex-basis: min(70vw, 286px) !important;
+        width: min(70vw, 286px);
+        max-width: min(70vw, 286px);
+        border-radius: 13px;
+    }
+
+    .guia-num {
+        font-size: 1.05rem;
+    }
+
+    .filtro-categorias {
+        width: calc(100vw - 20px);
+        gap: 6px !important;
+        padding: 1px 10px 7px !important;
+        margin-left: -10px;
+        margin-bottom: 16px !important;
+    }
+
+    .filtro-btn {
+        min-height: 36px;
+        padding: 7px 11px !important;
+        font-size: .74rem !important;
+    }
+
+    .grid-produtos,
+    .relacionados-grid {
+        gap: 11px !important;
+        width: calc(100vw - 20px);
+        padding: 1px 10px 8px !important;
+        margin-left: -10px;
+    }
+
+    .produto-card,
+    .rel-card {
+        flex-basis: min(76vw, 304px) !important;
+        width: min(76vw, 304px);
+        max-width: min(76vw, 304px);
+        height: 366px;
+        min-height: 366px;
+        border-radius: 14px;
+    }
+
+    .produto-imagem-area {
+        flex-basis: 198px !important;
+        height: 198px !important;
+        padding: 8px 10px !important;
+    }
+
+    .produto-imagem-area img {
+        max-width: 182px;
+        max-height: 182px;
+    }
+
+    .produto-info {
+        padding: 11px 12px 13px !important;
+    }
+
+    .produto-categoria {
+        font-size: .68rem;
+        margin-bottom: 4px;
+    }
+
+    .produto-nome {
+        font-size: .90rem;
+        line-height: 1.28;
+        min-height: 2.55em;
+    }
+
+    .produto-preco {
+        font-size: 1.18rem;
+    }
+
+    .produto-parcelas {
+        font-size: .68rem;
+        margin-bottom: 8px;
+    }
+
+    /* “Ver detalhes” permanece com o tamanho atual. */
+    .btn-produto {
+        min-height: 46px;
+        padding: 12px 14px !important;
+        font-size: inherit;
+    }
+
+    .pagina-produto {
+        padding: 12px 10px 100px !important;
+    }
+
+    .voltar {
+        margin-bottom: 12px;
+        padding: 8px 9px !important;
+        font-size: .80rem;
+    }
+
+    .pp-detalhe-grid {
+        gap: 14px !important;
+    }
+
+    .pp-galeria {
+        gap: 8px;
+    }
+
+    .pp-galeria .pp-imagem-area {
+        height: min(68vw, 280px) !important;
+        min-height: 230px !important;
+        padding: 9px !important;
+        border-radius: 14px;
+    }
+
+    .pp-imagem-principal {
+        max-height: 245px !important;
+    }
+
+    .pp-miniaturas {
+        gap: 6px;
+        padding: 1px 1px 4px;
+    }
+
+    .pp-miniatura {
+        flex-basis: 52px !important;
+        width: 52px !important;
+        height: 52px !important;
+    }
+
+    .pp-titulo {
+        font-size: 1.28rem !important;
+        line-height: 1.22;
+    }
+
+    .pp-categoria {
+        font-size: .76rem;
+    }
+
+    .pp-cores {
+        gap: 8px !important;
+        padding: 1px 1px 5px;
+    }
+
+    .pp-cor-thumb {
+        width: 46px;
+        height: 46px;
+    }
+
+    .pp-cor-nome {
+        font-size: .70rem;
+    }
+
+    .pp-resumo-descricao {
+        font-size: .86rem;
+    }
+
+    .pp-bloco {
+        margin-top: 18px !important;
+        padding: 16px 13px !important;
+        border-radius: 14px;
+    }
+
+    .pp-bloco h3 {
+        font-size: .98rem;
+    }
+
+    .carac-tabela td {
+        padding: 7px 8px;
+        font-size: .78rem;
+    }
+
+    .carac-sub {
+        font-size: .82rem;
+        margin-top: 14px;
+    }
+
+    .descricao-produto-texto {
+        font-size: .82rem;
+    }
+
+    .pp-compra-card {
+        padding: 13px !important;
+        border-radius: 14px;
+    }
+
+    .pp-compra-card h2 {
+        font-size: 1rem;
+    }
+
+    .pp-preco {
+        font-size: 1.28rem;
+    }
+
+    .pp-parcelamento {
+        font-size: .78rem;
+    }
+
+    .btn-carrinho-produto {
+        min-height: 46px;
+    }
+
+    .btn-orcamento-fixo {
+        min-height: 46px !important;
+        padding: 12px 14px !important;
+        font-size: .88rem !important;
+        border-radius: 12px !important;
+    }
+
+    .cart-modal-head {
+        padding: 13px 12px 10px;
+    }
+
+    .cart-modal-head h2 {
+        font-size: 1.02rem;
+    }
+
+    .cart-modal-lista {
+        padding: 2px 10px;
+    }
+
+    .cart-item {
+        grid-template-columns: 56px minmax(0,1fr);
+        gap: 9px;
+        padding: 10px 1px;
+    }
+
+    .cart-item-media {
+        width: 56px;
+        height: 56px;
+    }
+
+    .cart-item-title {
+        font-size: .82rem;
+    }
+
+    .cart-item-cor,
+    .cart-item-preco {
+        font-size: .68rem;
+    }
+
+    .cart-qty-btn {
+        width: 28px;
+        height: 28px;
+    }
+
+    .cart-qty-input {
+        width: 50px;
+        height: 30px;
+        font-size: .76rem;
+    }
+
+    .cart-remove-btn {
+        font-size: .64rem;
+    }
+
+    .cart-quote-btn {
+        min-height: 44px;
+        font-size: .82rem;
+    }
+
+    .orcamento-card {
+        padding: 26px 16px !important;
+    }
+
+    .orcamento-card h2 {
+        font-size: 1.28rem !important;
+    }
+
+    .orcamento-card p,
+    .contato-item,
+    .copy {
+        font-size: .80rem;
+    }
+
+    .contato-lista {
+        gap: 8px;
+    }
+
+    .contato-item {
+        padding: 11px;
+    }
+}
