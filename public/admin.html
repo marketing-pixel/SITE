@@ -2677,6 +2677,319 @@
         }
         .voltar .seta-3d { width:20px; height:20px; }
         
+    
+        /* =========================================================
+           CATEGORIAS — ORGANIZAÇÃO PREMIUM DA LISTA DO ADM
+        ========================================================= */
+        .toolbar-titulo {
+            min-width: 0;
+        }
+
+        .toolbar-kicker {
+            display: block;
+            margin-bottom: 4px;
+            color: #f97316;
+            font-size: .62rem;
+            font-weight: 900;
+            letter-spacing: 1.55px;
+        }
+
+        .toolbar-titulo h2 {
+            margin-bottom: 3px;
+        }
+
+        .toolbar-titulo p {
+            color: #6b7a8c;
+            font-size: .78rem;
+            line-height: 1.45;
+        }
+
+        .toolbar-acoes {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .btn-categoria-topo {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            min-height: 44px;
+            padding: 10px 16px;
+            border: 1px solid rgba(22,45,71,.12);
+            border-radius: 10px;
+            background: linear-gradient(180deg,#fff,#f5f8fb);
+            color: #162d47;
+            font-size: .83rem;
+            font-weight: 850;
+            cursor: pointer;
+            box-shadow: 0 6px 16px rgba(22,45,71,.08);
+            transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease;
+        }
+
+        .btn-categoria-topo > span {
+            display: inline-grid;
+            place-items: center;
+            width: 21px;
+            height: 21px;
+            border-radius: 7px;
+            background: #f97316;
+            color: #fff;
+            font-size: 1rem;
+            font-weight: 900;
+            line-height: 1;
+        }
+
+        .btn-categoria-topo:hover {
+            transform: translateY(-2px);
+            border-color: rgba(249,115,22,.25);
+            box-shadow: 0 10px 24px rgba(22,45,71,.12);
+        }
+
+        .categoria-separador td {
+            padding: 0;
+            border-bottom: 0;
+            background: transparent;
+        }
+
+        .categoria-linha {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            margin-top: 18px;
+            padding: 13px 16px;
+            border: 1px solid #dce5ec;
+            border-radius: 13px 13px 8px 8px;
+            background:
+                radial-gradient(circle at 100% 0%, rgba(249,115,22,.10), transparent 32%),
+                linear-gradient(135deg,#f9fbfd,#eef3f8);
+            box-shadow: 0 7px 18px rgba(22,45,71,.07);
+        }
+
+        .categoria-nome-area {
+            min-width: 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .categoria-nome {
+            color: #162d47;
+            font-size: .92rem;
+            font-weight: 900;
+            letter-spacing: .1px;
+        }
+
+        .categoria-contador {
+            display: inline-flex;
+            align-items: center;
+            min-height: 23px;
+            padding: 3px 8px;
+            border-radius: 999px;
+            background: #fff;
+            border: 1px solid #e0e8ef;
+            color: #718193;
+            font-size: .65rem;
+            font-weight: 800;
+        }
+
+        .categoria-acoes {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            flex: 0 0 auto;
+        }
+
+        .categoria-lapis {
+            width: 34px;
+            height: 34px;
+            display: inline-grid;
+            place-items: center;
+            border: 1px solid #dbe4eb;
+            border-radius: 9px;
+            background: #fff;
+            color: #24406b;
+            cursor: pointer;
+            box-shadow: 0 5px 12px rgba(22,45,71,.06);
+            transition: transform .18s ease, border-color .18s ease, box-shadow .18s ease, color .18s ease;
+        }
+
+        .categoria-lapis svg {
+            width: 16px;
+            height: 16px;
+            fill: currentColor;
+            stroke: currentColor;
+            stroke-width: 1.4;
+            stroke-linejoin: round;
+        }
+
+        .categoria-lapis:hover {
+            transform: translateY(-1px);
+            color: #f97316;
+            border-color: rgba(249,115,22,.28);
+            box-shadow: 0 8px 17px rgba(22,45,71,.10);
+        }
+
+        .btn-categoria {
+            min-height: 34px;
+            padding: 7px 11px;
+            border: 1px solid transparent;
+            border-radius: 8px;
+            font-size: .72rem;
+            font-weight: 850;
+            cursor: pointer;
+            transition: transform .18s ease, box-shadow .18s ease, filter .18s ease;
+        }
+
+        .btn-categoria:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 7px 15px rgba(22,45,71,.10);
+        }
+
+        .btn-categoria-renomear {
+            background: linear-gradient(135deg,#162d47,#2c5f8a);
+            color: #fff;
+        }
+
+        .btn-categoria-excluir {
+            background: linear-gradient(135deg,#dc2626,#f87171);
+            color: #fff;
+        }
+
+        .categoria-sem-produtos td {
+            padding: 15px 18px;
+            color: #8a98a7;
+            font-size: .74rem;
+            font-style: italic;
+            background: #fcfdfe;
+            border-left: 1px solid #e4eaf0;
+            border-right: 1px solid #e4eaf0;
+        }
+
+        .tabela-vazia {
+            text-align: center;
+            padding: 34px !important;
+            color: #778596 !important;
+        }
+
+        .categoria-modal-overlay {
+            z-index: 1400;
+        }
+
+        .categoria-modal-box {
+            width: min(500px, calc(100vw - 30px));
+            max-width: 500px;
+            margin: 0;
+            padding: 28px;
+            border-radius: 20px;
+            box-shadow: 0 28px 70px rgba(8,17,27,.30), 0 8px 24px rgba(22,45,71,.12);
+        }
+
+        .categoria-modal-kicker {
+            display: block;
+            margin-bottom: 5px;
+            color: #f97316;
+            font-size: .63rem;
+            font-weight: 900;
+            letter-spacing: 1.5px;
+        }
+
+        .categoria-modal-box h2 {
+            margin-bottom: 8px;
+        }
+
+        .categoria-modal-texto {
+            margin-bottom: 20px;
+            color: #6b7a8c;
+            font-size: .8rem;
+            line-height: 1.55;
+        }
+
+        .categoria-modal-box .form-grupo {
+            margin-bottom: 20px;
+        }
+
+        .categoria-modal-box .form-grupo input {
+            min-height: 46px;
+            border-radius: 10px;
+        }
+
+        .categoria-modal-acoes {
+            display: flex;
+            justify-content: flex-end;
+            gap: 9px;
+            flex-wrap: wrap;
+        }
+
+        .categoria-cancelar {
+            background: #fff;
+            color: #526579;
+            border: 1px solid #dce5ec;
+        }
+
+        .categoria-confirmar {
+            background: linear-gradient(135deg,#162d47,#f97316);
+            color: #fff;
+            box-shadow: 0 7px 16px rgba(249,115,22,.18);
+        }
+
+        @media (max-width: 800px) {
+            .toolbar-acoes {
+                width: 100%;
+                justify-content: flex-start;
+            }
+
+            .btn-categoria-topo,
+            .toolbar-acoes .btn-novo {
+                flex: 1 1 220px;
+            }
+
+            .categoria-linha {
+                align-items: flex-start;
+                flex-direction: column;
+            }
+
+            .categoria-acoes {
+                width: 100%;
+                justify-content: flex-end;
+            }
+        }
+
+        @media (max-width: 500px) {
+            .toolbar-titulo p {
+                font-size: .72rem;
+            }
+
+            .toolbar-acoes {
+                flex-direction: column;
+            }
+
+            .btn-categoria-topo,
+            .toolbar-acoes .btn-novo {
+                width: 100%;
+            }
+
+            .categoria-acoes {
+                width: 100%;
+                display: grid;
+                grid-template-columns: 36px 1fr 1fr;
+            }
+
+            .btn-categoria {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .categoria-modal-box {
+                padding: 22px;
+            }
+        }
+
     </style>
 </head>
 
@@ -2840,17 +3153,32 @@
 
             <div class="toolbar">
 
-                <h2>
-                    Produtos
-                </h2>
+                <div class="toolbar-titulo">
+                    <span class="toolbar-kicker">CATÁLOGO</span>
+                    <h2>
+                        Produtos por categoria
+                    </h2>
+                    <p>Organize, renomeie e gerencie suas categorias diretamente nesta lista.</p>
+                </div>
 
-                <button
-                    type="button"
-                    class="btn-novo"
-                    id="btn-novo-produto"
-                >
-                    + Novo Produto
-                </button>
+                <div class="toolbar-acoes">
+                    <button
+                        type="button"
+                        class="btn-categoria-topo"
+                        id="btn-adicionar-categoria"
+                    >
+                        <span aria-hidden="true">+</span>
+                        Adicionar categoria
+                    </button>
+
+                    <button
+                        type="button"
+                        class="btn-novo"
+                        id="btn-novo-produto"
+                    >
+                        + Novo Produto
+                    </button>
+                </div>
 
             </div>
 
@@ -3333,7 +3661,7 @@
     </script>
 
     <script
-        src="/js/admin.js?v=11"
+        src="/js/admin.js?v=12"
         defer
     ></script>
     <script
