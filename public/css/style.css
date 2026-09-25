@@ -2864,6 +2864,44 @@ img[data-zoom] {
     font-weight: 900;
 }
 
+.cart-qty-input {
+    width: 54px;
+    height: 32px;
+    padding: 0 7px;
+    border: 1px solid #dbe4eb;
+    border-radius: 9px;
+    background: linear-gradient(180deg,#ffffff,#f7fafc);
+    color: var(--azul-800);
+    font: inherit;
+    font-size: .82rem;
+    font-weight: 900;
+    text-align: center;
+    outline: none;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.9);
+    transition: border-color .18s ease, box-shadow .18s ease, transform .18s ease, background .18s ease;
+}
+
+.cart-qty-input:hover {
+    border-color: rgba(44,95,138,.24);
+}
+
+.cart-qty-input:focus {
+    border-color: #2c5f8a;
+    background: #fff;
+    box-shadow: 0 0 0 4px rgba(44,95,138,.09), 0 7px 14px rgba(22,45,71,.08);
+    transform: translateY(-1px);
+}
+
+.cart-qty-input::-webkit-outer-spin-button,
+.cart-qty-input::-webkit-inner-spin-button {
+    margin: 0;
+}
+
+.cart-qty-input[type="number"] {
+    -moz-appearance: textfield;
+    appearance: textfield;
+}
+
 .cart-remove-btn {
     margin-left: 6px;
     border: 0;
