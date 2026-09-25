@@ -142,16 +142,6 @@ function criarCabecalhoCategoria(categoria,total){
     titulo.className="categoria-nome";
     titulo.textContent=categoria.nome||"Sem categoria";
 
-    const contador=document.createElement("span");
-    contador.className="categoria-contador";
-    contador.textContent=total+(total===1?" produto":" produtos");
-
-    nomeArea.appendChild(titulo);
-    nomeArea.appendChild(contador);
-
-    const acoes=document.createElement("div");
-    acoes.className="categoria-acoes";
-
     const lapis=document.createElement("button");
     lapis.type="button";
     lapis.className="categoria-lapis";
@@ -160,11 +150,16 @@ function criarCabecalhoCategoria(categoria,total){
     lapis.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 17.5V20h2.5L18.9 7.6l-2.5-2.5L4 17.5z"></path><path d="m14.9 6.1 2.9-2.9a1.7 1.7 0 0 1 2.4 0l.5.5a1.7 1.7 0 0 1 0 2.4l-2.9 2.9"></path></svg>';
     lapis.addEventListener("click",()=>renomearCategoria(categoria.id));
 
-    const renomear=document.createElement("button");
-    renomear.type="button";
-    renomear.className="btn-categoria btn-categoria-renomear";
-    renomear.textContent="Renomear";
-    renomear.addEventListener("click",()=>renomearCategoria(categoria.id));
+    const contador=document.createElement("span");
+    contador.className="categoria-contador";
+    contador.textContent=total+(total===1?" produto":" produtos");
+
+    nomeArea.appendChild(titulo);
+    nomeArea.appendChild(lapis);
+    nomeArea.appendChild(contador);
+
+    const acoes=document.createElement("div");
+    acoes.className="categoria-acoes";
 
     const excluir=document.createElement("button");
     excluir.type="button";
@@ -172,8 +167,6 @@ function criarCabecalhoCategoria(categoria,total){
     excluir.textContent="Excluir";
     excluir.addEventListener("click",()=>excluirCategoria(categoria.id));
 
-    acoes.appendChild(lapis);
-    acoes.appendChild(renomear);
     acoes.appendChild(excluir);
 
     header.appendChild(nomeArea);
