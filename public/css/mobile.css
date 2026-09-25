@@ -146,7 +146,7 @@
    ================================================================== */
 .btn-orcamento-fixo { display: none; }
 
-@media (max-width: 480px) {
+@media (max-width: 600px) {
     body:has(#view-produto[style*="block"]) .btn-orcamento-fixo {
         display: flex; position: fixed; left: 12px; right: 12px; bottom: 12px;
         z-index: 55; align-items: center; justify-content: center; gap: 8px;
@@ -519,26 +519,42 @@
     }
 
     /* Início/guia/catálogo: tudo em coluna */
+    /* Guias, categorias e catálogo: carrosséis horizontais por gesto */
     .guia-grid,
     .grid-produtos,
     .relacionados-grid {
-        display: grid !important;
-        grid-template-columns: minmax(0, 1fr) !important;
-        gap: 18px !important;
-        width: 100%;
-        max-width: 100%;
-        overflow: visible !important;
-        padding: 0 !important;
-        margin-left: 0;
+        display: flex !important;
+        flex-direction: row !important;
+        flex-wrap: nowrap !important;
+        gap: 14px !important;
+        width: calc(100vw - 24px);
+        max-width: none;
+        overflow-x: auto !important;
+        overflow-y: hidden !important;
+        padding: 2px 12px 10px !important;
+        margin-left: -12px;
         margin-right: 0;
-        scroll-snap-type: none !important;
+        scroll-snap-type: x mandatory !important;
+        scroll-padding-left: 12px;
+        -webkit-overflow-scrolling: touch;
+        overscroll-behavior-x: contain;
+        scrollbar-width: none;
+        touch-action: pan-x pan-y;
+    }
+
+    .guia-grid::-webkit-scrollbar,
+    .grid-produtos::-webkit-scrollbar,
+    .relacionados-grid::-webkit-scrollbar {
+        display: none;
     }
 
     .guia-item {
-        width: 100%;
-        flex: none !important;
+        flex: 0 0 min(84vw, 390px) !important;
+        width: min(84vw, 390px);
+        max-width: min(84vw, 390px);
         margin: 0 !important;
         border-radius: 16px;
+        scroll-snap-align: start;
     }
 
     .guia-item img {
@@ -548,29 +564,49 @@
     }
 
     .filtro-categorias {
+        display: flex !important;
+        flex-direction: row !important;
         justify-content: flex-start;
-        align-items: stretch;
-        flex-wrap: wrap !important;
-        overflow: visible !important;
+        align-items: center;
+        flex-wrap: nowrap !important;
+        width: calc(100vw - 24px);
+        max-width: none;
+        overflow-x: auto !important;
+        overflow-y: hidden !important;
         gap: 8px !important;
-        padding: 0 !important;
-        margin-bottom: 24px !important;
+        padding: 2px 12px 8px !important;
+        margin-left: -12px;
+        margin-right: 0;
+        margin-bottom: 20px !important;
+        -webkit-overflow-scrolling: touch;
+        overscroll-behavior-x: contain;
+        scrollbar-width: none;
+        touch-action: pan-x;
+    }
+
+    .filtro-categorias::-webkit-scrollbar {
+        display: none;
     }
 
     .filtro-btn {
-        max-width: 100%;
+        flex: 0 0 auto !important;
+        width: auto;
+        max-width: none;
+        white-space: nowrap;
         min-height: 40px;
         padding: 9px 14px !important;
         font-size: .82rem !important;
     }
 
-    .produto-card {
-        width: 100%;
-        max-width: 100%;
-        flex: none !important;
+    .produto-card,
+    .rel-card {
+        flex: 0 0 min(82vw, 340px) !important;
+        width: min(82vw, 340px);
+        max-width: min(82vw, 340px);
         height: 414px;
         min-height: 414px;
         border-radius: 16px;
+        scroll-snap-align: start;
     }
 
     .produto-imagem-area {
