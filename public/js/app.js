@@ -632,7 +632,7 @@ async function inicializarSite(){const e=document.getElementById("view-produto")
         var header = document.querySelector(".header");
         if (header) header.classList.toggle("scrolled", atual > 18);
 
-        voltarTopo.classList.toggle("visivel", atual > Math.max(420, window.innerHeight * .65));
+        voltarTopo.classList.toggle("visivel", atual > Math.max(260, window.innerHeight * .42));
     }
 
     var rolando = false;
