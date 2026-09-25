@@ -1282,3 +1282,58 @@
         padding: 11px;
     }
 }
+
+/* ==================================================================
+   CABEÇALHO MOBILE — MENU À ESQUERDA / CARRINHO À ESQUERDA DA LOGO
+   ================================================================== */
+@media (max-width: 600px) {
+    .header-inner {
+        justify-content: space-between !important;
+        align-items: center;
+    }
+
+    .menu-toggle {
+        order: 1;
+        margin-right: auto;
+    }
+
+    .header-marca-area {
+        order: 2;
+        margin-left: auto;
+        flex-direction: row-reverse !important;
+        justify-content: flex-start;
+        gap: 7px;
+    }
+
+    .header-logo {
+        max-width: 94px;
+    }
+
+    .header-nav {
+        left: 10px !important;
+        right: auto !important;
+        width: min(232px, calc(100vw - 20px)) !important;
+        max-height: min(48vh, 300px) !important;
+        top: calc(100% + 7px) !important;
+        padding: 7px !important;
+        gap: 3px !important;
+        border-radius: 15px !important;
+        transform-origin: top left !important;
+        box-shadow:
+            0 18px 40px rgba(15,34,54,.15),
+            0 7px 18px rgba(15,34,54,.07) !important;
+    }
+
+    .header-nav a {
+        min-height: 36px !important;
+        padding: 7px 9px !important;
+        font-size: .83rem !important;
+    }
+
+    .header-cta {
+        min-height: 38px !important;
+        margin-top: 3px !important;
+        padding: 7px 10px !important;
+        font-size: .82rem !important;
+    }
+}
