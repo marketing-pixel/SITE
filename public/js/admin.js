@@ -473,9 +473,9 @@ function montarEditorPartesCaracteristicas(editor,partesIniciais){
             const row=document.createElement("div");
             row.className="parte-outra-item";
             row.innerHTML=`
-                <input type="text" class="parte-outra-nome" maxlength="100" placeholder="Nome da característica">
-                <input type="text" class="parte-outra-valor" maxlength="500" placeholder="Valor">
-                <button type="button" class="parte-outra-remover" aria-label="Remover característica">×</button>
+                <input type="text" class="parte-outra-nome" maxlength="100" placeholder="Nome da característica" aria-label="Nome da característica">
+                <input type="text" class="parte-outra-valor" maxlength="500" placeholder="Valor da característica" aria-label="Valor da característica">
+                <button type="button" class="parte-outra-remover" aria-label="Remover característica" title="Remover característica">×</button>
             `;
             row.querySelector(".parte-outra-nome").value=nome||"";
             row.querySelector(".parte-outra-valor").value=valor||"";
