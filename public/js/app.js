@@ -850,7 +850,7 @@ async function excluirInteracao(tipo,id,card,botao){
 
     try{
         const resposta=await api(
-            "/api/produtos/"+encodeURIComponent(produtoAtual.id)+"/"+tipo+"/"+encodeURIComponent(id),
+            "/api/produtos/"+encodeURIComponent(produtoAtual.id)+"/"+(tipo==="pergunta"?"perguntas":"avaliacoes")+"/"+encodeURIComponent(id),
             {method:"DELETE"}
         );
 
