@@ -180,28 +180,6 @@ function renderProduto(){
         info.appendChild(cores);
     }
 
-    const saber=document.createElement("div");
-    saber.className="pp-resumo-descricao";
-    const saberH=document.createElement("h2");
-    saberH.textContent="O que você precisa saber";
-    saber.appendChild(saberH);
-    const descricao=(produto.descricao||"").trim();
-    if(descricao){
-        descricao.split(/\n+|[•]+/).map(v=>v.trim()).filter(Boolean).slice(0,6).forEach(txt=>{
-            const p=document.createElement("p");
-            p.className="pp-resumo-item";
-            p.innerHTML="<span>•</span>"+escaparHtml(txt);
-            saber.appendChild(p);
-        });
-    }else{
-        const p=document.createElement("p");
-        p.className="pp-resumo-item";
-        p.innerHTML="<span>•</span>"+escaparHtml(obterDescricaoCorAtual());
-        saber.appendChild(p);
-    }
-    info.appendChild(saber);
-    grid.appendChild(info);
-
     const compra=document.createElement("aside");
     compra.className="pp-compra-card";
 
