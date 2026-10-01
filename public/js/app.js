@@ -307,6 +307,7 @@ function renderProduto(){
         descricaoBotao.setAttribute("aria-expanded","false");
         descricaoBotao.addEventListener("click",()=>{
             const expandida=descricaoConteudo.classList.toggle("expandida");
+            descricaoBotao.classList.toggle("aberta",expandida);
             descricaoBotao.textContent=expandida?"Recolher descrição":"Ver descrição completa";
             descricaoBotao.setAttribute("aria-expanded",expandida?"true":"false");
         });
