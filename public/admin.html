@@ -6129,6 +6129,16 @@
         .carac-parte-titulo::before{content:"";width:4px;height:18px;border-radius:99px;background:linear-gradient(180deg,#f97316,#fb923c);box-shadow:0 3px 8px rgba(249,115,22,.2)}
         @media (max-width:700px){.cor-parte-cabecalho{align-items:flex-start}.cor-parte-editar{min-height:34px;padding-inline:9px}.cor-parte-nome-input{width:100%;min-width:0}}
 
+            /* ===== Outras características editáveis por parte ===== */
+        .parte-outras-lista{display:grid;gap:8px;margin-bottom:9px}
+        .parte-outra-item{display:grid;grid-template-columns:minmax(150px,.9fr) minmax(170px,1.2fr) 34px;gap:8px;align-items:center}
+        .parte-outra-item input{min-height:40px!important}
+        .parte-outra-remover{width:34px;height:40px;border:1px solid #e0e5eb;border-radius:9px;background:#fff;color:#9a3b33;font-size:1.05rem;font-weight:800;cursor:pointer;transition:transform .18s ease,box-shadow .18s ease,border-color .18s ease}
+        .parte-outra-remover:hover{transform:translateY(-1px);border-color:#e8a7a0;box-shadow:0 6px 14px rgba(163,58,50,.10)}
+        .parte-adicionar-caracteristica{min-height:37px;padding:8px 11px;border:1px dashed #c5d0dc;border-radius:9px;background:#fff;color:#31536f;font-size:.70rem;font-weight:850;cursor:pointer}
+        .parte-adicionar-caracteristica:hover{border-color:#f97316;color:#c2410c;background:#fff8f3}
+        @media (max-width:700px){.parte-outra-item{grid-template-columns:1fr 34px}.parte-outra-item .parte-outra-nome{grid-column:1}.parte-outra-item .parte-outra-valor{grid-column:1}.parte-outra-item .parte-outra-remover{grid-column:2;grid-row:1 / span 2;height:100%}}
+
     </style>
 </head>
 
@@ -6692,7 +6702,7 @@
     </script>
 
     <script
-        src="/js/admin.js?v=19"
+        src="/js/admin.js?v=20"
         defer
     ></script>
     <script
