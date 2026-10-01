@@ -3836,3 +3836,7 @@ body {
 .pp-caracteristicas .carac-parte-titulo::before{content:"";width:5px;height:20px;flex:0 0 auto;border-radius:99px;background:linear-gradient(180deg,#f97316,#fb923c);box-shadow:0 4px 10px rgba(249,115,22,.18)}
 .pp-caracteristicas .carac-parte-titulo + .carac-sub{margin-top:7px}
 @media (max-width:700px){.pp-caracteristicas .carac-parte-titulo{margin-top:19px;padding:10px 11px;font-size:.80rem}}
+
+
+/* ===== Características opcionais por parte ===== */
+.pp-caracteristicas .carac-parte-titulo{margin-bottom:12px}
