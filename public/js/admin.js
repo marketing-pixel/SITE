@@ -301,610 +301,133 @@ function renderTabela(produtos){
     }
 }
 
-function confirmarAcao(e,t){return new Promise(o=>{let a=document.getElementById("modal-confirmar");a&&a.remove(),a=document.createElement("div"),a.id="modal-confirmar",a.className="modal-overlay aberto";const n=t.indexOf("DEFINITIVAMENTE")>=0;a.innerHTML=`<div class="modal-box modal-confirmar-box"><h2>${escaparHtml(e)}</h2><p class="modal-confirmar-texto">${escaparHtml(t)}</p><div class="modal-confirmar-acoes"><button type="button" class="btn-tabela btn-desativar" id="mc-cancelar">Cancelar</button><button type="button" class="btn-tabela ${n?"btn-excluir":"btn-reativar"}" id="mc-ok">Confirmar</button></div></div>`,document.body.appendChild(a),document.getElementById("mc-cancelar").onclick=()=>{a.remove(),o(!1)},document.getElementById("mc-ok").onclick=()=>{a.remove(),o(!0)},a.addEventListener("click",e=>{e.target===a&&(a.remove(),o(!1))})})}async function desativarProduto(e){if(await confirmarAcao("Desativar produto","Desativar este produto? Ele sai do catálogo, mas continua no painel e pode ser reativado."))try{await api("/api/produtos/"+e,{method:"DELETE"}),mostrarMensagem("Produto desativado."),await carregarProdutos()}catch(e){mostrarMensagem(e.message||"Erro ao desativar o produto.","erro")}}async function excluirProdutoDefinitivo(e){if(await confirmarAcao("Excluir definitivamente","EXCLUIR este produto DEFINITIVAMENTE? Esta ação não pode ser desfeita: o produto, suas imagens, perguntas e avaliações serão apagados."))try{await api("/api/produtos/"+e+"/excluir",{method:"DELETE"}),mostrarMensagem("Produto excluído definitivamente."),await carregarProdutos()}catch(e){mostrarMensagem(e.message||"Erro ao excluir o produto.","erro")}}async function reativarProduto(e){try{await api("/api/produtos/"+e+"/reativar",{method:"PUT"}),mostrarMensagem("Produto reativado."),await carregarProdutos()}catch(e){mostrarMensagem(e.message||"Erro ao reativar o produto.","erro")}}function abrirNovoProduto(){produtoEditando=null;const e=document.getElementById("modal-titulo"),t=document.getElementById("produto-id"),o=document.getElementById("produto-form"),a=document.getElementById("cores-container"),n=document.getElementById("modal-produto");e&&(e.textContent="Novo Produto"),t&&(t.value=""),o&&o.reset(),a&&(a.innerHTML=""),adicionarCor(),n&&n.classList.add("aberto")}async function abrirEdicao(e){try{const t=await api("/api/produtos/"+e);produtoEditando=t,document.getElementById("modal-titulo").textContent="Editar Produto",document.getElementById("produto-id").value=t.id,document.getElementById("f-titulo").value=t.titulo||"",document.getElementById("f-linha").value=t.linha||"",document.getElementById("f-categoria").value=t.categoria_id||"",document.getElementById("f-preco").value=t.preco??"",document.getElementById("f-parcelamento").value=t.parcelamento||"",document.getElementById("f-descricao").value=t.descricao||"";const o=t.caracteristicas||{};document.getElementById("f-modelo").value=o.modelo||"",document.getElementById("f-largura").value=o.largura||"",document.getElementById("f-comprimento").value=o.comprimento||"",document.getElementById("f-altura").value=o.altura||"",document.getElementById("f-assentos").value=o.quantidade_assentos||"",document.getElementById("f-compartimento").value=o.compartimento_livros||"",document.getElementById("f-outros").value=o.outros||"",document.getElementById("cores-container").innerHTML="",Array.isArray(t.cores)&&t.cores.length>0?t.cores.forEach(e=>{const o=(t.imagens||[]).filter(t=>Number(t.cor_id)===Number(e.id));adicionarCor({...e,imagens:o})}):adicionarCor(),document.getElementById("modal-produto").classList.add("aberto")}catch(e){console.error("Erro ao abrir produto:",e),mostrarMensagem(e.message||"Erro ao carregar o produto.","erro")}}function fecharModal(){const e=document.getElementById("modal-produto");e&&e.classList.remove("aberto")}let contadorGrupoImagemPrincipal=0;function adicionarCor(e={}){const t=document.getElementById("cores-container");if(!t)return;const o=document.createElement("div"),s="imagem-principal-"+(++contadorGrupoImagemPrincipal);o.className="cores-editor",o.dataset.imagemPrincipalGrupo=s,o.innerHTML=`\n        <h4>Cor</h4>\n\n        <div class="form-grupo">
+function confirmarAcao(e,t){return new Promise(o=>{let a=document.getElementById("modal-confirmar");a&&a.remove(),a=document.createElement("div"),a.id="modal-confirmar",a.className="modal-overlay aberto";const n=t.indexOf("DEFINITIVAMENTE")>=0;a.innerHTML=`<div class="modal-box modal-confirmar-box"><h2>${escaparHtml(e)}</h2><p class="modal-confirmar-texto">${escaparHtml(t)}</p><div class="modal-confirmar-acoes"><button type="button" class="btn-tabela btn-desativar" id="mc-cancelar">Cancelar</button><button type="button" class="btn-tabela ${n?"btn-excluir":"btn-reativar"}" id="mc-ok">Confirmar</button></div></div>`,document.body.appendChild(a),document.getElementById("mc-cancelar").onclick=()=>{a.remove(),o(!1)},document.getElementById("mc-ok").onclick=()=>{a.remove(),o(!0)},a.addEventListener("click",e=>{e.target===a&&(a.remove(),o(!1))})})}async function desativarProduto(e){if(await confirmarAcao("Desativar produto","Desativar este produto? Ele sai do catálogo, mas continua no painel e pode ser reativado."))try{await api("/api/produtos/"+e,{method:"DELETE"}),mostrarMensagem("Produto desativado."),await carregarProdutos()}catch(e){mostrarMensagem(e.message||"Erro ao desativar o produto.","erro")}}async function excluirProdutoDefinitivo(e){if(await confirmarAcao("Excluir definitivamente","EXCLUIR este produto DEFINITIVAMENTE? Esta ação não pode ser desfeita: o produto, suas imagens, perguntas e avaliações serão apagados."))try{await api("/api/produtos/"+e+"/excluir",{method:"DELETE"}),mostrarMensagem("Produto excluído definitivamente."),await carregarProdutos()}catch(e){mostrarMensagem(e.message||"Erro ao excluir o produto.","erro")}}async function reativarProduto(e){try{await api("/api/produtos/"+e+"/reativar",{method:"PUT"}),mostrarMensagem("Produto reativado."),await carregarProdutos()}catch(e){mostrarMensagem(e.message||"Erro ao reativar o produto.","erro")}}function abrirNovoProduto(){produtoEditando=null;const e=document.getElementById("modal-titulo"),t=document.getElementById("produto-id"),o=document.getElementById("produto-form"),a=document.getElementById("cores-container"),n=document.getElementById("modal-produto");e&&(e.textContent="Novo Produto"),t&&(t.value=""),o&&o.reset(),a&&(a.innerHTML=""),adicionarCor(),n&&n.classList.add("aberto")}async function abrirEdicao(e){
+    try{
+        const t=await api("/api/produtos/"+e);
+        produtoEditando=t;
 
-            <label>
-                Nome da cor
-            </label>
+        document.getElementById("modal-titulo").textContent="Editar Produto";
+        document.getElementById("produto-id").value=t.id;
+        document.getElementById("f-titulo").value=t.titulo||"";
+        document.getElementById("f-linha").value=t.linha||"";
+        document.getElementById("f-categoria").value=t.categoria_id||"";
+        document.getElementById("f-preco").value=t.preco??"";
+        document.getElementById("f-parcelamento").value=t.parcelamento||"";
+        document.getElementById("f-descricao").value=t.descricao||"";
 
-            <input
-                type="text"
-                class="cor-nome"
-                maxlength="100"
-                value="${escaparHtml(e.nome||"")}"
-            >
+        document.getElementById("cores-container").innerHTML="";
 
-        </div>
+        if(Array.isArray(t.cores)&&t.cores.length>0){
+            t.cores.forEach(cor=>{
+                const imagens=(t.imagens||[]).filter(img=>Number(img.cor_id)===Number(cor.id));
+                adicionarCor({...cor,imagens});
+            });
+        }else{
+            adicionarCor();
+        }
 
+        document.getElementById("modal-produto").classList.add("aberto");
+    }catch(e){
+        console.error("Erro ao abrir produto:",e);
+        mostrarMensagem(e.message||"Erro ao carregar o produto.","erro");
+    }
+}
+const produtoForm=document.getElementById("produto-form");
+produtoForm&&produtoForm.addEventListener("submit",async e=>{
+    e.preventDefault();
 
-        <div class="cor-caracteristicas-editor">
+    const categoria=document.getElementById("f-categoria").value;
+    if(!categoria)return mostrarMensagem("Selecione uma categoria.","erro");
 
-            <div class="cor-caracteristicas-titulo">
-                Características do produto
-            </div>
+    const cores=[];
 
-            <div class="cor-caracteristicas-subtitulo">
-                Características Principais
-            </div>
+    document.querySelectorAll(".cores-editor").forEach(el=>{
+        const nome=el.querySelector(".cor-nome")?.value.trim()||"";
+        const altura=el.querySelector(".cor-altura")?.value.trim()||"";
+        const modelo=el.querySelector(".cor-modelo")?.value.trim()||"";
+        const largura=el.querySelector(".cor-largura")?.value.trim()||"";
+        const comprimento=el.querySelector(".cor-comprimento")?.value.trim()||"";
+        const outros=el.querySelector(".cor-outros")?.value||"";
+        const quantidade_assentos=el.querySelector(".cor-assentos")?.value.trim()||"";
+        const compartimento_livros=el.querySelector(".cor-compartimento")?.value.trim()||"";
+        const descricaoEl=el.querySelector(".cor-descricao");
+        const descricao=descricaoEl?descricaoEl.value:"";
 
-            <div class="form-grupo">
-                <label>Modelo</label>
-                <input
-                    type="text"
-                    class="cor-modelo"
-                    maxlength="255"
-                    value="${escaparHtml(e.modelo||"")}"
-                >
-            </div>
+        const imagens=[];
+        el.querySelectorAll(".imagem-item").forEach(item=>{
+            const caminho=item.querySelector(".cor-imagem-caminho");
+            if(!caminho||!caminho.value)return;
 
-            <div class="cor-caracteristicas-subtitulo">
-                Dimensões
-            </div>
+            const principal=item.querySelector(".cor-imagem-principal");
+            const id=item.querySelector(".cor-imagem-id");
+            const publicId=item.querySelector(".cor-imagem-public-id");
 
-            <div class="form-grid">
+            imagens.push({
+                id:id?id.value:"",
+                caminho:caminho.value,
+                public_id:publicId?publicId.value:null,
+                principal:!!principal&&principal.checked
+            });
+        });
 
-                <div class="form-grupo">
-                    <label>Largura</label>
-                    <input
-                        type="text"
-                        class="cor-largura"
-                        maxlength="50"
-                        value="${escaparHtml(e.largura||"")}"
-                    >
-                </div>
+        if(
+            nome||altura||modelo||largura||comprimento||outros||
+            quantidade_assentos||compartimento_livros||descricao||imagens.length
+        ){
+            cores.push({
+                nome,
+                altura,
+                modelo,
+                largura,
+                comprimento,
+                outros,
+                quantidade_assentos,
+                compartimento_livros,
+                descricao,
+                imagens
+            });
+        }
+    });
 
-                <div class="form-grupo">
-                    <label>Comprimento</label>
-                    <input
-                        type="text"
-                        class="cor-comprimento"
-                        maxlength="50"
-                        value="${escaparHtml(e.comprimento||"")}"
-                    >
-                </div>
-
-                <div class="form-grupo">
-                    <label>Altura</label>
-                    <input
-                        type="text"
-                        class="cor-altura"
-                        maxlength="50"
-                        value="${escaparHtml(e.altura||"")}"
-                    >
-                </div>
-
-            </div>
-
-            <div class="cor-caracteristicas-subtitulo">
-                Outras características
-            </div>
-
-            <div class="form-grid">
-
-                <div class="form-grupo">
-                    <label>Quantidade de assentos</label>
-                    <input
-                        type="text"
-                        class="cor-assentos"
-                        maxlength="50"
-                        value="${escaparHtml(e.quantidade_assentos||"")}"
-                    >
-                </div>
-
-                <div class="form-grupo">
-                    <label>Compartimento para livros</label>
-                    <input
-                        type="text"
-                        class="cor-compartimento"
-                        maxlength="50"
-                        value="${escaparHtml(e.compartimento_livros||"")}"
-                    >
-                </div>
-
-            </div>
-
-            <div class="form-grupo">
-                <label>Outros</label>
-                <input
-                    type="text"
-                    class="cor-outros"
-                    value="${escaparHtml(e.outros||"")}"
-                >
-            </div>
-
-        </div>
-
-
-        <div class="form-grupo">\n\n            <label>\n                Descrição da cor\n            </label>\n\n            <textarea\n                class="cor-descricao descricao-cor"\n                maxlength="5000"\n                placeholder="Descreva as características específicas desta cor, acabamento ou configuração."\n            >${escaparHtml(e.descricao||"")}</textarea>\n\n        </div>\n\n\n        <div class="form-grupo imagem-upload">\n\n            <label>\n                Imagens da cor\n            </label>\n\n            <div class="imagem-dropzone" tabindex="0" role="button" aria-label="Adicionar imagens desta cor">\n                <div class="imagem-upload-icon" aria-hidden="true">↥</div>\n\n                <div class="imagem-upload-copy">\n                    <div class="imagem-upload-title">Adicionar imagens</div>\n                    <div class="imagem-upload-subtitle">PNG, JPG ou WebP • até 5 MB por arquivo</div>\n                </div>\n\n                <div class="imagem-upload-actions">\n                    <span class="imagem-selecionar-btn">Selecionar arquivos</span>\n                </div>\n\n                <input\n                    type="file"\n                    class="cor-imagens-input imagem-upload-file"\n                    accept="image/png,image/jpeg,image/webp"\n                    multiple\n                    tabindex="-1"\n                >\n            </div>\n\n            <div class="imagem-contador" aria-live="polite"></div>\n\n        </div>\n\n\n        <div\n            class="imagem-lista cor-imagens-lista"\n        ></div>\n\n\n        <button\n            type="button"\n            class="btn-remove-cor"\n        >\n            Remover cor\n        </button>\n    `,t.appendChild(o);const a=o.querySelector(".btn-remove-cor");if(a&&a.addEventListener("click",()=>removerCor(a)),Array.isArray(e.imagens)&&e.imagens.length>0){const t=o.querySelector(".cor-imagens-lista");e.imagens.forEach(e=>{adicionarItemImagem(t,e.caminho,Boolean(e.principal),e.id||"",e.public_id||"")})}const n=o.querySelector(".cor-imagens-input"),r=o.querySelector(".imagem-dropzone");if(n&&r){const a=async e=>{const t=Array.from(e.target.files||[]);if(window.abrirEditorImagemArquivos)await window.abrirEditorImagemArquivos(t,o);else for(const e of t)await fazerUpload(e,o);e.target.value="",atualizarContadorImagens(o)};n.addEventListener("change",a),r.addEventListener("click",()=>n.click()),r.addEventListener("keydown",e=>{("Enter"===e.key||" "===e.key)&&(e.preventDefault(),n.click())}),["dragenter","dragover"].forEach(e=>r.addEventListener(e,e=>{e.preventDefault(),r.classList.add("dragging")})),["dragleave","drop"].forEach(e=>r.addEventListener(e,e=>{e.preventDefault(),r.classList.remove("dragging")})),r.addEventListener("drop",async e=>{const t=Array.from(e.dataTransfer?.files||[]);if(window.abrirEditorImagemArquivos)await window.abrirEditorImagemArquivos(t,o);else for(const e of t)await fazerUpload(e,o);atualizarContadorImagens(o)})}atualizarContadorImagens(o)}function atualizarContadorImagens(e){const t=e?.querySelector(".imagem-contador"),o=e?e.querySelectorAll(".imagem-item").length:0;t&&(t.innerHTML=o?'<strong>'+o+(1===o?" imagem":" imagens")+'</strong> cadastrada'+(1===o?"":"s")+"." :"Nenhuma imagem cadastrada ainda.")} function adicionarItemImagem(e,t,o=!1,a="",n=""){if(!e||!t)return;const r=document.createElement("div");if(r.className="imagem-item",r.innerHTML=`\n        <img\n            src="${escaparHtml(urlImagemAdmin(t))}"\n            alt="Imagem do produto"\n        >\n\n        <input\n            type="hidden"\n            class="cor-imagem-caminho"\n            value="${escaparHtml(t)}"\n        >\n\n        ${a?`\n                    <input\n                        type="hidden"\n                        class="cor-imagem-id"\n                        value="${escaparHtml(a)}"\n                    >\n                `:""}\n\n        <label\n            class="imagem-principal-label"\n        >\n\n            <input\n                type="radio"\n                name="${e.closest(".cores-editor")?.dataset.imagemPrincipalGrupo||"imagem-principal-global"}"\n                class="cor-imagem-principal"\n                ${o?"checked":""}\n            >\n\n            Principal\n\n        </label>\n\n\n        <div class="imagem-item-acoes">\n            <button\n                type="button"\n                class="btn-recortar-imagem"\n                title="Recortar e reposicionar imagem"\n            >\n                ✂ Recortar\n            </button>\n\n            <button\n            type="button"\n            class="btn-remove-imagem"\n            title="Remover imagem"\n        >\n            ×\n        </button>\n        </div>\n    `,e.appendChild(r),atualizarContadorImagens(e.closest(".cores-editor")),n){const e=document.createElement("input");e.type="hidden",e.className="cor-imagem-public-id",e.value=n,r.appendChild(e)}const c=r.querySelector(".cor-imagem-principal");c&&c.addEventListener("change",()=>{if(!c.checked)return;c.closest(".cores-editor")?.querySelectorAll(".cor-imagem-principal").forEach(e=>{e!==c&&(e.checked=!1)});atualizarPreviaProduto()});const i=r.querySelector(".btn-remove-imagem");i&&i.addEventListener("click",()=>removerImagem(i));const s=r.querySelector(".btn-recortar-imagem");s&&s.addEventListener("click",()=>{if(typeof window.recortarImagemExistente==="function")window.recortarImagemExistente(r,e.closest(".cores-editor"))})}function removerImagem(e){const t=e.closest(".imagem-item");if(!t)return;const o=t.querySelector(".cor-imagem-principal")?.checked;const r=t.closest(".cores-editor");if(t.remove(),atualizarContadorImagens(r),o){const e=r?.querySelector(".cor-imagem-principal");e&&(e.checked=!0)}}function removerCor(e){const t=e.closest(".cores-editor");if(!t)return;const o=Array.from(t.querySelectorAll(".cor-imagem-principal")).some(e=>e.checked);if(t.remove(),o){const e=document.querySelector(".cor-imagem-principal");e&&(e.checked=!0)}}async function enviarImagemParaArmazenamento(e){if(!e||!["image/png","image/jpeg","image/webp"].includes(e.type))throw new Error("Formato não permitido. Use PNG, JPG ou WebP.");if(e.size>5242880)throw new Error("A imagem deve ter no máximo 5 MB.");const t=new FormData;t.append("imagem",e),t.append("tipo","cor");const o=await fetch("/api/uploads",{method:"POST",body:t,credentials:"same-origin"}),a=await o.json().catch(()=>({}));if(!o.ok)throw new Error(a.erro||"Erro no upload.");if(!a.caminho)throw new Error("O servidor não retornou o endereço da imagem.");return a}
-
-async function fazerUpload(e,t){try{const o=await enviarImagemParaArmazenamento(e),a=t.querySelector(".cor-imagens-lista");if(!a)return;const n=!t.querySelector(".cor-imagem-principal:checked");return adicionarItemImagem(a,o.caminho,n,"",o.public_id||"")}catch(e){console.error("Erro no upload:",e),alert(e.message||"Erro ao enviar a imagem.")}}
-/* ===== PRÉVIA: MESMA ESTRUTURA DA PÁGINA DE DETALHES DO CATÁLOGO ===== */
-let indiceImagemPrevia = 0;
-let corPreviaSelecionada = 0;
-
-function urlImagemAdmin(caminho) {
-    if (!caminho) return caminho;
-
-    if (caminho.startsWith("https://res.cloudinary.com/")) {
-        const marcador = "/image/upload/";
-        const posicao = caminho.indexOf(marcador);
-
-        if (posicao >= 0) {
-            let resto = caminho.substring(posicao + marcador.length);
-            const partes = resto.split("/");
-
-            while (partes.length && /^(q_|c_|w_|h_|f_|dpr_|v\d)/.test(partes[0])) {
-                partes.shift();
+    if(!cores.some(cor=>cor.imagens.some(img=>img.principal))&&cores.length>0){
+        for(const cor of cores){
+            if(cor.imagens.length>0){
+                cor.imagens[0].principal=true;
+                break;
             }
-
-            resto = partes.join("/");
-            const ponto = resto.lastIndexOf(".");
-            if (ponto > 0) resto = resto.substring(0, ponto);
-
-            return "/api/imagens/cloudinary/" + resto;
         }
     }
 
-    return caminho;
-}
-
-function obterDadosPreviaProduto() {
-    const cores = Array.from(document.querySelectorAll(".cores-editor")).map((el) => ({
-        nome: el.querySelector(".cor-nome")?.value.trim() || "",
-        altura: el.querySelector(".cor-altura")?.value.trim() || "",
-        modelo: el.querySelector(".cor-modelo")?.value.trim() || "",
-        largura: el.querySelector(".cor-largura")?.value.trim() || "",
-        comprimento: el.querySelector(".cor-comprimento")?.value.trim() || "",
-        outros: el.querySelector(".cor-outros")?.value || "",
-        quantidade_assentos: el.querySelector(".cor-assentos")?.value.trim() || "",
-        compartimento_livros: el.querySelector(".cor-compartimento")?.value.trim() || "",
-        descricao: el.querySelector(".cor-descricao")?.value || "",
-        imagens: Array.from(el.querySelectorAll(".imagem-item")).map((item) => ({
-            caminho: item.querySelector(".cor-imagem-caminho")?.value || "",
-            principal: !!item.querySelector(".cor-imagem-principal")?.checked
-        })).filter((img) => img.caminho)
-    })).filter((cor) =>
-        cor.nome ||
-        cor.altura ||
-        cor.modelo ||
-        cor.largura ||
-        cor.comprimento ||
-        cor.outros ||
-        cor.quantidade_assentos ||
-        cor.compartimento_livros ||
-        cor.descricao ||
-        cor.imagens.length
-    );
-
-    return {
-        titulo: document.getElementById("f-titulo")?.value.trim() || "Seu produto",
-        linha: document.getElementById("f-linha")?.value.trim() || "",
-        preco: document.getElementById("f-preco")?.value || "",
-        parcelamento: document.getElementById("f-parcelamento")?.value.trim() || "",
-        descricao: document.getElementById("f-descricao")?.value || "",
+    const dados={
+        titulo:document.getElementById("f-titulo").value.trim(),
+        linha:document.getElementById("f-linha").value.trim(),
+        categoria_id:Number(categoria),
+        preco:document.getElementById("f-preco").value?Number(document.getElementById("f-preco").value):null,
+        parcelamento:document.getElementById("f-parcelamento").value.trim(),
+        descricao:document.getElementById("f-descricao").value,
         cores
     };
-}
-function criarIconeSeta3D(direcao) {
-    const rotacao = { esquerda: "180", direita: "0", cima: "-90", baixo: "90" }[direcao] ?? "0";
-    const span = document.createElement("span");
-    span.className = "seta-3d";
-    span.setAttribute("aria-hidden", "true");
-    span.innerHTML = '<svg class="seta-3d-svg" viewBox="0 0 28 28" focusable="false" style="--seta-rotacao:' + rotacao + 'deg"><path class="seta-3d-sombra" d="M4 12h11.4L11 7.6 14.8 4 25 14 14.8 24 11 20.4l4.4-4.4H4z"></path><path class="seta-3d-face" d="M3 10h11.4L10 5.6 13.8 2 24 12 13.8 22 10 18.4l4.4-4.4H3z"></path><path class="seta-3d-brilho" d="M5 10h9.8l-2.2-2.2" /></svg>';
-    return span;
-}
-function imagensDaCorPrevia(dados) {
-    const cor = dados.cores[corPreviaSelecionada];
-    if (cor?.imagens?.length) return cor.imagens.slice();
 
-    const todas = [];
-    dados.cores.forEach((item) => item.imagens.forEach((img) => todas.push(img)));
-    return todas;
-}
+    if(!dados.titulo)return mostrarMensagem("Informe o título do produto.","erro");
 
-function montarPaginaPrevia() {
-    const card = document.getElementById("previa-card");
-    if (!card) return;
+    const id=document.getElementById("produto-id").value;
 
-    card.innerHTML = "";
-
-    const dados = obterDadosPreviaProduto();
-
-    const container = document.createElement("div");
-    container.className = "pp-container";
-
-    const voltar = document.createElement("button");
-    voltar.type = "button";
-    voltar.className = "voltar";
-    voltar.innerHTML = "";
-    voltar.appendChild(criarIconeSeta3D("esquerda"));
-    voltar.appendChild(document.createTextNode("Voltar para produtos"));
-    container.appendChild(voltar);
-
-    const tituloArea = document.createElement("div");
-    tituloArea.className = "pp-titulo-area";
-
-    const titulo = document.createElement("h1");
-    titulo.className = "pp-titulo";
-    titulo.textContent = dados.titulo;
-    tituloArea.appendChild(titulo);
-
-    const categoria = document.createElement("div");
-    categoria.className = "pp-categoria";
-    categoria.textContent = dados.linha;
-    tituloArea.appendChild(categoria);
-
-    const avaliacao = produtoEditando?.avaliacao_resumo || { media: 0, total: 0 };
-    const media = Number(avaliacao.media || 0);
-    const totalAvaliacoes = Number(avaliacao.total || 0);
-
-    const resumo = document.createElement("div");
-    resumo.className = "pp-avaliacao-resumo-topo";
-
-    const estrelas = document.createElement("span");
-    estrelas.className = "estrelas pp-estrelas-topo";
-    for (let i = 1; i <= 5; i++) {
-        const estrela = document.createElement("span");
-        estrela.className = "estrela" + (i <= Math.round(media) ? " ativa" : "");
-        estrela.textContent = i <= Math.round(media) ? "★" : "☆";
-        estrelas.appendChild(estrela);
-    }
-    resumo.appendChild(estrelas);
-
-    const mediaEl = document.createElement("span");
-    mediaEl.className = "pp-media-topo";
-    mediaEl.textContent = totalAvaliacoes ? media.toFixed(1) : "Sem avaliações";
-    resumo.appendChild(mediaEl);
-
-    const quantidade = document.createElement("span");
-    quantidade.className = "pp-quantidade-topo";
-    quantidade.textContent = totalAvaliacoes
-        ? "(" + totalAvaliacoes + (totalAvaliacoes === 1 ? " avaliação)" : " avaliações)")
-        : "";
-    resumo.appendChild(quantidade);
-
-    tituloArea.appendChild(resumo);
-    container.appendChild(tituloArea);
-
-    const imagemArea = document.createElement("div");
-    imagemArea.className = "pp-imagem-area";
-
-    const imagens = imagensDaCorPrevia(dados);
-    if (indiceImagemPrevia >= imagens.length) indiceImagemPrevia = 0;
-
-    const contador = document.createElement("span");
-    contador.className = "pp-contador";
-    contador.textContent = imagens.length ? (indiceImagemPrevia + 1) + " / " + imagens.length : "1 / 1";
-    imagemArea.appendChild(contador);
-
-    const imagemSelecionada = imagens[indiceImagemPrevia] || imagens.find((img) => img.principal) || imagens[0];
-    const img = document.createElement("img");
-    img.className = "pp-imagem-principal";
-    img.alt = dados.titulo;
-    if (imagemSelecionada?.caminho) {
-        img.src = urlImagemAdmin(imagemSelecionada.caminho);
-    } else {
-        img.alt = "Imagem do produto";
-        img.style.minHeight = "240px";
-        img.style.background = "#f7f8fa";
-    }
-    imagemArea.appendChild(img);
-
-    const favorito = document.createElement("button");
-    favorito.type = "button";
-    favorito.className = "pp-fav";
-    favorito.textContent = "♡";
-    favorito.setAttribute("aria-hidden", "true");
-    imagemArea.appendChild(favorito);
-
-    const compartilhar = document.createElement("button");
-    compartilhar.type = "button";
-    compartilhar.className = "pp-compartilhar";
-    compartilhar.innerHTML = '<svg class="pp-compartilhar-icone" viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="2.25"></circle><circle cx="6" cy="12" r="2.25"></circle><circle cx="18" cy="19" r="2.25"></circle><path d="M8.02 10.9 15.98 6.1"></path><path d="M8.02 13.1 15.98 17.9"></path></svg>';
-    compartilhar.setAttribute("aria-hidden", "true");
-    imagemArea.appendChild(compartilhar);
-
-    if (imagens.length > 1) {
-        const anterior = document.createElement("button");
-        anterior.type = "button";
-        anterior.className = "pp-seta esq";
-        anterior.innerHTML = "";
-        anterior.appendChild(criarIconeSeta3D("esquerda"));
-        anterior.addEventListener("click", () => {
-            indiceImagemPrevia = (indiceImagemPrevia - 1 + imagens.length) % imagens.length;
-            montarPaginaPrevia();
-        });
-
-        const proxima = document.createElement("button");
-        proxima.type = "button";
-        proxima.className = "pp-seta dir";
-        proxima.innerHTML = "";
-        proxima.appendChild(criarIconeSeta3D("direita"));
-        proxima.addEventListener("click", () => {
-            indiceImagemPrevia = (indiceImagemPrevia + 1) % imagens.length;
-            montarPaginaPrevia();
-        });
-
-        imagemArea.appendChild(anterior);
-        imagemArea.appendChild(proxima);
-    }
-
-    container.appendChild(imagemArea);
-
-    if (dados.cores.length) {
-        if (corPreviaSelecionada >= dados.cores.length) corPreviaSelecionada = 0;
-
-        const corLinha = document.createElement("div");
-        corLinha.className = "pp-cor-linha";
-        
-        const corNomeLabel = document.createElement("span");
-        corNomeLabel.className = "pp-cor-label";
-        corNomeLabel.textContent = "Cor:";
-        
-        const corNomeValor = document.createElement("span");
-        corNomeValor.className = "pp-cor-valor";
-        corNomeValor.textContent = dados.cores[corPreviaSelecionada].nome || "—";
-        
-        corLinha.appendChild(corNomeLabel);
-        corLinha.appendChild(corNomeValor);
-        container.appendChild(corLinha);
-
-        const cores = document.createElement("div");
-        cores.className = "pp-cores";
-
-        dados.cores.forEach((cor, index) => {
-            const item = document.createElement("div");
-            item.className = "pp-cor-item" + (index === corPreviaSelecionada ? " selecionada" : "");
-
-            const thumb = document.createElement("div");
-            thumb.className = "pp-cor-thumb";
-
-            const thumbImgData = cor.imagens.find((img) => img.principal) || cor.imagens[0];
-            if (thumbImgData?.caminho) {
-                const thumbImg = document.createElement("img");
-                thumbImg.src = urlImagemAdmin(thumbImgData.caminho);
-                thumbImg.alt = cor.nome || "Cor";
-                thumb.appendChild(thumbImg);
-            }
-
-            const nome = document.createElement("div");
-            nome.className = "pp-cor-nome";
-            nome.textContent = cor.nome || "";
-
-            item.appendChild(thumb);
-            item.appendChild(nome);
-
-            item.addEventListener("click", () => {
-                corPreviaSelecionada = index;
-                indiceImagemPrevia = 0;
-                montarPaginaPrevia();
-            });
-
-            cores.appendChild(item);
-        });
-
-        container.appendChild(cores);
-    }
-
-    const orcamento = document.createElement("div");
-    orcamento.className = "pp-bloco pp-orcamento";
-
-    if (dados.preco) {
-        const preco = document.createElement("div");
-        preco.className = "pp-preco";
-        preco.textContent = formatarPreco(dados.preco);
-        orcamento.appendChild(preco);
-    }
-
-    if (dados.parcelamento) {
-        const parcela = document.createElement("div");
-        parcela.className = "pp-parcelamento";
-        parcela.textContent = dados.parcelamento;
-        orcamento.appendChild(parcela);
-    }
-
-    const solicitar = document.createElement("button");
-    solicitar.type = "button";
-    solicitar.className = "btn-solicitar";
-    solicitar.textContent = "SOLICITAR ORÇAMENTO";
-    solicitar.setAttribute("aria-hidden", "true");
-    orcamento.appendChild(solicitar);
-
-    container.appendChild(orcamento);
-
-    const caracteristicas = document.createElement("section");
-    caracteristicas.className = "pp-bloco pp-caracteristicas";
-
-    const tituloCaracteristicas = document.createElement("h2");
-    tituloCaracteristicas.textContent = "Características do produto";
-    caracteristicas.appendChild(tituloCaracteristicas);
-
-    function adicionarTabela(secao, linhas) {
-        const sub = document.createElement("div");
-        sub.className = "carac-sub";
-        sub.textContent = secao;
-        caracteristicas.appendChild(sub);
-
-        const tabela = document.createElement("table");
-        tabela.className = "carac-tabela";
-
-        linhas.forEach(([nome, valor]) => {
-            if (!valor) return;
-            const tr = document.createElement("tr");
-            const tdNome = document.createElement("td");
-            tdNome.textContent = nome;
-            const tdValor = document.createElement("td");
-            tdValor.textContent = valor;
-            tr.appendChild(tdNome);
-            tr.appendChild(tdValor);
-            tabela.appendChild(tr);
-        });
-
-        if (!tabela.rows.length) {
-            const tr = document.createElement("tr");
-            const td = document.createElement("td");
-            td.colSpan = 2;
-            td.textContent = "Nenhuma característica preenchida.";
-            tr.appendChild(td);
-            tabela.appendChild(tr);
+    try{
+        if(id){
+            await api("/api/produtos/"+id,{method:"PUT",body:JSON.stringify(dados)});
+            mostrarMensagem("Produto atualizado com sucesso.");
+        }else{
+            await api("/api/produtos",{method:"POST",body:JSON.stringify(dados)});
+            mostrarMensagem("Produto criado com sucesso.");
         }
 
-        caracteristicas.appendChild(tabela);
+        fecharModal();
+        await carregarProdutos();
+    }catch(e){
+        console.error("Erro ao salvar produto:",e);
+        mostrarMensagem(e.message||"Erro ao salvar o produto.","erro");
     }
-
-    const B = {
-        modelo: dados.modelo,
-        largura: dados.largura,
-        comprimento: dados.comprimento,
-        altura: dados.altura,
-        quantidade_assentos: dados.assentos,
-        compartimento_livros: dados.compartimento,
-        outros: dados.outros
-    };
-
-    adicionarTabela("Características Principais", [
-        ["Modelo", B.modelo],
-        ["Cor", dados.cores[corPreviaSelecionada]?.nome || "—"]
-    ]);
-
-    adicionarTabela("Dimensões", [
-        ["Largura x Comprimento", B.largura && B.comprimento ? B.largura + " x " + B.comprimento : ""],
-        ["Altura", B.altura || dados.cores[corPreviaSelecionada]?.altura || "—"]
-    ]);
-
-    adicionarTabela("Outras características", [
-        ["Outros", B.outros],
-        ["Quantidade de assentos", B.quantidade_assentos],
-        ["Compartimento para livros", B.compartimento_livros]
-    ]);
-
-    const descricaoLabel = document.createElement("div");
-    descricaoLabel.className = "carac-sub";
-    descricaoLabel.textContent = "Descrição";
-    caracteristicas.appendChild(descricaoLabel);
-
-    const descricaoCompleta = dados.cores[corPreviaSelecionada]?.descricao || dados.descricao || "Descrição ainda não cadastrada.";
-    const descricaoArea = document.createElement("div");
-    descricaoArea.className = "descricao-produto-area";
-
-    const descricaoConteudo = document.createElement("div");
-    descricaoConteudo.className = "descricao-produto-conteudo";
-
-    const descricao = document.createElement("div");
-    descricao.className = "descricao-produto-texto";
-    descricao.textContent = descricaoCompleta;
-    descricaoConteudo.appendChild(descricao);
-    descricaoArea.appendChild(descricaoConteudo);
-
-    if (descricaoCompleta && descricaoCompleta !== "Descrição ainda não cadastrada.") {
-        const descricaoBotao = document.createElement("button");
-        descricaoBotao.type = "button";
-        descricaoBotao.className = "descricao-completa-btn";
-        descricaoBotao.textContent = "Ver descrição completa";
-        descricaoBotao.setAttribute("aria-expanded", "false");
-
-        descricaoBotao.addEventListener("click", () => {
-            const expandida = descricaoConteudo.classList.toggle("expandida");
-            descricaoBotao.classList.toggle("aberta", expandida);
-            descricaoBotao.textContent = expandida ? "Recolher descrição" : "Ver descrição completa";
-            descricaoBotao.setAttribute("aria-expanded", expandida ? "true" : "false");
-        });
-
-        descricaoArea.appendChild(descricaoBotao);
-    }
-
-    caracteristicas.appendChild(descricaoArea);
-    container.appendChild(caracteristicas);
-
-    const perguntas = document.createElement("div");
-    perguntas.className = "pp-bloco";
-    const perguntasH3 = document.createElement("h3");
-    perguntasH3.textContent = "Perguntas e Respostas";
-    perguntas.appendChild(perguntasH3);
-
-    const perguntaEstado = document.createElement("div");
-    perguntaEstado.className = "sem-conteudo";
-    perguntaEstado.textContent = "Veja as perguntas dos clientes.";
-    perguntas.appendChild(perguntaEstado);
-    container.appendChild(perguntas);
-
-    const avaliacoes = document.createElement("div");
-    avaliacoes.className = "pp-bloco";
-    const avaliacoesH3 = document.createElement("h3");
-    avaliacoesH3.textContent = "Avaliações do produto";
-    avaliacoes.appendChild(avaliacoesH3);
-
-    const resumoAval = document.createElement("div");
-    resumoAval.className = "avaliacao-resumo-produto";
-    resumoAval.textContent = totalAvaliacoes
-        ? media.toFixed(1) + " • " + totalAvaliacoes + (totalAvaliacoes === 1 ? " avaliação" : " avaliações")
-        : "Sem avaliações ainda.";
-    avaliacoes.appendChild(resumoAval);
-
-    container.appendChild(avaliacoes);
-
-    card.appendChild(container);
-}
-
-function atualizarPreviaProduto() {
-    montarPaginaPrevia();
-}
-
-function iniciarPreviaProduto() {
-    const form = document.getElementById("produto-form");
-    const modal = document.getElementById("modal-produto");
-    const cores = document.getElementById("cores-container");
-
-    if (!form) return;
-
-    form.addEventListener("input", atualizarPreviaProduto);
-    form.addEventListener("change", atualizarPreviaProduto);
-
-    if (cores) {
-        const observer = new MutationObserver(atualizarPreviaProduto);
-        observer.observe(cores, {
-            childList: true,
-            subtree: true,
-            attributes: true,
-            characterData: true
-        });
-        cores.addEventListener("focusin", (event) => {
-            const editor = event.target.closest(".cores-editor");
-            if (!editor) return;
-            const index = Array.from(cores.querySelectorAll(".cores-editor")).indexOf(editor);
-            if (index >= 0 && index !== corPreviaSelecionada) {
-                corPreviaSelecionada = index;
-                indiceImagemPrevia = 0;
-                atualizarPreviaProduto();
-            }
-        });
-    }
-
-    if (modal) {
-        const observerModal = new MutationObserver(() => {
-            if (modal.classList.contains("aberto")) {
-                indiceImagemPrevia = 0;
-                corPreviaSelecionada = 0;
-                atualizarPreviaProduto();
-            }
-        });
-
-        observerModal.observe(modal, {
-            attributes: true,
-            attributeFilter: ["class"]
-        });
-    }
-
-    atualizarPreviaProduto();
-}
-
-if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", iniciarPreviaProduto);
-} else {
-    iniciarPreviaProduto();
-}
-
-const produtoForm=document.getElementById("produto-form");produtoForm&&produtoForm.addEventListener("submit",async e=>{e.preventDefault();const t=document.getElementById("f-categoria").value;if(!t)return void mostrarMensagem("Selecione uma categoria.","erro");const o=[];if(document.querySelectorAll(".cores-editor").forEach(e=>{const t=e.querySelector(".cor-nome").value.trim(),a=e.querySelector(".cor-altura").value.trim(),n=e.querySelector(".cor-descricao"),r=n?n.value:"",c=[];e.querySelectorAll(".imagem-item").forEach(e=>{const t=e.querySelector(".cor-imagem-caminho");if(!t||!t.value)return;const o=e.querySelector(".cor-imagem-principal"),a=e.querySelector(".cor-imagem-id"),n=e.querySelector(".cor-imagem-public-id");c.push({id:a?a.value:"",caminho:t.value,public_id:n?n.value:null,principal:!!o&&o.checked})}),(t||a||r||c.length>0)&&o.push({nome:t,altura:a,descricao:r,imagens:c})}),!o.some(e=>e.imagens.some(e=>!0===e.principal))&&o.length>0)e:for(const e of o)if(e.imagens.length>0){e.imagens[0].principal=!0;break e}const a={titulo:document.getElementById("f-titulo").value.trim(),linha:document.getElementById("f-linha").value.trim(),categoria_id:Number(t),preco:document.getElementById("f-preco").value?Number(document.getElementById("f-preco").value):null,parcelamento:document.getElementById("f-parcelamento").value.trim(),descricao:document.getElementById("f-descricao").value,caracteristicas:{modelo:document.getElementById("f-modelo").value.trim(),largura:document.getElementById("f-largura").value.trim(),comprimento:document.getElementById("f-comprimento").value.trim(),altura:document.getElementById("f-altura").value.trim(),outros:document.getElementById("f-outros").value.trim(),quantidadeAssentos:document.getElementById("f-assentos").value.trim(),compartimentoLivros:document.getElementById("f-compartimento").value.trim()},cores:o};if(!a.titulo)return void mostrarMensagem("Informe o título do produto.","erro");const n=document.getElementById("produto-id").value;try{n?(await api("/api/produtos/"+n,{method:"PUT",body:JSON.stringify(a)}),mostrarMensagem("Produto atualizado com sucesso.")):(await api("/api/produtos",{method:"POST",body:JSON.stringify(a)}),mostrarMensagem("Produto criado com sucesso.")),fecharModal(),await carregarProdutos()}catch(e){console.error("Erro ao salvar produto:",e),mostrarMensagem(e.message||"Erro ao salvar o produto.","erro")}});const loginForm=document.getElementById("login-form");function escaparHtml(e){return String(e??"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#039;")}loginForm&&loginForm.addEventListener("submit",e=>{e.preventDefault(),login(document.getElementById("login-email").value.trim(),document.getElementById("login-senha").value)}),document.getElementById("btn-logout")?.addEventListener("click",logout),document.getElementById("btn-novo-produto")?.addEventListener("click",abrirNovoProduto),document.getElementById("btn-adicionar-categoria")?.addEventListener("click",()=>abrirModalCategoria("adicionar")),document.getElementById("btn-fechar-modal")?.addEventListener("click",fecharModal),document.getElementById("btn-adicionar-cor")?.addEventListener("click",()=>adicionarCor()),document.getElementById("btn-entrar-site")?.addEventListener("click",()=>window.open("/?modo=admin","_blank","noopener")),document.getElementById("btn-notificacoes")?.addEventListener("click",alternarPainelNotificacoes),document.getElementById("btn-fechar-notificacoes")?.addEventListener("click",alternarPainelNotificacoes),document.addEventListener("click",e=>{const t=document.querySelector(".notificacoes-wrapper");t&&t.contains(e.target)||document.getElementById("notificacoes-painel")?.setAttribute("hidden","")}),document.getElementById("modal-produto")?.addEventListener("click",e=>{"modal-produto"===e.target.id&&fecharModal()}),document.addEventListener("keydown",e=>{"Escape"===e.key&&fecharModal(),("Escape"===e.key)&&document.getElementById("notificacoes-painel")?.setAttribute("hidden","")}),verificarSessao(); 
+});const loginForm=document.getElementById("login-form");function escaparHtml(e){return String(e??"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#039;")}loginForm&&loginForm.addEventListener("submit",e=>{e.preventDefault(),login(document.getElementById("login-email").value.trim(),document.getElementById("login-senha").value)}),document.getElementById("btn-logout")?.addEventListener("click",logout),document.getElementById("btn-novo-produto")?.addEventListener("click",abrirNovoProduto),document.getElementById("btn-adicionar-categoria")?.addEventListener("click",()=>abrirModalCategoria("adicionar")),document.getElementById("btn-fechar-modal")?.addEventListener("click",fecharModal),document.getElementById("btn-adicionar-cor")?.addEventListener("click",()=>adicionarCor()),document.getElementById("btn-entrar-site")?.addEventListener("click",()=>window.open("/?modo=admin","_blank","noopener")),document.getElementById("btn-notificacoes")?.addEventListener("click",alternarPainelNotificacoes),document.getElementById("btn-fechar-notificacoes")?.addEventListener("click",alternarPainelNotificacoes),document.addEventListener("click",e=>{const t=document.querySelector(".notificacoes-wrapper");t&&t.contains(e.target)||document.getElementById("notificacoes-painel")?.setAttribute("hidden","")}),document.getElementById("modal-produto")?.addEventListener("click",e=>{"modal-produto"===e.target.id&&fecharModal()}),document.addEventListener("keydown",e=>{"Escape"===e.key&&fecharModal(),("Escape"===e.key)&&document.getElementById("notificacoes-painel")?.setAttribute("hidden","")}),verificarSessao(); 
 function formatarDataNotificacao(data){
     if(!data)return"";
     const d=new Date(data);
