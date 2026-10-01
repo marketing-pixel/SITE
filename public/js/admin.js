@@ -328,7 +328,158 @@ function confirmarAcao(e,t){return new Promise(o=>{let a=document.getElementById
         mostrarMensagem(e.message||"Erro ao carregar o produto.","erro");
     }
 }
-function fecharModal(){const e=document.getElementById("modal-produto");e&&e.classList.remove("aberto")}let contadorGrupoImagemPrincipal=0;function adicionarCor(e={}){const t=document.getElementById("cores-container");if(!t)return;const o=document.createElement("div"),s="imagem-principal-"+(++contadorGrupoImagemPrincipal);o.className="cores-editor",o.dataset.imagemPrincipalGrupo=s,o.innerHTML=`\n        <h4>Cor</h4>\n\n        <div class="form-grupo">
+function fecharModal(){const e=document.getElementById("modal-produto");e&&e.classList.remove("aberto")}
+function normalizarPartesCaracteristicasAdmin(e={}){
+    const bruto=Array.isArray(e.partes_caracteristicas)?e.partes_caracteristicas:Array.isArray(e.partes)?e.partes:null;
+    const partes=bruto?bruto.map((p)=>({
+        nome:String(p?.nome||"").trim()||"Parte",
+        modelo:String(p?.modelo||""),
+        largura:String(p?.largura||""),
+        comprimento:String(p?.comprimento||""),
+        altura:String(p?.altura||""),
+        outros:String(p?.outros||""),
+        quantidade_assentos:String(p?.quantidade_assentos||""),
+        compartimento_livros:String(p?.compartimento_livros||"")
+    })):[];
+
+    if(partes.length)return partes;
+    return [
+        {
+            nome:"Mesa",
+            modelo:String(e.modelo||""),
+            largura:String(e.largura||""),
+            comprimento:String(e.comprimento||""),
+            altura:String(e.altura||""),
+            outros:String(e.outros||""),
+            quantidade_assentos:String(e.quantidade_assentos||""),
+            compartimento_livros:String(e.compartimento_livros||"")
+        },
+        {nome:"Cadeira",modelo:"",largura:"",comprimento:"",altura:"",outros:"",quantidade_assentos:"",compartimento_livros:""}
+    ];
+}
+
+function montarEditorPartesCaracteristicas(editor,partesIniciais){
+    if(!editor)return;
+    const partes=Array.isArray(partesIniciais)&&partesIniciais.length?partesIniciais:[{nome:"Mesa"}];
+    editor.innerHTML="";
+
+    const titulo=document.createElement("div");
+    titulo.className="cor-caracteristicas-titulo";
+    titulo.textContent="Características do produto";
+    editor.appendChild(titulo);
+
+    const subtitulo=document.createElement("div");
+    subtitulo.className="cor-caracteristicas-descricao";
+    subtitulo.textContent="Cada parte do conjunto tem suas próprias características. Você pode renomear Cadeira para Banco, por exemplo.";
+    editor.appendChild(subtitulo);
+
+    const lista=document.createElement("div");
+    lista.className="cor-partes-lista";
+    editor.appendChild(lista);
+
+    const criarParte=(dados={})=>{
+        const card=document.createElement("div");
+        card.className="cor-parte-card";
+        card.innerHTML=`
+            <div class="cor-parte-cabecalho">
+                <div class="cor-parte-identidade">
+                    <span class="cor-parte-marcador" aria-hidden="true"></span>
+                    <span class="cor-parte-nome-exibicao"></span>
+                    <input type="text" class="cor-parte-nome-input" maxlength="100" hidden>
+                </div>
+                <button type="button" class="cor-parte-editar">Editar parte</button>
+            </div>
+            <div class="cor-partes-conteudo">
+                <div class="cor-caracteristicas-subtitulo">Características Principais</div>
+                <div class="form-grupo">
+                    <label>Modelo</label>
+                    <input type="text" class="parte-modelo" maxlength="255">
+                </div>
+
+                <div class="cor-caracteristicas-subtitulo">Dimensões</div>
+                <div class="form-grid">
+                    <div class="form-grupo"><label>Largura</label><input type="text" class="parte-largura" maxlength="50"></div>
+                    <div class="form-grupo"><label>Comprimento</label><input type="text" class="parte-comprimento" maxlength="50"></div>
+                    <div class="form-grupo"><label>Altura</label><input type="text" class="parte-altura" maxlength="50"></div>
+                </div>
+
+                <div class="cor-caracteristicas-subtitulo">Outras características</div>
+                <div class="form-grid">
+                    <div class="form-grupo"><label>Quantidade de assentos</label><input type="text" class="parte-assentos" maxlength="50"></div>
+                    <div class="form-grupo"><label>Compartimento para livros</label><input type="text" class="parte-compartimento" maxlength="50"></div>
+                </div>
+                <div class="form-grupo"><label>Outros</label><input type="text" class="parte-outros"></div>
+            </div>
+            <button type="button" class="cor-parte-remover">Remover parte</button>
+        `;
+
+        const nomeSpan=card.querySelector(".cor-parte-nome-exibicao");
+        const nomeInput=card.querySelector(".cor-parte-nome-input");
+        const editar=card.querySelector(".cor-parte-editar");
+        nomeSpan.textContent=String(dados.nome||"Parte").trim()||"Parte";
+        nomeInput.value=nomeSpan.textContent;
+        card.querySelector(".parte-modelo").value=dados.modelo||"";
+        card.querySelector(".parte-largura").value=dados.largura||"";
+        card.querySelector(".parte-comprimento").value=dados.comprimento||"";
+        card.querySelector(".parte-altura").value=dados.altura||"";
+        card.querySelector(".parte-assentos").value=dados.quantidade_assentos||"";
+        card.querySelector(".parte-compartimento").value=dados.compartimento_livros||"";
+        card.querySelector(".parte-outros").value=dados.outros||"";
+
+        editar.addEventListener("click",()=>{
+            const editando=card.classList.toggle("editando");
+            nomeInput.hidden=!editando;
+            nomeSpan.hidden=editando;
+            editar.textContent=editando?"Salvar parte":"Editar parte";
+            if(editando){nomeInput.focus();nomeInput.select();}
+            else{
+                nomeSpan.textContent=nomeInput.value.trim()||"Parte";
+                nomeInput.value=nomeSpan.textContent;
+                atualizarPreviaProduto();
+            }
+        });
+        nomeInput.addEventListener("keydown",(event)=>{
+            if(event.key==="Enter"){event.preventDefault();editar.click();}
+            else if(event.key==="Escape"&&card.classList.contains("editando")){
+                event.preventDefault();nomeInput.value=nomeSpan.textContent;editar.click();
+            }
+        });
+        card.querySelector(".cor-parte-remover").addEventListener("click",()=>{
+            if(lista.querySelectorAll(".cor-parte-card").length<=1){alert("Cada cor precisa ter pelo menos uma parte.");return;}
+            card.remove();atualizarPreviaProduto();
+        });
+        lista.appendChild(card);
+        return card;
+    };
+
+    partes.forEach(criarParte);
+    const add=document.createElement("button");
+    add.type="button";
+    add.className="cor-adicionar-parte";
+    add.textContent="+ Adicionar parte";
+    add.addEventListener("click",()=>{
+        const card=criarParte({nome:"Nova parte"});
+        card.querySelector(".cor-parte-editar")?.click();
+        card.scrollIntoView({behavior:"smooth",block:"center"});
+    });
+    editor.appendChild(add);
+}
+
+function obterPartesCaracteristicasAdmin(editor){
+    if(!editor)return[];
+    return Array.from(editor.querySelectorAll(".cor-parte-card")).map((card)=>({
+        nome:card.querySelector(".cor-parte-nome-exibicao")?.textContent?.trim()||card.querySelector(".cor-parte-nome-input")?.value?.trim()||"Parte",
+        modelo:card.querySelector(".parte-modelo")?.value||"",
+        largura:card.querySelector(".parte-largura")?.value||"",
+        comprimento:card.querySelector(".parte-comprimento")?.value||"",
+        altura:card.querySelector(".parte-altura")?.value||"",
+        outros:card.querySelector(".parte-outros")?.value||"",
+        quantidade_assentos:card.querySelector(".parte-assentos")?.value||"",
+        compartimento_livros:card.querySelector(".parte-compartimento")?.value||""
+    }));
+}
+
+let contadorGrupoImagemPrincipal=0;function adicionarCor(e={}){const t=document.getElementById("cores-container");if(!t)return;const o=document.createElement("div"),s="imagem-principal-"+(++contadorGrupoImagemPrincipal);o.className="cores-editor",o.dataset.imagemPrincipalGrupo=s,o.innerHTML=`\n        <h4>Cor</h4>\n\n        <div class="form-grupo">
 
             <label>
                 Nome da cor
@@ -344,105 +495,12 @@ function fecharModal(){const e=document.getElementById("modal-produto");e&&e.cla
         </div>
 
 
-        <div class="cor-caracteristicas-editor">
-
-            <div class="cor-caracteristicas-titulo">
-                Características do produto
-            </div>
-
-            <div class="cor-caracteristicas-subtitulo">
-                Características Principais
-            </div>
-
-            <div class="form-grupo">
-                <label>Modelo</label>
-                <input
-                    type="text"
-                    class="cor-modelo"
-                    maxlength="255"
-                    value="${escaparHtml(e.modelo||"")}"
-                >
-            </div>
-
-            <div class="cor-caracteristicas-subtitulo">
-                Dimensões
-            </div>
-
-            <div class="form-grid">
-
-                <div class="form-grupo">
-                    <label>Largura</label>
-                    <input
-                        type="text"
-                        class="cor-largura"
-                        maxlength="50"
-                        value="${escaparHtml(e.largura||"")}"
-                    >
-                </div>
-
-                <div class="form-grupo">
-                    <label>Comprimento</label>
-                    <input
-                        type="text"
-                        class="cor-comprimento"
-                        maxlength="50"
-                        value="${escaparHtml(e.comprimento||"")}"
-                    >
-                </div>
-
-                <div class="form-grupo">
-                    <label>Altura</label>
-                    <input
-                        type="text"
-                        class="cor-altura"
-                        maxlength="50"
-                        value="${escaparHtml(e.altura||"")}"
-                    >
-                </div>
-
-            </div>
-
-            <div class="cor-caracteristicas-subtitulo">
-                Outras características
-            </div>
-
-            <div class="form-grid">
-
-                <div class="form-grupo">
-                    <label>Quantidade de assentos</label>
-                    <input
-                        type="text"
-                        class="cor-assentos"
-                        maxlength="50"
-                        value="${escaparHtml(e.quantidade_assentos||"")}"
-                    >
-                </div>
-
-                <div class="form-grupo">
-                    <label>Compartimento para livros</label>
-                    <input
-                        type="text"
-                        class="cor-compartimento"
-                        maxlength="50"
-                        value="${escaparHtml(e.compartimento_livros||"")}"
-                    >
-                </div>
-
-            </div>
-
-            <div class="form-grupo">
-                <label>Outros</label>
-                <input
-                    type="text"
-                    class="cor-outros"
-                    value="${escaparHtml(e.outros||"")}"
-                >
-            </div>
-
-        </div>
+        <div class="cor-caracteristicas-editor"></div>
 
 
-        <div class="form-grupo">\n\n            <label>\n                Descrição da cor\n            </label>\n\n            <textarea\n                class="cor-descricao descricao-cor"\n                maxlength="5000"\n                placeholder="Descreva as características específicas desta cor, acabamento ou configuração."\n            >${escaparHtml(e.descricao||"")}</textarea>\n\n        </div>\n\n\n        <div class="form-grupo imagem-upload">\n\n            <label>\n                Imagens da cor\n            </label>\n\n            <div class="imagem-dropzone" tabindex="0" role="button" aria-label="Adicionar imagens desta cor">\n                <div class="imagem-upload-icon" aria-hidden="true">↥</div>\n\n                <div class="imagem-upload-copy">\n                    <div class="imagem-upload-title">Adicionar imagens</div>\n                    <div class="imagem-upload-subtitle">PNG, JPG ou WebP • até 5 MB por arquivo</div>\n                </div>\n\n                <div class="imagem-upload-actions">\n                    <span class="imagem-selecionar-btn">Selecionar arquivos</span>\n                </div>\n\n                <input\n                    type="file"\n                    class="cor-imagens-input imagem-upload-file"\n                    accept="image/png,image/jpeg,image/webp"\n                    multiple\n                    tabindex="-1"\n                >\n            </div>\n\n            <div class="imagem-contador" aria-live="polite"></div>\n\n        </div>\n\n\n        <div\n            class="imagem-lista cor-imagens-lista"\n        ></div>\n\n\n        <button\n            type="button"\n            class="btn-remove-cor"\n        >\n            Remover cor\n        </button>\n    `,t.appendChild(o);const a=o.querySelector(".btn-remove-cor");if(a&&a.addEventListener("click",()=>removerCor(a)),Array.isArray(e.imagens)&&e.imagens.length>0){const t=o.querySelector(".cor-imagens-lista");e.imagens.forEach(e=>{adicionarItemImagem(t,e.caminho,Boolean(e.principal),e.id||"",e.public_id||"")})}const n=o.querySelector(".cor-imagens-input"),r=o.querySelector(".imagem-dropzone");if(n&&r){const a=async e=>{const t=Array.from(e.target.files||[]);if(window.abrirEditorImagemArquivos)await window.abrirEditorImagemArquivos(t,o);else for(const e of t)await fazerUpload(e,o);e.target.value="",atualizarContadorImagens(o)};n.addEventListener("change",a),r.addEventListener("click",()=>n.click()),r.addEventListener("keydown",e=>{("Enter"===e.key||" "===e.key)&&(e.preventDefault(),n.click())}),["dragenter","dragover"].forEach(e=>r.addEventListener(e,e=>{e.preventDefault(),r.classList.add("dragging")})),["dragleave","drop"].forEach(e=>r.addEventListener(e,e=>{e.preventDefault(),r.classList.remove("dragging")})),r.addEventListener("drop",async e=>{const t=Array.from(e.dataTransfer?.files||[]);if(window.abrirEditorImagemArquivos)await window.abrirEditorImagemArquivos(t,o);else for(const e of t)await fazerUpload(e,o);atualizarContadorImagens(o)})}atualizarContadorImagens(o)}function atualizarContadorImagens(e){const t=e?.querySelector(".imagem-contador"),o=e?e.querySelectorAll(".imagem-item").length:0;t&&(t.innerHTML=o?'<strong>'+o+(1===o?" imagem":" imagens")+'</strong> cadastrada'+(1===o?"":"s")+"." :"Nenhuma imagem cadastrada ainda.")} function adicionarItemImagem(e,t,o=!1,a="",n=""){if(!e||!t)return;const r=document.createElement("div");if(r.className="imagem-item",r.innerHTML=`\n        <img\n            src="${escaparHtml(urlImagemAdmin(t))}"\n            alt="Imagem do produto"\n        >\n\n        <input\n            type="hidden"\n            class="cor-imagem-caminho"\n            value="${escaparHtml(t)}"\n        >\n\n        ${a?`\n                    <input\n                        type="hidden"\n                        class="cor-imagem-id"\n                        value="${escaparHtml(a)}"\n                    >\n                `:""}\n\n        <label\n            class="imagem-principal-label"\n        >\n\n            <input\n                type="radio"\n                name="${e.closest(".cores-editor")?.dataset.imagemPrincipalGrupo||"imagem-principal-global"}"\n                class="cor-imagem-principal"\n                ${o?"checked":""}\n            >\n\n            Principal\n\n        </label>\n\n\n        <div class="imagem-item-acoes">\n            <button\n                type="button"\n                class="btn-recortar-imagem"\n                title="Recortar e reposicionar imagem"\n            >\n                ✂ Recortar\n            </button>\n\n            <button\n            type="button"\n            class="btn-remove-imagem"\n            title="Remover imagem"\n        >\n            ×\n        </button>\n        </div>\n    `,e.appendChild(r),atualizarContadorImagens(e.closest(".cores-editor")),n){const e=document.createElement("input");e.type="hidden",e.className="cor-imagem-public-id",e.value=n,r.appendChild(e)}const c=r.querySelector(".cor-imagem-principal");c&&c.addEventListener("change",()=>{if(!c.checked)return;c.closest(".cores-editor")?.querySelectorAll(".cor-imagem-principal").forEach(e=>{e!==c&&(e.checked=!1)});atualizarPreviaProduto()});const i=r.querySelector(".btn-remove-imagem");i&&i.addEventListener("click",()=>removerImagem(i));const s=r.querySelector(".btn-recortar-imagem");s&&s.addEventListener("click",()=>{if(typeof window.recortarImagemExistente==="function")window.recortarImagemExistente(r,e.closest(".cores-editor"))})}function removerImagem(e){const t=e.closest(".imagem-item");if(!t)return;const o=t.querySelector(".cor-imagem-principal")?.checked;const r=t.closest(".cores-editor");if(t.remove(),atualizarContadorImagens(r),o){const e=r?.querySelector(".cor-imagem-principal");e&&(e.checked=!0)}}function removerCor(e){const t=e.closest(".cores-editor");if(!t)return;const o=Array.from(t.querySelectorAll(".cor-imagem-principal")).some(e=>e.checked);if(t.remove(),o){const e=document.querySelector(".cor-imagem-principal");e&&(e.checked=!0)}}async function enviarImagemParaArmazenamento(e){if(!e||!["image/png","image/jpeg","image/webp"].includes(e.type))throw new Error("Formato não permitido. Use PNG, JPG ou WebP.");if(e.size>5242880)throw new Error("A imagem deve ter no máximo 5 MB.");const t=new FormData;t.append("imagem",e),t.append("tipo","cor");const o=await fetch("/api/uploads",{method:"POST",body:t,credentials:"same-origin"}),a=await o.json().catch(()=>({}));if(!o.ok)throw new Error(a.erro||"Erro no upload.");if(!a.caminho)throw new Error("O servidor não retornou o endereço da imagem.");return a}
+        <div class="form-grupo">\n\n            <label>\n                Descrição da cor\n            </label>\n\n            <textarea\n                class="cor-descricao descricao-cor"\n                maxlength="5000"\n                placeholder="Descreva as características específicas desta cor, acabamento ou configuração."\n            >${escaparHtml(e.descricao||"")}</textarea>\n\n        </div>\n\n\n        <div class="form-grupo imagem-upload">\n\n            <label>\n                Imagens da cor\n            </label>\n\n            <div class="imagem-dropzone" tabindex="0" role="button" aria-label="Adicionar imagens desta cor">\n                <div class="imagem-upload-icon" aria-hidden="true">↥</div>\n\n                <div class="imagem-upload-copy">\n                    <div class="imagem-upload-title">Adicionar imagens</div>\n                    <div class="imagem-upload-subtitle">PNG, JPG ou WebP • até 5 MB por arquivo</div>\n                </div>\n\n                <div class="imagem-upload-actions">\n                    <span class="imagem-selecionar-btn">Selecionar arquivos</span>\n                </div>\n\n                <input\n                    type="file"\n                    class="cor-imagens-input imagem-upload-file"\n                    accept="image/png,image/jpeg,image/webp"\n                    multiple\n                    tabindex="-1"\n                >\n            </div>\n\n            <div class="imagem-contador" aria-live="polite"></div>\n\n        </div>\n\n\n        <div\n            class="imagem-lista cor-imagens-lista"\n        ></div>\n\n\n        <button\n            type="button"\n            class="btn-remove-cor"\n        >\n            Remover cor\n        </button>\n    `,t.appendChild(o);
+    montarEditorPartesCaracteristicas(o.querySelector(".cor-caracteristicas-editor"),normalizarPartesCaracteristicasAdmin(e));
+    const a=o.querySelector(".btn-remove-cor");if(a&&a.addEventListener("click",()=>removerCor(a)),Array.isArray(e.imagens)&&e.imagens.length>0){const t=o.querySelector(".cor-imagens-lista");e.imagens.forEach(e=>{adicionarItemImagem(t,e.caminho,Boolean(e.principal),e.id||"",e.public_id||"")})}const n=o.querySelector(".cor-imagens-input"),r=o.querySelector(".imagem-dropzone");if(n&&r){const a=async e=>{const t=Array.from(e.target.files||[]);if(window.abrirEditorImagemArquivos)await window.abrirEditorImagemArquivos(t,o);else for(const e of t)await fazerUpload(e,o);e.target.value="",atualizarContadorImagens(o)};n.addEventListener("change",a),r.addEventListener("click",()=>n.click()),r.addEventListener("keydown",e=>{("Enter"===e.key||" "===e.key)&&(e.preventDefault(),n.click())}),["dragenter","dragover"].forEach(e=>r.addEventListener(e,e=>{e.preventDefault(),r.classList.add("dragging")})),["dragleave","drop"].forEach(e=>r.addEventListener(e,e=>{e.preventDefault(),r.classList.remove("dragging")})),r.addEventListener("drop",async e=>{const t=Array.from(e.dataTransfer?.files||[]);if(window.abrirEditorImagemArquivos)await window.abrirEditorImagemArquivos(t,o);else for(const e of t)await fazerUpload(e,o);atualizarContadorImagens(o)})}atualizarContadorImagens(o)}function atualizarContadorImagens(e){const t=e?.querySelector(".imagem-contador"),o=e?e.querySelectorAll(".imagem-item").length:0;t&&(t.innerHTML=o?'<strong>'+o+(1===o?" imagem":" imagens")+'</strong> cadastrada'+(1===o?"":"s")+"." :"Nenhuma imagem cadastrada ainda.")} function adicionarItemImagem(e,t,o=!1,a="",n=""){if(!e||!t)return;const r=document.createElement("div");if(r.className="imagem-item",r.innerHTML=`\n        <img\n            src="${escaparHtml(urlImagemAdmin(t))}"\n            alt="Imagem do produto"\n        >\n\n        <input\n            type="hidden"\n            class="cor-imagem-caminho"\n            value="${escaparHtml(t)}"\n        >\n\n        ${a?`\n                    <input\n                        type="hidden"\n                        class="cor-imagem-id"\n                        value="${escaparHtml(a)}"\n                    >\n                `:""}\n\n        <label\n            class="imagem-principal-label"\n        >\n\n            <input\n                type="radio"\n                name="${e.closest(".cores-editor")?.dataset.imagemPrincipalGrupo||"imagem-principal-global"}"\n                class="cor-imagem-principal"\n                ${o?"checked":""}\n            >\n\n            Principal\n\n        </label>\n\n\n        <div class="imagem-item-acoes">\n            <button\n                type="button"\n                class="btn-recortar-imagem"\n                title="Recortar e reposicionar imagem"\n            >\n                ✂ Recortar\n            </button>\n\n            <button\n            type="button"\n            class="btn-remove-imagem"\n            title="Remover imagem"\n        >\n            ×\n        </button>\n        </div>\n    `,e.appendChild(r),atualizarContadorImagens(e.closest(".cores-editor")),n){const e=document.createElement("input");e.type="hidden",e.className="cor-imagem-public-id",e.value=n,r.appendChild(e)}const c=r.querySelector(".cor-imagem-principal");c&&c.addEventListener("change",()=>{if(!c.checked)return;c.closest(".cores-editor")?.querySelectorAll(".cor-imagem-principal").forEach(e=>{e!==c&&(e.checked=!1)});atualizarPreviaProduto()});const i=r.querySelector(".btn-remove-imagem");i&&i.addEventListener("click",()=>removerImagem(i));const s=r.querySelector(".btn-recortar-imagem");s&&s.addEventListener("click",()=>{if(typeof window.recortarImagemExistente==="function")window.recortarImagemExistente(r,e.closest(".cores-editor"))})}function removerImagem(e){const t=e.closest(".imagem-item");if(!t)return;const o=t.querySelector(".cor-imagem-principal")?.checked;const r=t.closest(".cores-editor");if(t.remove(),atualizarContadorImagens(r),o){const e=r?.querySelector(".cor-imagem-principal");e&&(e.checked=!0)}}function removerCor(e){const t=e.closest(".cores-editor");if(!t)return;const o=Array.from(t.querySelectorAll(".cor-imagem-principal")).some(e=>e.checked);if(t.remove(),o){const e=document.querySelector(".cor-imagem-principal");e&&(e.checked=!0)}}async function enviarImagemParaArmazenamento(e){if(!e||!["image/png","image/jpeg","image/webp"].includes(e.type))throw new Error("Formato não permitido. Use PNG, JPG ou WebP.");if(e.size>5242880)throw new Error("A imagem deve ter no máximo 5 MB.");const t=new FormData;t.append("imagem",e),t.append("tipo","cor");const o=await fetch("/api/uploads",{method:"POST",body:t,credentials:"same-origin"}),a=await o.json().catch(()=>({}));if(!o.ok)throw new Error(a.erro||"Erro no upload.");if(!a.caminho)throw new Error("O servidor não retornou o endereço da imagem.");return a}
 
 async function fazerUpload(e,t){try{const o=await enviarImagemParaArmazenamento(e),a=t.querySelector(".cor-imagens-lista");if(!a)return;const n=!t.querySelector(".cor-imagem-principal:checked");return adicionarItemImagem(a,o.caminho,n,"",o.public_id||"")}catch(e){console.error("Erro no upload:",e),alert(e.message||"Erro ao enviar a imagem.")}}
 /* ===== PRÉVIA: MESMA ESTRUTURA DA PÁGINA DE DETALHES DO CATÁLOGO ===== */
@@ -476,42 +534,26 @@ function urlImagemAdmin(caminho) {
 }
 
 function obterDadosPreviaProduto() {
-    const cores = Array.from(document.querySelectorAll(".cores-editor")).map((el) => ({
-        nome: el.querySelector(".cor-nome")?.value.trim() || "",
-        altura: el.querySelector(".cor-altura")?.value.trim() || "",
-        modelo: el.querySelector(".cor-modelo")?.value.trim() || "",
-        largura: el.querySelector(".cor-largura")?.value.trim() || "",
-        comprimento: el.querySelector(".cor-comprimento")?.value.trim() || "",
-        outros: el.querySelector(".cor-outros")?.value || "",
-        quantidade_assentos: el.querySelector(".cor-assentos")?.value.trim() || "",
-        compartimento_livros: el.querySelector(".cor-compartimento")?.value.trim() || "",
-        descricao: el.querySelector(".cor-descricao")?.value || "",
-        imagens: Array.from(el.querySelectorAll(".imagem-item")).map((item) => ({
-            caminho: item.querySelector(".cor-imagem-caminho")?.value || "",
-            principal: !!item.querySelector(".cor-imagem-principal")?.checked
-        })).filter((img) => img.caminho)
-    })).filter((cor) =>
-        cor.nome ||
-        cor.altura ||
-        cor.modelo ||
-        cor.largura ||
-        cor.comprimento ||
-        cor.outros ||
-        cor.quantidade_assentos ||
-        cor.compartimento_livros ||
-        cor.descricao ||
-        cor.imagens.length
-    );
+    const cores=Array.from(document.querySelectorAll(".cores-editor")).map((el)=>({
+        nome:el.querySelector(".cor-nome")?.value.trim()||"",
+        partes_caracteristicas:obterPartesCaracteristicasAdmin(el.querySelector(".cor-caracteristicas-editor")),
+        descricao:el.querySelector(".cor-descricao")?.value||"",
+        imagens:Array.from(el.querySelectorAll(".imagem-item")).map((item)=>({
+            caminho:item.querySelector(".cor-imagem-caminho")?.value||"",
+            principal:!!item.querySelector(".cor-imagem-principal")?.checked
+        })).filter((img)=>img.caminho)
+    })).filter((cor)=>cor.nome||cor.partes_caracteristicas.length||cor.descricao||cor.imagens.length);
 
     return {
-        titulo: document.getElementById("f-titulo")?.value.trim() || "Seu produto",
-        linha: document.getElementById("f-linha")?.value.trim() || "",
-        preco: document.getElementById("f-preco")?.value || "",
-        parcelamento: document.getElementById("f-parcelamento")?.value.trim() || "",
-        descricao: document.getElementById("f-descricao")?.value || "",
+        titulo:document.getElementById("f-titulo")?.value.trim()||"Seu produto",
+        linha:document.getElementById("f-linha")?.value.trim()||"",
+        preco:document.getElementById("f-preco")?.value||"",
+        parcelamento:document.getElementById("f-parcelamento")?.value.trim()||"",
+        descricao:document.getElementById("f-descricao")?.value||"",
         cores
     };
 }
+
 function criarIconeSeta3D(direcao) {
     const rotacao = { esquerda: "180", direita: "0", cima: "-90", baixo: "90" }[direcao] ?? "0";
     const span = document.createElement("span");
@@ -779,32 +821,28 @@ function montarPaginaPrevia() {
         caracteristicas.appendChild(tabela);
     }
 
-    const corSelecionada = dados.cores[corPreviaSelecionada] || {};
-    const B = {
-        modelo: corSelecionada.modelo || "",
-        largura: corSelecionada.largura || "",
-        comprimento: corSelecionada.comprimento || "",
-        altura: corSelecionada.altura || "",
-        quantidade_assentos: corSelecionada.quantidade_assentos || "",
-        compartimento_livros: corSelecionada.compartimento_livros || "",
-        outros: corSelecionada.outros || ""
-    };
+    const corSelecionada=dados.cores[corPreviaSelecionada]||{};
+    const partesSelecionadas=Array.isArray(corSelecionada.partes_caracteristicas)&&corSelecionada.partes_caracteristicas.length
+        ?corSelecionada.partes_caracteristicas
+        :normalizarPartesCaracteristicasAdmin(corSelecionada);
 
-    adicionarTabela("Características Principais", [
-        ["Modelo", B.modelo],
-        ["Cor", corSelecionada.nome || "—"]
-    ]);
+    partesSelecionadas.forEach((parte)=>{
+        const parteTitulo=document.createElement("div");
+        parteTitulo.className="carac-parte-titulo";
+        parteTitulo.textContent=parte.nome||"Parte";
+        caracteristicas.appendChild(parteTitulo);
 
-    adicionarTabela("Dimensões", [
-        ["Largura x Comprimento", B.largura && B.comprimento ? B.largura + " x " + B.comprimento : ""],
-        ["Altura", B.altura || "—"]
-    ]);
-
-    adicionarTabela("Outras características", [
-        ["Outros", B.outros],
-        ["Quantidade de assentos", B.quantidade_assentos],
-        ["Compartimento para livros", B.compartimento_livros]
-    ]);
+        adicionarTabela("Características Principais",[["Modelo",parte.modelo||"—"]]);
+        adicionarTabela("Dimensões",[
+            ["Largura x Comprimento",parte.largura&&parte.comprimento?parte.largura+" x "+parte.comprimento:"—"],
+            ["Altura",parte.altura||"—"]
+        ]);
+        adicionarTabela("Outras características",[
+            ["Outros",parte.outros||"—"],
+            ["Quantidade de assentos",parte.quantidade_assentos||"—"],
+            ["Compartimento para livros",parte.compartimento_livros||"—"]
+        ]);
+    });
 
     const descricaoLabel = document.createElement("div");
     descricaoLabel.className = "carac-sub";
@@ -941,15 +979,9 @@ produtoForm&&produtoForm.addEventListener("submit",async e=>{
     const cores=[];
     document.querySelectorAll(".cores-editor").forEach(el=>{
         const nome=el.querySelector(".cor-nome")?.value.trim()||"";
-        const altura=el.querySelector(".cor-altura")?.value.trim()||"";
-        const modelo=el.querySelector(".cor-modelo")?.value.trim()||"";
-        const largura=el.querySelector(".cor-largura")?.value.trim()||"";
-        const comprimento=el.querySelector(".cor-comprimento")?.value.trim()||"";
-        const outros=el.querySelector(".cor-outros")?.value||"";
-        const quantidade_assentos=el.querySelector(".cor-assentos")?.value.trim()||"";
-        const compartimento_livros=el.querySelector(".cor-compartimento")?.value.trim()||"";
-        const descricaoEl=el.querySelector(".cor-descricao");
-        const descricao=descricaoEl?descricaoEl.value:"";
+        const partes_caracteristicas=obterPartesCaracteristicasAdmin(el.querySelector(".cor-caracteristicas-editor"));
+        const primeiro=partes_caracteristicas[0]||{};
+        const descricao=el.querySelector(".cor-descricao")?.value||"";
         const imagens=[];
 
         el.querySelectorAll(".imagem-item").forEach(item=>{
@@ -966,20 +998,26 @@ produtoForm&&produtoForm.addEventListener("submit",async e=>{
             });
         });
 
-        if(nome||altura||modelo||largura||comprimento||outros||quantidade_assentos||compartimento_livros||descricao||imagens.length){
+        if(nome||partes_caracteristicas.length||descricao||imagens.length){
             cores.push({
-                nome,altura,modelo,largura,comprimento,outros,
-                quantidade_assentos,compartimento_livros,descricao,imagens
+                nome,
+                modelo:primeiro.modelo||"",
+                largura:primeiro.largura||"",
+                comprimento:primeiro.comprimento||"",
+                altura:primeiro.altura||"",
+                outros:primeiro.outros||"",
+                quantidade_assentos:primeiro.quantidade_assentos||"",
+                compartimento_livros:primeiro.compartimento_livros||"",
+                partes_caracteristicas,
+                descricao,
+                imagens
             });
         }
     });
 
-    if(!cores.some(cor=>cor.imagens.some(img=>img.principal))&&cores.length>0){
+    if(!cores.some((cor)=>cor.imagens.some((img)=>img.principal))&&cores.length>0){
         for(const cor of cores){
-            if(cor.imagens.length>0){
-                cor.imagens[0].principal=true;
-                break;
-            }
+            if(cor.imagens.length>0){cor.imagens[0].principal=true;break;}
         }
     }
 
