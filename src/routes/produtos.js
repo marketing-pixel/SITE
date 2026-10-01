@@ -1,4 +1,25 @@
 const express=require("express"),pool=require("../config/db"),uploadsRoutes=require("./uploads"),{autenticar:autenticar}=require("../middleware/auth"),fs=require("fs"),path=require("path"),{cloudinary:cloudinary}=require("../config/cloudinary"),router=express.Router();function normalizarTexto(r,o=null){if(null==r)return null;const a=String(r).trim();return a?o&&a.length>o?a.slice(0,o):a:null}function normalizarDescricao(r,o=null){if(null==r)return null;const a=String(r);return a.trim()?o&&a.length>o?a.slice(0,o):a:null}
+function normalizarOutrasCaracteristicasBackend(parte={}){
+    const explicitas=Array.isArray(parte.outras_caracteristicas)?parte.outras_caracteristicas:[];
+    if(explicitas.length){
+        return explicitas.map((item)=>({
+            nome:normalizarTexto(item&&item.nome,100)||"Característica",
+            valor:normalizarTexto(item&&item.valor,500)
+        })).filter((item)=>item.nome||item.valor);
+    }
+
+    const nomeParte=String(parte&&parte.nome||"").trim().toLowerCase();
+    const itens=[];
+    const adicionar=(nome,valor)=>{
+        const v=normalizarTexto(valor,500);
+        if(v)itens.push({nome,valor:v});
+    };
+    adicionar("Outros",parte&&parte.outros);
+    adicionar("Compartimento para livros",parte&&parte.compartimento_livros);
+    if(nomeParte!=="mesa")adicionar("Quantidade de assentos",parte&&parte.quantidade_assentos);
+    return itens;
+}
+
 function normalizarPartesCaracteristicas(partes,legado={}){
     const fonte=Array.isArray(partes)?partes:[];
     const normalizadas=fonte.map((parte)=>({
@@ -7,11 +28,10 @@ function normalizarPartesCaracteristicas(partes,legado={}){
         largura:normalizarTexto(parte&&parte.largura,50),
         comprimento:normalizarTexto(parte&&parte.comprimento,50),
         altura:normalizarTexto(parte&&parte.altura,50),
-        outros:normalizarTexto(parte&&parte.outros),
-        quantidade_assentos:normalizarTexto(parte&&parte.quantidade_assentos,50),
-        compartimento_livros:normalizarTexto(parte&&parte.compartimento_livros,50)
+        outras_caracteristicas:normalizarOutrasCaracteristicasBackend(parte)
     }));
     if(normalizadas.length)return normalizadas;
+
     return [
         {
             nome:"Mesa",
@@ -19,20 +39,9 @@ function normalizarPartesCaracteristicas(partes,legado={}){
             largura:normalizarTexto(legado.largura,50),
             comprimento:normalizarTexto(legado.comprimento,50),
             altura:normalizarTexto(legado.altura,50),
-            outros:normalizarTexto(legado.outros),
-            quantidade_assentos:normalizarTexto(legado.quantidade_assentos,50),
-            compartimento_livros:normalizarTexto(legado.compartimento_livros,50)
+            outras_caracteristicas:normalizarOutrasCaracteristicasBackend({...legado,nome:"Mesa"})
         },
-        {
-            nome:"Cadeira",
-            modelo:null,
-            largura:null,
-            comprimento:null,
-            altura:null,
-            outros:null,
-            quantidade_assentos:null,
-            compartimento_livros:null
-        }
+        {nome:"Cadeira",modelo:null,largura:null,comprimento:null,altura:null,outras_caracteristicas:[]}
     ];
 }
 
