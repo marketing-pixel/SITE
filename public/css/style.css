@@ -1363,7 +1363,7 @@ img[data-zoom] {
 }
 
 .descricao-produto-conteudo.expandida {
-    max-height: 2000px;
+    max-height: 100000px;
 }
 
 .descricao-produto-conteudo.expandida::after {
