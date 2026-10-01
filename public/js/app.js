@@ -180,6 +180,8 @@ function renderProduto(){
         info.appendChild(cores);
     }
 
+    grid.appendChild(info);
+
     const compra=document.createElement("aside");
     compra.className="pp-compra-card";
 
