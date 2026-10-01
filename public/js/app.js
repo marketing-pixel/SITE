@@ -274,16 +274,17 @@ function renderProduto(){
         adicionarLinhaTabela(tab2,"Altura",parte.altura||"—");
         caracteristicas.appendChild(tab2);
 
-        const sub3=document.createElement("div");
-        sub3.className="carac-sub";
-        sub3.textContent="Outras características";
-        caracteristicas.appendChild(sub3);
-        const tab3=document.createElement("table");
-        tab3.className="carac-tabela";
-        adicionarLinhaTabela(tab3,"Outros",parte.outros||"—");
-        adicionarLinhaTabela(tab3,"Quantidade de assentos",parte.quantidade_assentos||"—");
-        adicionarLinhaTabela(tab3,"Compartimento para livros",parte.compartimento_livros||"—");
-        caracteristicas.appendChild(tab3);
+        const outras=Array.isArray(parte.outras_caracteristicas)?parte.outras_caracteristicas:[];
+        if(outras.length){
+            const sub3=document.createElement("div");
+            sub3.className="carac-sub";
+            sub3.textContent="Outras características";
+            caracteristicas.appendChild(sub3);
+            const tab3=document.createElement("table");
+            tab3.className="carac-tabela";
+            outras.forEach((item)=>adicionarLinhaTabela(tab3,item.nome||"Característica",item.valor||"—"));
+            caracteristicas.appendChild(tab3);
+        }
     });
 
     const sub4=document.createElement("div");
@@ -955,7 +956,24 @@ function atualizarResumoAvaliacoesNaTela(){if(!produtoAtual)return;const e=produ
     outros:cor.outros||global.outros||"",
     quantidade_assentos:cor.quantidade_assentos||global.quantidade_assentos||"",
     compartimento_livros:cor.compartimento_livros||global.compartimento_livros||""
-}}function obterPartesCaracteristicasCorAtual(){
+}}function normalizarOutrasCaracteristicasPublic(parte={}){
+    const explicitas=Array.isArray(parte.outras_caracteristicas)?parte.outras_caracteristicas:[];
+    if(explicitas.length){
+        return explicitas.map((item)=>({
+            nome:String(item?.nome||"").trim()||"Característica",
+            valor:String(item?.valor??item?.value??"")
+        })).filter((item)=>item.nome||item.valor);
+    }
+
+    const nomeParte=String(parte.nome||"").trim().toLowerCase();
+    const itens=[];
+    if(String(parte.outros||"").trim())itens.push({nome:"Outros",valor:String(parte.outros)});
+    if(String(parte.compartimento_livros||"").trim())itens.push({nome:"Compartimento para livros",valor:String(parte.compartimento_livros)});
+    if(nomeParte!=="mesa"&&String(parte.quantidade_assentos||"").trim())itens.push({nome:"Quantidade de assentos",valor:String(parte.quantidade_assentos)});
+    return itens;
+}
+
+function obterPartesCaracteristicasCorAtual(){
     const cor=produtoAtual&&Array.isArray(produtoAtual.cores)?produtoAtual.cores[corAtual]||{}:{};
     if(Array.isArray(cor.partes_caracteristicas)&&cor.partes_caracteristicas.length){
         return cor.partes_caracteristicas.map((parte)=>({
@@ -964,13 +982,18 @@ function atualizarResumoAvaliacoesNaTela(){if(!produtoAtual)return;const e=produ
             largura:String(parte?.largura||""),
             comprimento:String(parte?.comprimento||""),
             altura:String(parte?.altura||""),
-            outros:String(parte?.outros||""),
-            quantidade_assentos:String(parte?.quantidade_assentos||""),
-            compartimento_livros:String(parte?.compartimento_livros||"")
+            outras_caracteristicas:normalizarOutrasCaracteristicasPublic(parte)
         }));
     }
     const legado=obterCaracteristicasCorAtual();
-    return [{nome:"Mesa",modelo:legado.modelo||"",largura:legado.largura||"",comprimento:legado.comprimento||"",altura:legado.altura||"",outros:legado.outros||"",quantidade_assentos:legado.quantidade_assentos||"",compartimento_livros:legado.compartimento_livros||""}];
+    return [{
+        nome:"Mesa",
+        modelo:legado.modelo||"",
+        largura:legado.largura||"",
+        comprimento:legado.comprimento||"",
+        altura:legado.altura||"",
+        outras_caracteristicas:normalizarOutrasCaracteristicasPublic({...legado,nome:"Mesa"})
+    }];
 }
 
 function obterDescricaoCorAtual(){if(produtoAtual&&Array.isArray(produtoAtual.cores)&&produtoAtual.cores[corAtual]){const e=produtoAtual.cores[corAtual];if(null!==e.descricao&&void 0!==e.descricao&&""!==String(e.descricao).trim())return String(e.descricao)}if(String(produtoAtual?.descricao||"").trim())return String(produtoAtual.descricao);return"Descrição desta cor ainda não cadastrada."}function atualizarDescricaoCorNaTela(){const e=document.getElementById("descricao-cor-atual");e&&(e.textContent=obterDescricaoCorAtual())}function obterNomeCorAtual(){return produtoAtual&&Array.isArray(produtoAtual.cores)&&produtoAtual.cores[corAtual]&&produtoAtual.cores[corAtual].nome||"—"}function obterAlturaAtual(){return produtoAtual&&Array.isArray(produtoAtual.cores)&&produtoAtual.cores[corAtual]?produtoAtual.cores[corAtual].altura||produtoAtual.caracteristicas?.altura||"—":produtoAtual?.caracteristicas?.altura||"—"}function atualizarImagemPrincipal(){if(!produtoAtual)return;const e=obterImagensDaCor(produtoAtual,corAtual),t=e.length?e:(Array.isArray(produtoAtual.imagens)?produtoAtual.imagens:[]),a=document.getElementById("pp-img"),o=document.getElementById("pp-contador"),n=document.getElementById("pp-miniaturas");if(t.length){const r=t[Math.max(0,Math.min(imgAtual,t.length-1))];a&&(a.src=urlImagem(r.caminho));o&&(o.textContent=(imgAtual+1)+" / "+t.length);n&&n.querySelectorAll(".pp-miniatura").forEach((e,t)=>e.classList.toggle("selecionada",t===imgAtual))}else{o&&(o.textContent="1 / 1");n&&(n.innerHTML="")}}function mudarCor(e){if(!produtoAtual||!Array.isArray(produtoAtual.cores)||!produtoAtual.cores[e])return;corAtual=Number(e),imgAtual=0,renderProduto()}function mudarImagem(e){if(!produtoAtual)return;const t=obterImagensDaCor(produtoAtual,corAtual),a=t.length?t:(Array.isArray(produtoAtual.imagens)?produtoAtual.imagens:[]),o=a.length;if(!o)return;imgAtual=(imgAtual+e+o)%o,atualizarImagemPrincipal();const n=document.querySelectorAll(".pp-cor-item");n.forEach((e,t)=>e.classList.toggle("selecionada",t===corAtual))} async function compartilharProduto(){if(!produtoAtual)return;const e=window.location.origin+window.location.pathname+"?produto="+encodeURIComponent(produtoAtual.id),t=produtoAtual.titulo||"Cortez Móveis";if(navigator.share)try{await navigator.share({title:t,text:t,url:e})}catch(e){}else try{await navigator.clipboard.writeText(e),alert("Link do produto copiado.")}catch(t){prompt("Copie o link do produto:",e)}}function abrirModalOrcamento(){const e=document.getElementById("modal-orcamento");if(!e)return;const t=document.getElementById("modal-produto-info"),a=document.getElementById("modal-link-whatsapp"),o=document.getElementById("modal-link-email"),n=produtoAtual?produtoAtual.titulo:"",r=produtoAtual&&Array.isArray(produtoAtual.cores)&&produtoAtual.cores[corAtual]?produtoAtual.cores[corAtual].nome:"";produtoAtual?t&&(t.textContent=n+(r?" - Cor: "+r:"")):t&&(t.textContent="Conte-nos o que você precisa.");const c=produtoAtual?"Olá! Gostaria de solicitar um orçamento para o produto "+n+(r?", na cor "+r:"")+".":"Olá! Gostaria de solicitar um orçamento com a Cortez Móveis.";a&&(a.href="https://wa.me/551532769999?text="+encodeURIComponent(c));const d=produtoAtual?"Solicitação de orçamento - "+n:"Solicitação de orçamento - Cortez Móveis";o&&(o.href="mailto:cortez@cortezmoveis.com.br?subject="+encodeURIComponent(d)+"&body="+encodeURIComponent(c)),e.classList.add("aberto")}function fecharModalOrcamento(){const e=document.getElementById("modal-orcamento");e&&e.classList.remove("aberto")}function fecharMenuMobile(){const e=document.getElementById("menu");if(!e)return;e.classList.remove("aberto");const t=document.getElementById("btn-menu-toggle");t&&t.setAttribute("aria-expanded","false");document.body.classList.remove("menu-mobile-open")}function irParaInicio(){fecharMenuMobile(),window.location.search?voltarCatalogo():window.scrollTo({top:0,behavior:"smooth"})}function navegar(e){fecharMenuMobile();const t=()=>{const t=document.getElementById(e);t&&t.scrollIntoView({behavior:"smooth",block:"start"})},a=document.getElementById("view-produto");a&&"none"!==a.style.display?(voltarCatalogo(),setTimeout(t,100)):t()}function toggleMenu(){const e=document.getElementById("menu");if(!e)return;const t=e.classList.toggle("aberto"),a=document.getElementById("btn-menu-toggle");a&&a.setAttribute("aria-expanded",t?"true":"false");document.body.classList.toggle("menu-mobile-open",t&&window.innerWidth<=600)}function abrirZoom(e){if(!e)return;const t=document.getElementById("zoom-overlay"),a=document.getElementById("zoom-imagem");t&&a&&(a.src=e.currentSrc||e.src,a.alt=e.alt||"Visualização ampliada",t.classList.add("aberto"))}function fecharZoom(){const e=document.getElementById("zoom-overlay");e&&e.classList.remove("aberto")}function obterCarrinho(){
