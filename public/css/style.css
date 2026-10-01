@@ -3349,44 +3349,129 @@ body {
 .pergunta-admin-acoes,
 .avaliacao-admin-acoes {
     flex-wrap: wrap;
+    gap: 9px;
 }
+
 .btn-excluir-interacao {
+    --excluir: #b42318;
+    --excluir-soft: #fff8f7;
+    --excluir-line: rgba(180,35,24,.16);
+
+    position: relative;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    gap: 7px;
-    min-height: 39px;
-    padding: 9px 14px;
-    border: 1px solid rgba(185,28,28,.15);
-    border-radius: 10px;
-    background: linear-gradient(135deg,#fff7f7 0%,#ffecec 100%);
-    color: #b42318;
-    font-size: .78rem;
-    font-weight: 850;
+    gap: 8px;
+    min-height: 40px;
+    padding: 9px 14px 9px 12px;
+    border: 1px solid var(--excluir-line);
+    border-radius: 11px;
+    background: linear-gradient(180deg, #ffffff 0%, var(--excluir-soft) 100%);
+    color: var(--excluir);
+    font-family: inherit;
+    font-size: .76rem;
+    font-weight: 800;
+    letter-spacing: .15px;
     cursor: pointer;
-    box-shadow: 0 6px 16px rgba(127,29,29,.08);
-    transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease, background .2s ease;
+    box-shadow:
+        0 4px 12px rgba(15,23,42,.045),
+        0 1px 2px rgba(180,35,24,.05);
+    overflow: hidden;
+    isolation: isolate;
+    transition:
+        transform .2s cubic-bezier(.22,.61,.36,1),
+        box-shadow .2s ease,
+        border-color .2s ease,
+        background .2s ease,
+        color .2s ease;
 }
+
+.btn-excluir-interacao::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: linear-gradient(135deg, rgba(180,35,24,.08), rgba(249,115,22,.04));
+    opacity: 0;
+    transition: opacity .2s ease;
+}
+
+.btn-excluir-interacao::after {
+    content: "";
+    position: absolute;
+    left: 12px;
+    right: 12px;
+    bottom: 4px;
+    height: 1px;
+    border-radius: 999px;
+    background: linear-gradient(90deg, transparent, rgba(180,35,24,.32), transparent);
+    opacity: 0;
+    transform: scaleX(.6);
+    transition: opacity .2s ease, transform .2s ease;
+}
+
 .btn-excluir-interacao svg {
     width: 16px;
     height: 16px;
+    flex: 0 0 16px;
     fill: none;
     stroke: currentColor;
-    stroke-width: 1.8;
+    stroke-width: 1.75;
     stroke-linecap: round;
     stroke-linejoin: round;
+    transition: transform .2s ease;
 }
+
 .btn-excluir-interacao:hover {
-    transform: translateY(-1px);
-    border-color: rgba(185,28,28,.28);
-    background: linear-gradient(135deg,#fff2f2 0%,#ffe2e2 100%);
-    box-shadow: 0 10px 22px rgba(127,29,29,.13);
+    transform: translateY(-2px);
+    border-color: rgba(180,35,24,.28);
+    background: linear-gradient(180deg, #ffffff 0%, #fff3f1 100%);
+    box-shadow:
+        0 10px 22px rgba(15,23,42,.07),
+        0 5px 14px rgba(180,35,24,.10);
 }
+
+.btn-excluir-interacao:hover::before {
+    opacity: 1;
+}
+
+.btn-excluir-interacao:hover::after {
+    opacity: 1;
+    transform: scaleX(1);
+}
+
+.btn-excluir-interacao:hover svg {
+    transform: translateY(-1px) scale(1.04);
+}
+
+.btn-excluir-interacao:active {
+    transform: translateY(0);
+    box-shadow: 0 5px 12px rgba(15,23,42,.07);
+}
+
+.btn-excluir-interacao:focus-visible {
+    outline: none;
+    border-color: rgba(180,35,24,.5);
+    box-shadow:
+        0 0 0 3px rgba(180,35,24,.10),
+        0 8px 18px rgba(15,23,42,.07);
+}
+
 .btn-excluir-interacao:disabled {
-    opacity: .65;
+    opacity: .58;
     cursor: wait;
     transform: none;
+    box-shadow: none;
 }
+
+@media (max-width: 700px) {
+    .btn-excluir-interacao {
+        min-height: 40px;
+        padding-inline: 13px;
+    }
+}
+
+/* ===== Confirmação premium da exclusão ===== */
 .interacao-exclusao-overlay {
     position: fixed;
     inset: 0;
@@ -3502,6 +3587,13 @@ body {
     box-shadow: 0 12px 25px rgba(185,28,28,.28);
     filter: brightness(1.03);
 }
+@media (max-width: 700px) {
+    .interacao-exclusao-overlay { padding: 14px; }
+    .interacao-exclusao-modal { padding: 22px; border-radius: 18px; }
+    .interacao-exclusao-acoes { flex-direction: column-reverse; }
+    .interacao-exclusao-acoes button { width: 100%; }
+}
+
 @media (max-width: 700px) {
     .interacao-exclusao-overlay { padding: 14px; }
     .interacao-exclusao-modal { padding: 22px; border-radius: 18px; }
