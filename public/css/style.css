@@ -1250,10 +1250,32 @@ img[data-zoom] {
 }
 
 .pp-cor-linha {
-    margin-top: 26px;
+    display: flex;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: 7px;
+    margin-top: 22px;
+    padding: 11px 14px;
+    width: fit-content;
+    max-width: 100%;
+    border: 1px solid #e4eaf0;
+    border-radius: 12px;
+    background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+    box-shadow: 0 6px 18px rgba(15, 34, 54, .06);
     color: #26394c;
+    font-size: .93rem;
+    line-height: 1.35;
+}
+
+.pp-cor-label {
+    color: #1e3348;
+    font-weight: 800;
+    letter-spacing: -.01em;
+}
+
+.pp-cor-valor {
+    color: #5a6b7d;
     font-weight: 600;
-    font-size: .98rem;
 }
 
 .pp-info-coluna .pp-cores {
