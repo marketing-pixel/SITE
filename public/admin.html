@@ -6106,6 +6106,29 @@
             }
         }
 
+            /* =========================================================
+           PARTES DO CONJUNTO — MESA / CADEIRA / BANCO
+        ========================================================= */
+        .cor-caracteristicas-descricao{margin:-6px 0 14px 12px;color:#718096;font-size:.70rem;line-height:1.5}
+        .cor-partes-lista{display:grid;gap:12px}
+        .cor-parte-card{overflow:hidden;border:1px solid #dfe6ee;border-radius:14px;background:rgba(255,255,255,.86);box-shadow:0 5px 18px rgba(22,45,71,.05)}
+        .cor-parte-cabecalho{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 13px;background:linear-gradient(135deg,#f7f9fc 0%,#eef3f8 100%);border-bottom:1px solid #e2e8ef}
+        .cor-parte-identidade{min-width:0;display:flex;align-items:center;gap:9px}
+        .cor-parte-marcador{width:7px;height:26px;flex:0 0 auto;border-radius:99px;background:linear-gradient(180deg,#f97316,#fb923c);box-shadow:0 4px 10px rgba(249,115,22,.22)}
+        .cor-parte-nome-exibicao{color:#162d47;font-size:.92rem;font-weight:850}
+        .cor-parte-nome-input{min-width:150px;width:min(300px,55vw);min-height:38px;padding:8px 11px;border:1px solid #cad5e1;border-radius:10px;background:#fff;color:#162d47;font-weight:750}
+        .cor-parte-nome-input:focus{outline:none;border-color:#f97316;box-shadow:0 0 0 4px rgba(249,115,22,.10)}
+        .cor-parte-editar{flex:0 0 auto;min-height:36px;padding:8px 11px;border:1px solid #d4dde7;border-radius:9px;background:#fff;color:#2d4965;font-size:.72rem;font-weight:800;cursor:pointer;transition:transform .18s ease,box-shadow .18s ease,border-color .18s ease,color .18s ease}
+        .cor-parte-editar:hover{transform:translateY(-1px);border-color:#f97316;color:#c2410c;box-shadow:0 7px 16px rgba(22,45,71,.08)}
+        .cor-partes-conteudo{padding:14px 13px 4px}
+        .cor-parte-remover{display:block;margin:2px 13px 13px auto;padding:7px 10px;border:0;background:transparent;color:#a33a32;font-size:.68rem;font-weight:800;cursor:pointer}
+        .cor-parte-remover:hover{color:#c62828;text-decoration:underline}
+        .cor-adicionar-parte{width:100%;min-height:40px;margin-top:12px;border:1px dashed #bcc9d7;border-radius:11px;background:rgba(255,255,255,.7);color:#31536f;font-size:.74rem;font-weight:850;cursor:pointer;transition:background .18s ease,border-color .18s ease,color .18s ease,transform .18s ease}
+        .cor-adicionar-parte:hover{transform:translateY(-1px);border-color:#f97316;color:#c2410c;background:#fff8f3}
+        .carac-parte-titulo{display:flex;align-items:center;gap:9px;margin:20px 0 11px;padding:10px 12px;border-radius:11px;background:linear-gradient(135deg,#eef3f8 0%,#f8fafc 100%);border:1px solid #dfe6ee;color:#162d47;font-size:.82rem;font-weight:900}
+        .carac-parte-titulo::before{content:"";width:4px;height:18px;border-radius:99px;background:linear-gradient(180deg,#f97316,#fb923c);box-shadow:0 3px 8px rgba(249,115,22,.2)}
+        @media (max-width:700px){.cor-parte-cabecalho{align-items:flex-start}.cor-parte-editar{min-height:34px;padding-inline:9px}.cor-parte-nome-input{width:100%;min-width:0}}
+
     </style>
 </head>
 
@@ -6669,7 +6692,7 @@
     </script>
 
     <script
-        src="/js/admin.js?v=18"
+        src="/js/admin.js?v=19"
         defer
     ></script>
     <script
