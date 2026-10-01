@@ -579,10 +579,10 @@ function montarPaginaPrevia() {
 
     container.appendChild(orcamento);
 
-    const caracteristicas = document.createElement("div");
-    caracteristicas.className = "pp-bloco";
+    const caracteristicas = document.createElement("section");
+    caracteristicas.className = "pp-bloco pp-caracteristicas";
 
-    const tituloCaracteristicas = document.createElement("h3");
+    const tituloCaracteristicas = document.createElement("h2");
     tituloCaracteristicas.textContent = "Características do produto";
     caracteristicas.appendChild(tituloCaracteristicas);
 
@@ -650,11 +650,37 @@ function montarPaginaPrevia() {
     descricaoLabel.textContent = "Descrição";
     caracteristicas.appendChild(descricaoLabel);
 
-    const descricao = document.createElement("p");
-    descricao.className = "descricao-produto-texto";
-    descricao.textContent = dados.cores[corPreviaSelecionada]?.descricao || dados.descricao || "Descrição ainda não cadastrada.";
-    caracteristicas.appendChild(descricao);
+    const descricaoCompleta = dados.cores[corPreviaSelecionada]?.descricao || dados.descricao || "Descrição ainda não cadastrada.";
+    const descricaoArea = document.createElement("div");
+    descricaoArea.className = "descricao-produto-area";
 
+    const descricaoConteudo = document.createElement("div");
+    descricaoConteudo.className = "descricao-produto-conteudo";
+
+    const descricao = document.createElement("div");
+    descricao.className = "descricao-produto-texto";
+    descricao.textContent = descricaoCompleta;
+    descricaoConteudo.appendChild(descricao);
+    descricaoArea.appendChild(descricaoConteudo);
+
+    if (descricaoCompleta && descricaoCompleta !== "Descrição ainda não cadastrada.") {
+        const descricaoBotao = document.createElement("button");
+        descricaoBotao.type = "button";
+        descricaoBotao.className = "descricao-completa-btn";
+        descricaoBotao.textContent = "Ver descrição completa";
+        descricaoBotao.setAttribute("aria-expanded", "false");
+
+        descricaoBotao.addEventListener("click", () => {
+            const expandida = descricaoConteudo.classList.toggle("expandida");
+            descricaoBotao.classList.toggle("aberta", expandida);
+            descricaoBotao.textContent = expandida ? "Recolher descrição" : "Ver descrição completa";
+            descricaoBotao.setAttribute("aria-expanded", expandida ? "true" : "false");
+        });
+
+        descricaoArea.appendChild(descricaoBotao);
+    }
+
+    caracteristicas.appendChild(descricaoArea);
     container.appendChild(caracteristicas);
 
     const perguntas = document.createElement("div");
