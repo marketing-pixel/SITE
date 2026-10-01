@@ -329,6 +329,48 @@ function confirmarAcao(e,t){return new Promise(o=>{let a=document.getElementById
     }
 }
 function fecharModal(){const e=document.getElementById("modal-produto");e&&e.classList.remove("aberto")}
+
+const CARACTERISTICAS_PADRAO_ADMIN=["Compartimento para livros","Quantidade de assentos"];
+const CHAVE_CARACTERISTICAS_SALVAS_ADMIN="cortez_admin_caracteristicas_salvas_v1";
+
+function normalizarNomeCaracteristicaAdmin(nome){
+    return String(nome??"").replace(/\\s+/g," ").trim().slice(0,100);
+}
+
+function obterCaracteristicasSalvasAdmin(){
+    try{
+        const dados=JSON.parse(localStorage.getItem(CHAVE_CARACTERISTICAS_SALVAS_ADMIN)||"[]");
+        if(!Array.isArray(dados))return [];
+        const vistos=new Set();
+        return dados.map(normalizarNomeCaracteristicaAdmin).filter((nome)=>{
+            const chave=nome.toLowerCase();
+            if(!nome||CARACTERISTICAS_PADRAO_ADMIN.some((item)=>item.toLowerCase()===chave)||vistos.has(chave))return false;
+            vistos.add(chave);
+            return true;
+        });
+    }catch(e){
+        return [];
+    }
+}
+
+function salvarCaracteristicaAdmin(nome){
+    const nomeNormalizado=normalizarNomeCaracteristicaAdmin(nome);
+    if(!nomeNormalizado||CARACTERISTICAS_PADRAO_ADMIN.some((item)=>item.toLowerCase()===nomeNormalizado.toLowerCase()))return;
+    try{
+        const atuais=obterCaracteristicasSalvasAdmin().filter((item)=>item.toLowerCase()!==nomeNormalizado.toLowerCase());
+        atuais.unshift(nomeNormalizado);
+        localStorage.setItem(CHAVE_CARACTERISTICAS_SALVAS_ADMIN,JSON.stringify(atuais.slice(0,50)));
+    }catch(e){}
+}
+
+function excluirCaracteristicaSalvaAdmin(nome){
+    const alvo=normalizarNomeCaracteristicaAdmin(nome).toLowerCase();
+    try{
+        const restantes=obterCaracteristicasSalvasAdmin().filter((item)=>item.toLowerCase()!==alvo);
+        localStorage.setItem(CHAVE_CARACTERISTICAS_SALVAS_ADMIN,JSON.stringify(restantes));
+    }catch(e){}
+}
+
 function normalizarOutrasCaracteristicasAdmin(parte={}){
     const explicitas=Array.isArray(parte.outras_caracteristicas)?parte.outras_caracteristicas:[];
     if(explicitas.length){
@@ -438,7 +480,29 @@ function montarEditorPartesCaracteristicas(editor,partesIniciais){
                 </div>
 
                 <div class="cor-caracteristicas-subtitulo">Outras características</div>
+
+                <div class="parte-outras-alternativas">
+                    <div class="parte-outras-alternativas-topo">
+                        <div>
+                            <strong>Alternativas rápidas</strong>
+                            <span>Selecione uma opção ou digite uma nova.</span>
+                        </div>
+                    </div>
+                    <div class="parte-outras-chips parte-outras-chips-padrao"></div>
+
+                    <div class="parte-outras-salvas-wrap" hidden>
+                        <div class="parte-outras-alternativas-topo parte-outras-salvas-topo">
+                            <div>
+                                <strong>Características salvas</strong>
+                                <span>As opções que você criar ficam disponíveis aqui.</span>
+                            </div>
+                        </div>
+                        <div class="parte-outras-chips parte-outras-chips-salvas"></div>
+                    </div>
+                </div>
+
                 <div class="parte-outras-lista"></div>
+
                 <button type="button" class="parte-adicionar-caracteristica">+ Adicionar característica</button>
             </div>
             <button type="button" class="cor-parte-remover">Remover parte</button>
@@ -455,18 +519,14 @@ function montarEditorPartesCaracteristicas(editor,partesIniciais){
         card.querySelector(".parte-altura").value=dados.altura||"";
 
         const outrasLista=card.querySelector(".parte-outras-lista");
-        const renderOutras=()=>{
-            outrasLista.innerHTML="";
-            const itens=normalizarOutrasCaracteristicasAdmin({
-                nome:nomeSpan.textContent,
-                outras_caracteristicas:Array.from(outrasLista.querySelectorAll(".parte-outra-item")).map((row)=>({
-                    nome:row.querySelector(".parte-outra-nome")?.value||"",
-                    valor:row.querySelector(".parte-outra-valor")?.value||""
-                }))
-            });
-            if(!Array.from(outrasLista.children).length && Array.isArray(dados.outras_caracteristicas)){
-                dados.outras_caracteristicas.forEach((item)=>criarOutra(item.nome,item.valor));
-            }
+        const chipsPadrao=card.querySelector(".parte-outras-chips-padrao");
+        const chipsSalvas=card.querySelector(".parte-outras-chips-salvas");
+        const salvasWrap=card.querySelector(".parte-outras-salvas-wrap");
+
+        const obterNomesUsados=()=>{
+            return Array.from(outrasLista.querySelectorAll(".parte-outra-item"))
+                .map((row)=>normalizarNomeCaracteristicaAdmin(row.querySelector(".parte-outra-nome")?.value||"").toLowerCase())
+                .filter(Boolean);
         };
 
         const criarOutra=(nome="",valor="")=>{
@@ -477,21 +537,120 @@ function montarEditorPartesCaracteristicas(editor,partesIniciais){
                 <input type="text" class="parte-outra-valor" maxlength="500" placeholder="Valor da característica" aria-label="Valor da característica">
                 <button type="button" class="parte-outra-remover" aria-label="Remover característica" title="Remover característica">×</button>
             `;
-            row.querySelector(".parte-outra-nome").value=nome||"";
-            row.querySelector(".parte-outra-valor").value=valor||"";
+
+            const nomeInputOutra=row.querySelector(".parte-outra-nome");
+            const valorInputOutra=row.querySelector(".parte-outra-valor");
+            nomeInputOutra.value=nome||"";
+            valorInputOutra.value=valor||"";
+
+            const salvarNomeDigitado=()=>{
+                const nomeNormalizado=normalizarNomeCaracteristicaAdmin(nomeInputOutra.value);
+                if(nomeNormalizado){
+                    nomeInputOutra.value=nomeNormalizado;
+                    salvarCaracteristicaAdmin(nomeNormalizado);
+                }
+                renderAlternativas();
+                atualizarPreviaProduto();
+            };
+
+            nomeInputOutra.addEventListener("blur",salvarNomeDigitado);
+            nomeInputOutra.addEventListener("change",salvarNomeDigitado);
+            valorInputOutra.addEventListener("input",atualizarPreviaProduto);
+
             row.querySelector(".parte-outra-remover").addEventListener("click",()=>{
                 row.remove();
                 atualizarPreviaProduto();
+                renderAlternativas();
             });
-            row.querySelectorAll("input").forEach((input)=>input.addEventListener("input",atualizarPreviaProduto));
+
             outrasLista.appendChild(row);
+            if(normalizarNomeCaracteristicaAdmin(nome)){
+                salvarCaracteristicaAdmin(nome);
+            }
             return row;
+        };
+
+        const renderAlternativas=()=>{
+            chipsPadrao.innerHTML="";
+            CARACTERISTICAS_PADRAO_ADMIN.forEach((nome)=>{
+                const chip=document.createElement("button");
+                chip.type="button";
+                chip.className="parte-outra-chip";
+                chip.textContent=nome;
+                chip.title="Adicionar "+nome;
+                chip.addEventListener("click",()=>{
+                    adicionarAlternativa(nome);
+                });
+                chipsPadrao.appendChild(chip);
+            });
+
+            const salvas=obterCaracteristicasSalvasAdmin();
+            chipsSalvas.innerHTML="";
+            if(!salvas.length){
+                salvasWrap.hidden=true;
+                return;
+            }
+
+            salvasWrap.hidden=false;
+            const usados=obterNomesUsados();
+
+            salvas.forEach((nome)=>{
+                const grupo=document.createElement("span");
+                grupo.className="parte-outra-chip-salva";
+
+                const usar=document.createElement("button");
+                usar.type="button";
+                usar.className="parte-outra-chip-texto";
+                usar.textContent=nome;
+                usar.title="Adicionar "+nome;
+                usar.addEventListener("click",()=>adicionarAlternativa(nome));
+
+                const excluir=document.createElement("button");
+                excluir.type="button";
+                excluir.className="parte-outra-chip-excluir";
+                excluir.textContent="×";
+                excluir.title="Excluir característica salva";
+                excluir.setAttribute("aria-label","Excluir característica salva "+nome);
+                excluir.addEventListener("click",(event)=>{
+                    event.stopPropagation();
+                    excluirCaracteristicaSalvaAdmin(nome);
+                    renderAlternativas();
+                });
+
+                grupo.appendChild(usar);
+                grupo.appendChild(excluir);
+                if(usados.includes(nome.toLowerCase()))grupo.classList.add("usada");
+
+                chipsSalvas.appendChild(grupo);
+            });
+        };
+
+        const adicionarAlternativa=(nome)=>{
+            const alvo=normalizarNomeCaracteristicaAdmin(nome);
+            if(!alvo)return;
+
+            const existente=Array.from(outrasLista.querySelectorAll(".parte-outra-item")).find((row)=>{
+                const atual=normalizarNomeCaracteristicaAdmin(row.querySelector(".parte-outra-nome")?.value||"");
+                return atual.toLowerCase()===alvo.toLowerCase();
+            });
+
+            if(existente){
+                existente.querySelector(".parte-outra-valor")?.focus();
+                return;
+            }
+
+            const row=criarOutra(alvo,"");
+            row.querySelector(".parte-outra-valor")?.focus();
+            renderAlternativas();
+            atualizarPreviaProduto();
         };
 
         const existentes=Array.isArray(dados.outras_caracteristicas)
             ?dados.outras_caracteristicas
             :normalizarOutrasCaracteristicasAdmin(dados);
         existentes.forEach((item)=>criarOutra(item.nome,item.valor));
+
+        renderAlternativas();
 
         card.querySelector(".parte-adicionar-caracteristica").addEventListener("click",()=>{
             const row=criarOutra("","");
