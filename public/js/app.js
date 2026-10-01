@@ -150,7 +150,17 @@ function renderProduto(){
         const corLinha=document.createElement("div");
         corLinha.className="pp-cor-linha";
         corLinha.id="pp-cor";
-        corLinha.textContent="Cor e acabamento: "+obterNomeCorAtual();
+
+        const corLabel=document.createElement("span");
+        corLabel.className="pp-cor-label";
+        corLabel.textContent="Cor:";
+
+        const corValor=document.createElement("span");
+        corValor.className="pp-cor-valor";
+        corValor.textContent=obterNomeCorAtual();
+
+        corLinha.appendChild(corLabel);
+        corLinha.appendChild(corValor);
         info.appendChild(corLinha);
 
         const cores=document.createElement("div");
