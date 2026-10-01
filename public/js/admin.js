@@ -511,10 +511,20 @@ function montarPaginaPrevia() {
     if (dados.cores.length) {
         if (corPreviaSelecionada >= dados.cores.length) corPreviaSelecionada = 0;
 
-        const corLabel = document.createElement("div");
-        corLabel.className = "pp-cor";
-        corLabel.textContent = "Cor: " + (dados.cores[corPreviaSelecionada].nome || "");
-        container.appendChild(corLabel);
+        const corLinha = document.createElement("div");
+        corLinha.className = "pp-cor-linha";
+        
+        const corNomeLabel = document.createElement("span");
+        corNomeLabel.className = "pp-cor-label";
+        corNomeLabel.textContent = "Cor:";
+        
+        const corNomeValor = document.createElement("span");
+        corNomeValor.className = "pp-cor-valor";
+        corNomeValor.textContent = dados.cores[corPreviaSelecionada].nome || "—";
+        
+        corLinha.appendChild(corNomeLabel);
+        corLinha.appendChild(corNomeValor);
+        container.appendChild(corLinha);
 
         const cores = document.createElement("div");
         cores.className = "pp-cores";
