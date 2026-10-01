@@ -6202,7 +6202,136 @@
             .parte-adicionar-caracteristica{width:100%}
         }
 
-    </style>
+    
+        /* ===== Outras características — alternativas e salvas ===== */
+        .parte-outras-alternativas{
+            margin:0 0 12px;
+            padding:12px 13px 11px;
+            border:1px solid #e4e9ef;
+            border-radius:12px;
+            background:linear-gradient(180deg,#fbfcfd 0%,#f7f9fb 100%);
+        }
+        .parte-outras-alternativas-topo{
+            display:flex;
+            align-items:flex-start;
+            justify-content:space-between;
+            gap:12px;
+            margin-bottom:9px;
+        }
+        .parte-outras-alternativas-topo > div{
+            display:grid;
+            gap:2px;
+        }
+        .parte-outras-alternativas-topo strong{
+            color:#25384c;
+            font-size:.69rem;
+            font-weight:850;
+            letter-spacing:.2px;
+        }
+        .parte-outras-alternativas-topo span{
+            color:#8794a2;
+            font-size:.63rem;
+            line-height:1.45;
+        }
+        .parte-outras-chips{
+            display:flex;
+            flex-wrap:wrap;
+            gap:7px;
+        }
+        .parte-outra-chip,
+        .parte-outra-chip-texto{
+            min-height:34px;
+            display:inline-flex;
+            align-items:center;
+            justify-content:center;
+            border:1px solid #dbe3eb;
+            border-radius:9px;
+            background:#fff;
+            color:#31536f;
+            font-size:.66rem;
+            font-weight:800;
+            padding:7px 10px;
+            cursor:pointer;
+            transition:background .18s ease,border-color .18s ease,color .18s ease,transform .18s ease,box-shadow .18s ease;
+        }
+        .parte-outra-chip:hover,
+        .parte-outra-chip-texto:hover{
+            border-color:#c5d1dd;
+            background:#f8fbfd;
+            color:#c2410c;
+            transform:translateY(-1px);
+            box-shadow:0 6px 14px rgba(22,45,71,.06);
+        }
+        .parte-outras-salvas-wrap{
+            margin-top:12px;
+            padding-top:11px;
+            border-top:1px solid #e8edf2;
+        }
+        .parte-outras-salvas-topo{
+            margin-bottom:8px;
+        }
+        .parte-outra-chip-salva{
+            display:inline-flex;
+            align-items:center;
+            max-width:100%;
+            overflow:hidden;
+            border:1px solid #d8e1ea;
+            border-radius:9px;
+            background:#fff;
+            box-shadow:0 3px 10px rgba(22,45,71,.035);
+        }
+        .parte-outra-chip-salva.usada{
+            border-color:#c6d6e4;
+            background:#f8fbfd;
+        }
+        .parte-outra-chip-salva .parte-outra-chip-texto{
+            min-width:0;
+            max-width:260px;
+            overflow:hidden;
+            text-overflow:ellipsis;
+            white-space:nowrap;
+            border:0;
+            border-radius:8px 0 0 8px;
+            box-shadow:none;
+        }
+        .parte-outra-chip-salva .parte-outra-chip-texto:hover{
+            transform:none;
+            box-shadow:none;
+        }
+        .parte-outra-chip-excluir{
+            width:29px;
+            height:32px;
+            flex:0 0 29px;
+            display:grid;
+            place-items:center;
+            padding:0;
+            border:0;
+            border-left:1px solid #e6ebf0;
+            background:#fff;
+            color:#8a96a3;
+            font-size:.92rem;
+            font-weight:600;
+            line-height:1;
+            cursor:pointer;
+            transition:background .18s ease,color .18s ease;
+        }
+        .parte-outra-chip-excluir:hover{
+            background:#fff6f5;
+            color:#b42318;
+        }
+        .parte-outras-alternativas + .parte-outras-lista{
+            margin-top:9px;
+        }
+        @media (max-width:700px){
+            .parte-outras-alternativas{
+                padding:11px;
+            }
+            .parte-outra-chip-salva .parte-outra-chip-texto{
+                max-width:210px;
+            }
+        }
+
+</style>
 </head>
 
 <body>
@@ -6765,7 +6894,7 @@
     </script>
 
     <script
-        src="/js/admin.js?v=20"
+        src="/js/admin.js?v=21"
         defer
     ></script>
     <script
