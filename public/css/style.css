@@ -1332,6 +1332,110 @@ img[data-zoom] {
     font-weight: 900;
 }
 
+.descricao-produto-area {
+    width: 100%;
+    margin-top: 2px;
+}
+
+.descricao-produto-conteudo {
+    position: relative;
+    max-height: calc(1.65em * 14);
+    overflow: hidden;
+    transition: max-height .65s ease;
+}
+
+.descricao-produto-conteudo::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 5.5em;
+    background: linear-gradient(
+        to bottom,
+        rgba(255,255,255,0),
+        rgba(255,255,255,.72) 55%,
+        #fff 100%
+    );
+    pointer-events: none;
+    opacity: 1;
+    transition: opacity .45s ease;
+}
+
+.descricao-produto-conteudo.expandida {
+    max-height: 2000px;
+}
+
+.descricao-produto-conteudo.expandida::after {
+    opacity: 0;
+}
+
+.descricao-produto-texto {
+    margin: 0;
+    color: #4c5e70;
+    font-size: .93rem;
+    line-height: 1.65;
+    font-weight: 450;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+    tab-size: 4;
+}
+
+.descricao-completa-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    width: 100%;
+    margin: 12px auto 0;
+    padding: 9px 14px;
+    border: 0;
+    background: transparent;
+    color: #245a91;
+    font: inherit;
+    font-size: .86rem;
+    font-weight: 800;
+    letter-spacing: -.005em;
+    cursor: pointer;
+    transition:
+        color .2s ease,
+        transform .2s ease,
+        opacity .2s ease;
+}
+
+.descricao-completa-btn::after {
+    content: "⌄";
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 18px;
+    height: 18px;
+    border: 1px solid rgba(36,90,145,.18);
+    border-radius: 50%;
+    font-size: .8rem;
+    line-height: 1;
+    transition: transform .35s ease;
+}
+
+.descricao-completa-btn:hover {
+    color: #163f68;
+    transform: translateY(-1px);
+}
+
+.descricao-produto-conteudo.expandida + .descricao-completa-btn::after {
+    transform: rotate(180deg);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .descricao-produto-conteudo,
+    .descricao-produto-conteudo::after,
+    .descricao-completa-btn,
+    .descricao-completa-btn::after {
+        transition: none;
+    }
+}
+
 .pp-compra-card {
     position: sticky;
     top: 94px;
