@@ -3827,3 +3827,12 @@ body {
     .interacao-exclusao-acoes { flex-direction: column-reverse; }
     .interacao-exclusao-acoes button { width: 100%; }
 }
+
+
+/* =========================================================
+   CARACTERÍSTICAS POR PARTE DO CONJUNTO
+========================================================= */
+.pp-caracteristicas .carac-parte-titulo{display:flex;align-items:center;gap:10px;margin:23px 0 12px;padding:11px 13px;border:1px solid #e0e6ed;border-radius:12px;background:linear-gradient(135deg,#f5f8fb 0%,#fbfcfe 100%);color:#162d47;font-size:.86rem;font-weight:900;letter-spacing:.01em}
+.pp-caracteristicas .carac-parte-titulo::before{content:"";width:5px;height:20px;flex:0 0 auto;border-radius:99px;background:linear-gradient(180deg,#f97316,#fb923c);box-shadow:0 4px 10px rgba(249,115,22,.18)}
+.pp-caracteristicas .carac-parte-titulo + .carac-sub{margin-top:7px}
+@media (max-width:700px){.pp-caracteristicas .carac-parte-titulo{margin-top:19px;padding:10px 11px;font-size:.80rem}}
