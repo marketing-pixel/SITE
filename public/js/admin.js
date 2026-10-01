@@ -329,18 +329,47 @@ function confirmarAcao(e,t){return new Promise(o=>{let a=document.getElementById
     }
 }
 function fecharModal(){const e=document.getElementById("modal-produto");e&&e.classList.remove("aberto")}
+function normalizarOutrasCaracteristicasAdmin(parte={}){
+    const explicitas=Array.isArray(parte.outras_caracteristicas)?parte.outras_caracteristicas:[];
+    if(explicitas.length){
+        return explicitas.map((item)=>({
+            nome:String(item?.nome||"").trim()||"Característica",
+            valor:String(item?.valor??item?.value??"")
+        })).filter((item)=>item.nome||item.valor);
+    }
+
+    const nomeParte=String(parte.nome||"").trim().toLowerCase();
+    const itens=[];
+    const adicionar=(nome,valor)=>{
+        if(String(valor??"").trim())itens.push({nome,valor:String(valor)});
+    };
+
+    adicionar("Outros",parte.outros);
+    adicionar("Compartimento para livros",parte.compartimento_livros);
+
+    /* Assentos não é uma característica da Mesa.
+       Continua disponível normalmente para Cadeira, Banco ou outra parte. */
+    if(nomeParte!=="mesa")adicionar("Quantidade de assentos",parte.quantidade_assentos);
+
+    return itens;
+}
+
 function normalizarPartesCaracteristicasAdmin(e={}){
     const bruto=Array.isArray(e.partes_caracteristicas)?e.partes_caracteristicas:Array.isArray(e.partes)?e.partes:null;
-    const partes=bruto?bruto.map((p)=>({
-        nome:String(p?.nome||"").trim()||"Parte",
-        modelo:String(p?.modelo||""),
-        largura:String(p?.largura||""),
-        comprimento:String(p?.comprimento||""),
-        altura:String(p?.altura||""),
-        outros:String(p?.outros||""),
-        quantidade_assentos:String(p?.quantidade_assentos||""),
-        compartimento_livros:String(p?.compartimento_livros||"")
-    })):[];
+    const partes=bruto?bruto.map((p)=>{
+        const parte={
+            nome:String(p?.nome||"").trim()||"Parte",
+            modelo:String(p?.modelo||""),
+            largura:String(p?.largura||""),
+            comprimento:String(p?.comprimento||""),
+            altura:String(p?.altura||""),
+            outros:String(p?.outros||""),
+            quantidade_assentos:String(p?.quantidade_assentos||""),
+            compartimento_livros:String(p?.compartimento_livros||"")
+        };
+        parte.outras_caracteristicas=normalizarOutrasCaracteristicasAdmin(p);
+        return parte;
+    }):[];
 
     if(partes.length)return partes;
     return [
@@ -350,11 +379,16 @@ function normalizarPartesCaracteristicasAdmin(e={}){
             largura:String(e.largura||""),
             comprimento:String(e.comprimento||""),
             altura:String(e.altura||""),
-            outros:String(e.outros||""),
-            quantidade_assentos:String(e.quantidade_assentos||""),
-            compartimento_livros:String(e.compartimento_livros||"")
+            outras_caracteristicas:normalizarOutrasCaracteristicasAdmin({nome:"Mesa",outros:e.outros,quantidade_assentos:e.quantidade_assentos,compartimento_livros:e.compartimento_livros})
         },
-        {nome:"Cadeira",modelo:"",largura:"",comprimento:"",altura:"",outros:"",quantidade_assentos:"",compartimento_livros:""}
+        {
+            nome:"Cadeira",
+            modelo:"",
+            largura:"",
+            comprimento:"",
+            altura:"",
+            outras_caracteristicas:[]
+        }
     ];
 }
 
@@ -370,7 +404,7 @@ function montarEditorPartesCaracteristicas(editor,partesIniciais){
 
     const subtitulo=document.createElement("div");
     subtitulo.className="cor-caracteristicas-descricao";
-    subtitulo.textContent="Cada parte do conjunto tem suas próprias características. Você pode renomear Cadeira para Banco, por exemplo.";
+    subtitulo.textContent="Cada parte do conjunto tem suas próprias características. As “Outras características” também são personalizáveis.";
     editor.appendChild(subtitulo);
 
     const lista=document.createElement("div");
@@ -404,11 +438,8 @@ function montarEditorPartesCaracteristicas(editor,partesIniciais){
                 </div>
 
                 <div class="cor-caracteristicas-subtitulo">Outras características</div>
-                <div class="form-grid">
-                    <div class="form-grupo"><label>Quantidade de assentos</label><input type="text" class="parte-assentos" maxlength="50"></div>
-                    <div class="form-grupo"><label>Compartimento para livros</label><input type="text" class="parte-compartimento" maxlength="50"></div>
-                </div>
-                <div class="form-grupo"><label>Outros</label><input type="text" class="parte-outros"></div>
+                <div class="parte-outras-lista"></div>
+                <button type="button" class="parte-adicionar-caracteristica">+ Adicionar característica</button>
             </div>
             <button type="button" class="cor-parte-remover">Remover parte</button>
         `;
@@ -422,9 +453,50 @@ function montarEditorPartesCaracteristicas(editor,partesIniciais){
         card.querySelector(".parte-largura").value=dados.largura||"";
         card.querySelector(".parte-comprimento").value=dados.comprimento||"";
         card.querySelector(".parte-altura").value=dados.altura||"";
-        card.querySelector(".parte-assentos").value=dados.quantidade_assentos||"";
-        card.querySelector(".parte-compartimento").value=dados.compartimento_livros||"";
-        card.querySelector(".parte-outros").value=dados.outros||"";
+
+        const outrasLista=card.querySelector(".parte-outras-lista");
+        const renderOutras=()=>{
+            outrasLista.innerHTML="";
+            const itens=normalizarOutrasCaracteristicasAdmin({
+                nome:nomeSpan.textContent,
+                outras_caracteristicas:Array.from(outrasLista.querySelectorAll(".parte-outra-item")).map((row)=>({
+                    nome:row.querySelector(".parte-outra-nome")?.value||"",
+                    valor:row.querySelector(".parte-outra-valor")?.value||""
+                }))
+            });
+            if(!Array.from(outrasLista.children).length && Array.isArray(dados.outras_caracteristicas)){
+                dados.outras_caracteristicas.forEach((item)=>criarOutra(item.nome,item.valor));
+            }
+        };
+
+        const criarOutra=(nome="",valor="")=>{
+            const row=document.createElement("div");
+            row.className="parte-outra-item";
+            row.innerHTML=`
+                <input type="text" class="parte-outra-nome" maxlength="100" placeholder="Nome da característica">
+                <input type="text" class="parte-outra-valor" maxlength="500" placeholder="Valor">
+                <button type="button" class="parte-outra-remover" aria-label="Remover característica">×</button>
+            `;
+            row.querySelector(".parte-outra-nome").value=nome||"";
+            row.querySelector(".parte-outra-valor").value=valor||"";
+            row.querySelector(".parte-outra-remover").addEventListener("click",()=>{
+                row.remove();
+                atualizarPreviaProduto();
+            });
+            row.querySelectorAll("input").forEach((input)=>input.addEventListener("input",atualizarPreviaProduto));
+            outrasLista.appendChild(row);
+            return row;
+        };
+
+        const existentes=Array.isArray(dados.outras_caracteristicas)
+            ?dados.outras_caracteristicas
+            :normalizarOutrasCaracteristicasAdmin(dados);
+        existentes.forEach((item)=>criarOutra(item.nome,item.valor));
+
+        card.querySelector(".parte-adicionar-caracteristica").addEventListener("click",()=>{
+            const row=criarOutra("","");
+            row.querySelector(".parte-outra-nome").focus();
+        });
 
         editar.addEventListener("click",()=>{
             const editando=card.classList.toggle("editando");
@@ -438,27 +510,34 @@ function montarEditorPartesCaracteristicas(editor,partesIniciais){
                 atualizarPreviaProduto();
             }
         });
+
         nomeInput.addEventListener("keydown",(event)=>{
             if(event.key==="Enter"){event.preventDefault();editar.click();}
             else if(event.key==="Escape"&&card.classList.contains("editando")){
-                event.preventDefault();nomeInput.value=nomeSpan.textContent;editar.click();
+                event.preventDefault();
+                nomeInput.value=nomeSpan.textContent;
+                editar.click();
             }
         });
+
         card.querySelector(".cor-parte-remover").addEventListener("click",()=>{
             if(lista.querySelectorAll(".cor-parte-card").length<=1){alert("Cada cor precisa ter pelo menos uma parte.");return;}
-            card.remove();atualizarPreviaProduto();
+            card.remove();
+            atualizarPreviaProduto();
         });
+
         lista.appendChild(card);
         return card;
     };
 
     partes.forEach(criarParte);
+
     const add=document.createElement("button");
     add.type="button";
     add.className="cor-adicionar-parte";
     add.textContent="+ Adicionar parte";
     add.addEventListener("click",()=>{
-        const card=criarParte({nome:"Nova parte"});
+        const card=criarParte({nome:"Nova parte",outras_caracteristicas:[]});
         card.querySelector(".cor-parte-editar")?.click();
         card.scrollIntoView({behavior:"smooth",block:"center"});
     });
@@ -473,9 +552,10 @@ function obterPartesCaracteristicasAdmin(editor){
         largura:card.querySelector(".parte-largura")?.value||"",
         comprimento:card.querySelector(".parte-comprimento")?.value||"",
         altura:card.querySelector(".parte-altura")?.value||"",
-        outros:card.querySelector(".parte-outros")?.value||"",
-        quantidade_assentos:card.querySelector(".parte-assentos")?.value||"",
-        compartimento_livros:card.querySelector(".parte-compartimento")?.value||""
+        outras_caracteristicas:Array.from(card.querySelectorAll(".parte-outra-item")).map((row)=>({
+            nome:row.querySelector(".parte-outra-nome")?.value?.trim()||"",
+            valor:row.querySelector(".parte-outra-valor")?.value||""
+        })).filter((item)=>item.nome||item.valor)
     }));
 }
 
@@ -833,15 +913,19 @@ function montarPaginaPrevia() {
         caracteristicas.appendChild(parteTitulo);
 
         adicionarTabela("Características Principais",[["Modelo",parte.modelo||"—"]]);
+
         adicionarTabela("Dimensões",[
             ["Largura x Comprimento",parte.largura&&parte.comprimento?parte.largura+" x "+parte.comprimento:"—"],
             ["Altura",parte.altura||"—"]
         ]);
-        adicionarTabela("Outras características",[
-            ["Outros",parte.outros||"—"],
-            ["Quantidade de assentos",parte.quantidade_assentos||"—"],
-            ["Compartimento para livros",parte.compartimento_livros||"—"]
-        ]);
+
+        const outras=Array.isArray(parte.outras_caracteristicas)
+            ?parte.outras_caracteristicas
+            :normalizarOutrasCaracteristicasAdmin(parte);
+
+        if(outras.length){
+            adicionarTabela("Outras características",outras.map((item)=>[item.nome,item.valor]));
+        }
     });
 
     const descricaoLabel = document.createElement("div");
@@ -1005,9 +1089,7 @@ produtoForm&&produtoForm.addEventListener("submit",async e=>{
                 largura:primeiro.largura||"",
                 comprimento:primeiro.comprimento||"",
                 altura:primeiro.altura||"",
-                outros:primeiro.outros||"",
-                quantidade_assentos:primeiro.quantidade_assentos||"",
-                compartimento_livros:primeiro.compartimento_livros||"",
+                outras_caracteristicas:primeiro.outras_caracteristicas||[],
                 partes_caracteristicas,
                 descricao,
                 imagens
