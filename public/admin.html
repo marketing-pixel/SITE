@@ -2941,6 +2941,188 @@
             }
         }
 
+
+        /* =========================================================
+           CENTRAL DE NOTIFICAÇÕES — REFINO FINAL / CLEAN PREMIUM
+        ========================================================= */
+        .notificacoes-painel {
+            width: min(420px, calc(100vw - 28px));
+            border: 1px solid rgba(210,219,229,.9);
+            border-radius: 18px;
+            background: rgba(255,255,255,.98);
+            box-shadow:
+                0 24px 70px rgba(15,34,54,.16),
+                0 8px 24px rgba(15,34,54,.07),
+                0 0 0 1px rgba(255,255,255,.55) inset;
+        }
+
+        .notificacoes-cabecalho {
+            padding: 16px 16px 15px;
+            gap: 12px;
+            background:
+                radial-gradient(circle at 100% 0%, rgba(249,115,22,.08), transparent 34%),
+                linear-gradient(180deg,#ffffff 0%,#fafcfe 100%);
+        }
+
+        .notificacoes-cabecalho::after {
+            left: 16px;
+            width: 42px;
+            height: 2px;
+        }
+
+        .notificacoes-kicker {
+            font-size: .54rem;
+            letter-spacing: 1.4px;
+        }
+
+        .notificacoes-kicker::before {
+            width: 13px;
+        }
+
+        .notificacoes-cabecalho h3 {
+            margin: 4px 0 3px;
+            font-size: 1rem;
+            letter-spacing: -.025em;
+        }
+
+        .notificacoes-cabecalho p {
+            max-width: 290px;
+            font-size: .66rem;
+            color: #8190a1;
+        }
+
+        .notificacoes-fechar {
+            width: 30px;
+            height: 30px;
+            flex-basis: 30px;
+            border-radius: 9px;
+            background: #f8fafc;
+            color: #7c8998;
+            font-size: .98rem;
+            box-shadow: none;
+        }
+
+        .notificacoes-fechar:hover {
+            color: #162d47;
+            background: #fff;
+            border-color: #ccd7e2;
+            box-shadow: 0 6px 15px rgba(22,45,71,.08);
+        }
+
+        .notificacoes-lista {
+            max-height: 390px;
+            padding: 9px;
+            background: linear-gradient(180deg,#fbfcfe 0%,#f8fafc 100%);
+        }
+
+        .notificacao-item {
+            gap: 11px;
+            padding: 11px;
+            border: 1px solid #e7edf3;
+            border-radius: 13px;
+            background: rgba(255,255,255,.96);
+            box-shadow: 0 3px 10px rgba(22,45,71,.025);
+        }
+
+        .notificacao-item + .notificacao-item {
+            margin-top: 7px;
+        }
+
+        .notificacao-item:hover {
+            transform: translateY(-1px);
+            border-color: #d7e1ea;
+            background: #fff;
+            box-shadow:
+                0 10px 22px rgba(22,45,71,.065),
+                0 2px 6px rgba(22,45,71,.035);
+        }
+
+        .notificacao-item.nao-lida {
+            border-color: rgba(249,115,22,.17);
+            background: linear-gradient(135deg,#fffaf6 0%,#fff 76%);
+            box-shadow:
+                0 6px 16px rgba(249,115,22,.055),
+                inset 2px 0 0 #f97316;
+        }
+
+        .notificacao-item.nao-lida::after {
+            top: 10px;
+            right: 10px;
+            width: 5px;
+            height: 5px;
+            box-shadow: 0 0 0 3px rgba(249,115,22,.09);
+        }
+
+        .notificacao-icone {
+            flex-basis: 36px;
+            width: 36px;
+            height: 36px;
+            border-radius: 11px;
+            box-shadow:
+                0 6px 14px rgba(22,45,71,.08),
+                inset 0 1px 0 rgba(255,255,255,.22);
+        }
+
+        .notificacao-tipo {
+            min-height: 20px;
+            padding: 3px 7px;
+            background: #f3f6f9;
+            font-size: .58rem;
+        }
+
+        .notificacao-data {
+            font-size: .54rem;
+            color: #9aa6b3;
+        }
+
+        .notificacao-produto {
+            margin-top: 5px;
+            font-size: .62rem;
+            color: #d7660d;
+        }
+
+        .notificacao-texto {
+            margin-top: 3px;
+            font-size: .65rem;
+            line-height: 1.42;
+            color: #647386;
+        }
+
+        .notificacoes-vazio {
+            min-height: 126px;
+            padding: 20px 18px;
+            color: #7f8d9d;
+            font-size: .68rem;
+            gap: 8px;
+        }
+
+        .notificacoes-vazio::before {
+            content: "✓";
+            width: 38px;
+            height: 38px;
+            display: grid;
+            place-items: center;
+            margin-bottom: 2px;
+            border: 1px solid rgba(22,45,71,.08);
+            border-radius: 12px;
+            background: linear-gradient(145deg,#f7fafc,#eef3f7);
+            color: #2f6b4c;
+            font-size: 1rem;
+            font-weight: 900;
+            box-shadow:
+                0 8px 18px rgba(22,45,71,.06),
+                inset 0 1px 0 rgba(255,255,255,.9);
+        }
+
+        @media (max-width: 500px) {
+            .notificacoes-painel {
+                border-radius: 16px;
+            }
+            .notificacoes-lista {
+                max-height: calc(100dvh - 172px);
+            }
+        }
+
         /* ===== SETAS 3D — NAVEGAÇÃO PREMIUM DO ADM ===== */
         .seta-3d {
             display:inline-grid;
