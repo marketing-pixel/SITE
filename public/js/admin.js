@@ -452,12 +452,29 @@ function obterDadosPreviaProduto() {
     const cores = Array.from(document.querySelectorAll(".cores-editor")).map((el) => ({
         nome: el.querySelector(".cor-nome")?.value.trim() || "",
         altura: el.querySelector(".cor-altura")?.value.trim() || "",
-        descricao: el.querySelector(".cor-descricao")?.value.trim() || "",
+        modelo: el.querySelector(".cor-modelo")?.value.trim() || "",
+        largura: el.querySelector(".cor-largura")?.value.trim() || "",
+        comprimento: el.querySelector(".cor-comprimento")?.value.trim() || "",
+        outros: el.querySelector(".cor-outros")?.value || "",
+        quantidade_assentos: el.querySelector(".cor-assentos")?.value.trim() || "",
+        compartimento_livros: el.querySelector(".cor-compartimento")?.value.trim() || "",
+        descricao: el.querySelector(".cor-descricao")?.value || "",
         imagens: Array.from(el.querySelectorAll(".imagem-item")).map((item) => ({
             caminho: item.querySelector(".cor-imagem-caminho")?.value || "",
             principal: !!item.querySelector(".cor-imagem-principal")?.checked
         })).filter((img) => img.caminho)
-    })).filter((cor) => cor.nome || cor.altura || cor.descricao || cor.imagens.length);
+    })).filter((cor) =>
+        cor.nome ||
+        cor.altura ||
+        cor.modelo ||
+        cor.largura ||
+        cor.comprimento ||
+        cor.outros ||
+        cor.quantidade_assentos ||
+        cor.compartimento_livros ||
+        cor.descricao ||
+        cor.imagens.length
+    );
 
     return {
         titulo: document.getElementById("f-titulo")?.value.trim() || "Seu produto",
@@ -465,17 +482,9 @@ function obterDadosPreviaProduto() {
         preco: document.getElementById("f-preco")?.value || "",
         parcelamento: document.getElementById("f-parcelamento")?.value.trim() || "",
         descricao: document.getElementById("f-descricao")?.value || "",
-        modelo: document.getElementById("f-modelo")?.value.trim() || "",
-        largura: document.getElementById("f-largura")?.value.trim() || "",
-        comprimento: document.getElementById("f-comprimento")?.value.trim() || "",
-        altura: document.getElementById("f-altura")?.value.trim() || "",
-        assentos: document.getElementById("f-assentos")?.value.trim() || "",
-        compartimento: document.getElementById("f-compartimento")?.value.trim() || "",
-        outros: document.getElementById("f-outros")?.value.trim() || "",
         cores
     };
 }
-
 function criarIconeSeta3D(direcao) {
     const rotacao = { esquerda: "180", direita: "0", cima: "-90", baixo: "90" }[direcao] ?? "0";
     const span = document.createElement("span");
