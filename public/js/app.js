@@ -837,7 +837,7 @@ function abrirConfirmacaoExclusaoInteracao(tipo,item){
 }
 
 async function excluirInteracao(tipo,id,card,botao){
-    if(!administratorLogado||!produtoAtual||!id)return;
+    if(!administradorLogado||!produtoAtual||!id)return;
     const listaItens=tipo==="pergunta"?produtoAtual.perguntas:produtoAtual.avaliacoes;
     const item=Array.isArray(listaItens)?listaItens.find(item=>Number(item.id)===Number(id)):null;
     if(!await abrirConfirmacaoExclusaoInteracao(tipo,item))return;
